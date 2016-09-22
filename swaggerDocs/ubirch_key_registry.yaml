@@ -43,7 +43,7 @@ paths:
         200:
           description: Successful response; returns data of the new created device
           schema:
-            $ref: '#/definitions/DeviceObject'
+            $ref: '#/definitions/DeviceStubObject'
         '400':
           description: Not successful response
           schema:
@@ -53,15 +53,15 @@ paths:
       tags:
         - devices CRUD
         - 2BImplemented
-      summary: list of all device ids
-      description: returns an array of device ids of all devices the authenticated user has connected
+      summary: list of all devices as stubs
+      description: returns an array of stubs of all devices the authenticated user has connected
       responses:
         200:
-          description: Successful response; returns an array of device ids
+          description: Successful response; returns an array of device stubs
           schema:
             type: array
             items:
-              type: string
+              $ref: '#/definitions/DeviceObject'
         '400':
           description: Not successful response
           schema:
