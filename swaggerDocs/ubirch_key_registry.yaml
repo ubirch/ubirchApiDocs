@@ -43,7 +43,7 @@ paths:
         200:
           description: Successful response; returns data of the new created device
           schema:
-            $ref: '#/definitions/DeviceStubObject'
+            $ref: '#/definitions/DeviceObject'
         '400':
           description: Not successful response
           schema:
@@ -61,7 +61,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/DeviceObject'
+              $ref: '#/definitions/DeviceStubObject'
         '400':
           description: Not successful response
           schema:
@@ -653,11 +653,23 @@ definitions:
         format: date-time
         description: timestamp when the device sent of requested data the last time
       syncState:
-        type: string
+        type: integer
+        description:
+          0 = outofsync
+          1 = insync
+          100 = unknown
         enum:
-          - insync
-          - outofsync
-          - unknown
+          - 0
+          - 1
+          - 100
+    example:
+      {
+        "deviceId": "06983253-9097-47a9-b041-b56b054e160a",
+        "deviceType": "lightsSensor",
+        "deviceName": "light_DE_Berlin_014",
+        "deviceLastUpdated": "2016-06-29T21:50:13Z",
+        "syncState": "0"
+      }
 
   DeviceObject:
     description: object for devices CRUD
