@@ -22,13 +22,14 @@ produces:
 paths:
 
 ###############################################
-#####             devices CRUD            #####
+#####             device CRUD            #####
 ###############################################
 
-  /ubirch/device:
+  /avatarService/device:
     post:
       tags:
-        - devices CRUD
+        - avatar service
+        - device CRUD
         - 2BImplemented
       summary: create a new device
       description: creates a new device with the given id; a name of the device is created in server, that can be changed with an update request
@@ -51,7 +52,8 @@ paths:
 
     get:
       tags:
-        - devices CRUD
+        - avatar service
+        - device CRUD
         - 2BImplemented
       summary: list of all devices as stubs
       description: returns an array of stubs of all devices the authenticated user has connected
@@ -67,10 +69,11 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/ubirch/device/{deviceId}':
+  '/avatarService/device/{deviceId}':
     put:
       tags:
-        - devices CRUD
+        - avatar service
+        - device CRUD
         - 2BImplemented
       summary: updates an existing device
       description: updates the device referenced by the given id with the sent data, if the authenticated user is autorized to do this
@@ -98,7 +101,8 @@ paths:
 
     get:
       tags:
-        - devices CRUD
+        - avatar service
+        - device CRUD
         - 2BImplemented
       summary: read data of given device
       description: returns data of device with the given id, if the authenticated user is autorized to get it
@@ -120,7 +124,8 @@ paths:
 
     delete:
       tags:
-        - devices CRUD
+        - avatar service
+        - device CRUD
         - 2BImplemented
       summary: delete device
       description: deletes device with the given id, if the authenticated user is autorized to do
@@ -141,10 +146,11 @@ paths:
             $ref: '#/definitions/ErrorResponse'
 
         
-  '/ubirch/device/stub/{deviceId}':
+  '/avatarService/device/stub/{deviceId}':
     get:
       tags:
-        - devices CRUD
+        - avatar service
+        - device CRUD
         - 2BImplemented
       summary: short data of given device
       description: returns a short data set of device with the given id, if the authenticated user is autorized to get it

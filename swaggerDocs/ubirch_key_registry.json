@@ -10,10 +10,11 @@
         "application/json"
     ],
     "paths": {
-        "/ubirch/device": {
+        "/avatarService/device": {
             "post": {
                 "tags": [
-                    "devices CRUD",
+                    "avatar service",
+                    "device CRUD",
                     "2BImplemented"
                 ],
                 "summary": "create a new device",
@@ -46,7 +47,8 @@
             },
             "get": {
                 "tags": [
-                    "devices CRUD",
+                    "avatar service",
+                    "device CRUD",
                     "2BImplemented"
                 ],
                 "summary": "list of all devices as stubs",
@@ -70,10 +72,11 @@
                 }
             }
         },
-        "/ubirch/device/{deviceId}": {
+        "/avatarService/device/{deviceId}": {
             "put": {
                 "tags": [
-                    "devices CRUD",
+                    "avatar service",
+                    "device CRUD",
                     "2BImplemented"
                 ],
                 "summary": "updates an existing device",
@@ -113,7 +116,8 @@
             },
             "get": {
                 "tags": [
-                    "devices CRUD",
+                    "avatar service",
+                    "device CRUD",
                     "2BImplemented"
                 ],
                 "summary": "read data of given device",
@@ -144,7 +148,8 @@
             },
             "delete": {
                 "tags": [
-                    "devices CRUD",
+                    "avatar service",
+                    "device CRUD",
                     "2BImplemented"
                 ],
                 "summary": "delete device",
@@ -174,10 +179,11 @@
                 }
             }
         },
-        "/ubirch/device/stub/{deviceId}": {
+        "/avatarService/device/stub/{deviceId}": {
             "get": {
                 "tags": [
-                    "devices CRUD",
+                    "avatar service",
+                    "device CRUD",
                     "2BImplemented"
                 ],
                 "summary": "short data of given device",
