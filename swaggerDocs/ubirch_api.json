@@ -213,6 +213,94 @@
                 }
             }
         },
+        "/avatarService/device/{deviceId}/history": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device history",
+                    "2BImplemented"
+                ],
+                "summary": "list oflatest sent device states",
+                "description": "returns an array of the last 10 values the device sent in the format elastic search deliveres",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device states",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceStateObject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/avatarService/device/{deviceId}/history/{from}/{size}": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device history",
+                    "2BImplemented"
+                ],
+                "summary": "list of device states for pagination",
+                "description": "returns an array of values the device sent in the format elastic search deliveres; for pagination, deliveres the defined part of the whole list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "from",
+                        "description": "the number of the jongest device state message we request; messages ordered by descending timestamps",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "size",
+                        "description": "number of device state message we request; starting from the message defined by 'from' to the past",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device states",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceStateObject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/chainService/explorer/eventHash/{eventHash}": {
             "get": {
                 "tags": [
@@ -866,6 +954,64 @@
                     }
                 }
             ]
+        },
+        "DeviceState": {
+            "description": "object with a state of a device",
+            "type": "object",
+            "properties": {
+                "deviceId": {
+                    "type": "string",
+                    "description": "device id"
+                },
+                "messageId": {
+                    "type": "string",
+                    "description": "id of the message containing this device state"
+                },
+                "deviceType": {
+                    "type": "string",
+                    "description": "device type, e.g. lightsLamp, lightsSensor, temperatureSensor"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the device sent this state"
+                },
+                "deviceTags": {
+                    "type": "array",
+                    "description": "list of user defined tags for this device",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "deviceMessage": {
+                    "type": "object",
+                    "description": "device type dependent object containing the properties which describe the state of the device"
+                }
+            }
+        },
+        "DeviceStateObject": {
+            "description": "envelope for a state of a device",
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string",
+                    "description": "message id of this state message"
+                },
+                "_index": {
+                    "type": "string",
+                    "description": "data source index (from elastic search)"
+                },
+                "_score": {
+                    "type": "integer"
+                },
+                "_type": {
+                    "type": "string",
+                    "description": "message id"
+                },
+                "_source": {
+                    "$ref": "#/definitions/DeviceState"
+                }
+            }
         },
         "SignedPackge": {
             "description": "signature wrapper for any payload",
