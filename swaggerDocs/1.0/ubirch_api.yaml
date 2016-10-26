@@ -170,13 +170,59 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
+  '/avatarService/device/{deviceId}/state':
+    post:
+      tags:
+        - avatar service
+        - device history
+        - 2BImplemented
+      summary: posts current state of device
+      description: sends state of device; will be stored in the states data base
+      parameters:
+        - in: path
+          name: deviceId
+          description: id of the device from this state
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response; returns the new stored device state
+          schema:
+            $ref: '#/definitions/DeviceStateObject'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - avatar service
+        - device history
+        - 2BImplemented
+      summary: current state of device
+      description: returns the newest state that has been send for this device
+      parameters:
+        - in: path
+          name: deviceId
+          description: id of the device from which we request the current state
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response; returns the current state of the device
+          schema:
+            $ref: '#/definitions/DeviceStateObject'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
   '/avatarService/device/{deviceId}/history':
     get:
       tags:
         - avatar service
         - device history
         - 2BImplemented
-      summary: list oflatest sent device states
+      summary: list of latest sent device states
       description: returns an array of the last 10 values the device sent in the format elastic search deliveres
       parameters:
         - in: path
