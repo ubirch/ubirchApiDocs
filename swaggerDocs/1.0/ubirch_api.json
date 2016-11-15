@@ -5,20 +5,20 @@
         "title": "ubirch REST API",
         "description": "This is the definition of the ubirch REST API containing the following parts:|\n- devices CRUD endpoints\n- key registry endpoints, where public keys of devices and apps can be stored and requested and handshakes between two parties can be performed\n- chain service endpoints, to get information about certificates, blockchain entries and bitcoin/etherium anchors to notarize that a message was sent"
     },
-    "basePath": "/api/v1",
+    "basePath": "/api",
     "produces": [
         "application/json"
     ],
     "paths": {
-        "/avatarService/device": {
+        "/avatarService/v1/device": {
             "post": {
                 "tags": [
                     "avatar service",
                     "device CRUD",
-                    "2BImplemented"
+                    "revisionNeeded"
                 ],
-                "summary": "create a new device",
-                "description": "creates a new device with the given id; a name of the device is created in server, that can be changed with an update request",
+                "summary": "CREATE new device",
+                "description": "creates a new device; a unique device id is required; several other properties of the device can be added optionally; some properties are created with default values on server if not specified; everything except the device id can be changed later with an update request",
                 "parameters": [
                     {
                         "in": "body",
@@ -49,17 +49,17 @@
                 "tags": [
                     "avatar service",
                     "device CRUD",
-                    "2BImplemented"
+                    "revisionNeeded"
                 ],
-                "summary": "list of all devices as stubs",
-                "description": "returns an array of stubs of all devices the authenticated user has connected",
+                "summary": "LIST all devices",
+                "description": "returns an array of all devices the authenticated user has connected",
                 "responses": {
                     "200": {
-                        "description": "Successful response; returns an array of device stubs",
+                        "description": "Successful response; returns an array of devices",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/DeviceStubObject"
+                                "$ref": "#/definitions/DeviceObject"
                             }
                         }
                     },
@@ -72,14 +72,14 @@
                 }
             }
         },
-        "/avatarService/device/{deviceId}": {
+        "/avatarService/v1/device/{deviceId}": {
             "put": {
                 "tags": [
                     "avatar service",
                     "device CRUD",
-                    "2BImplemented"
+                    "revisionNeeded"
                 ],
-                "summary": "updates an existing device",
+                "summary": "UPDATE device",
                 "description": "updates the device referenced by the given id with the sent data, if the authenticated user is autorized to do this",
                 "parameters": [
                     {
@@ -118,9 +118,9 @@
                 "tags": [
                     "avatar service",
                     "device CRUD",
-                    "2BImplemented"
+                    "revisionNeeded"
                 ],
-                "summary": "read data of given device",
+                "summary": "READ device",
                 "description": "returns data of device with the given id, if the authenticated user is autorized to get it",
                 "parameters": [
                     {
@@ -149,10 +149,9 @@
             "delete": {
                 "tags": [
                     "avatar service",
-                    "device CRUD",
-                    "2BImplemented"
+                    "device CRUD"
                 ],
-                "summary": "delete device",
+                "summary": "DELETE device",
                 "description": "deletes device with the given id, if the authenticated user is autorized to do",
                 "parameters": [
                     {
@@ -179,15 +178,42 @@
                 }
             }
         },
-        "/avatarService/device/stub/{deviceId}": {
+        "/avatarService/v1/device/stub": {
             "get": {
                 "tags": [
                     "avatar service",
                     "device CRUD",
-                    "2BImplemented"
+                    "revisionNeeded"
                 ],
-                "summary": "short data of given device",
-                "description": "returns a short data set of device with the given id, if the authenticated user is autorized to get it",
+                "summary": "LIST all devices as stubs",
+                "description": "returns an array of stubs of all devices the authenticated user has connected; the stubs contain a mix of device properties and state items as needed in devices overviews",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device stubs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceStubObject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/avatarService/v1/device/stub/{deviceId}": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "READ device as stub",
+                "description": "returns a stub of the device with the given id, if the authenticated user is autorized to get it; ; the stub contains a mix of device properties and state items",
                 "parameters": [
                     {
                         "in": "path",
@@ -199,7 +225,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful response; returns short data set of requested device",
+                        "description": "Successful response; returns stub of the requested device",
                         "schema": {
                             "$ref": "#/definitions/DeviceStubObject"
                         }
@@ -213,14 +239,15 @@
                 }
             }
         },
-        "/avatarService/device/{deviceId}/state": {
+        "/avatarService/v1/device/{deviceId}/state": {
             "post": {
                 "tags": [
                     "avatar service",
                     "device history",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
-                "summary": "posts current state of device",
+                "summary": "POST current state of device",
                 "description": "sends state of device; will be stored in the states data base",
                 "parameters": [
                     {
@@ -235,7 +262,7 @@
                     "200": {
                         "description": "Successful response; returns the new stored device state",
                         "schema": {
-                            "$ref": "#/definitions/DeviceStateObject"
+                            "$ref": "#/definitions/DeviceState"
                         }
                     },
                     "400": {
@@ -249,8 +276,7 @@
             "get": {
                 "tags": [
                     "avatar service",
-                    "device history",
-                    "2BImplemented"
+                    "device history"
                 ],
                 "summary": "current state of device",
                 "description": "returns the newest state that has been send for this device",
@@ -267,7 +293,7 @@
                     "200": {
                         "description": "Successful response; returns the current state of the device",
                         "schema": {
-                            "$ref": "#/definitions/DeviceStateObject"
+                            "$ref": "#/definitions/DeviceState"
                         }
                     },
                     "400": {
@@ -279,12 +305,13 @@
                 }
             }
         },
-        "/avatarService/device/{deviceId}/history": {
+        "/avatarService/v1/device/{deviceId}/history": {
             "get": {
                 "tags": [
                     "avatar service",
                     "device history",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "list of latest sent device states",
                 "description": "returns an array of the last 10 values the device sent in the format elastic search deliveres",
@@ -303,7 +330,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/DeviceStateObject"
+                                "$ref": "#/definitions/DeviceState"
                             }
                         }
                     },
@@ -316,12 +343,13 @@
                 }
             }
         },
-        "/avatarService/device/{deviceId}/history/{from}/{size}": {
+        "/avatarService/v1/device/{deviceId}/history/{from}/{size}": {
             "get": {
                 "tags": [
                     "avatar service",
                     "device history",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "list of device states for pagination",
                 "description": "returns an array of values the device sent in the format elastic search deliveres; for pagination, deliveres the defined part of the whole list",
@@ -354,7 +382,35 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/DeviceStateObject"
+                                "$ref": "#/definitions/DeviceState"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/avatarService/v1/device/deviceType": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD",
+                    "revisionNeeded"
+                ],
+                "summary": "LIST all device types",
+                "description": "returns an array of all configured device types",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device types",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceType"
                             }
                         }
                     },
@@ -402,7 +458,8 @@
         "/chainService/explorer/blockInfo/{blockHash}": {
             "get": {
                 "tags": [
-                    "chainservice"
+                    "chainservice",
+                    "revisionNeeded"
                 ],
                 "summary": "short block Info of the referenced block",
                 "description": "returns blockInfo of the block with the given block hash",
@@ -466,7 +523,8 @@
         "/chainService/explorer/fullBlock/{blockHash}": {
             "get": {
                 "tags": [
-                    "chainservice"
+                    "chainservice",
+                    "revisionNeeded"
                 ],
                 "summary": "full block data of the referenced block",
                 "description": "returns all data stored in the block with the given block hash",
@@ -499,7 +557,8 @@
             "post": {
                 "tags": [
                     "key registry",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "stores new public key",
                 "description": "stores the given public key with its unique pubKeyID",
@@ -534,7 +593,8 @@
             "put": {
                 "tags": [
                     "key registry",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "updates public key",
                 "description": "updates the given public key found by pubKeyID in the key registry with the given data; the public key must exist already",
@@ -575,7 +635,8 @@
             "get": {
                 "tags": [
                     "key registry",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "get public key",
                 "description": "returns the public key for the given pubKeyID from the key registry",
@@ -641,7 +702,8 @@
             "post": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "new handshake",
                 "description": "initiates a new handshake",
@@ -676,7 +738,8 @@
             "get": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "returns handshake data",
                 "description": "returns the full handshake dataset of the handshake identified by the handshake id",
@@ -707,7 +770,8 @@
             "put": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "updates handshake data",
                 "description": "updates the handshake dataset found by handshake id in the key registry with the given data",
@@ -747,7 +811,8 @@
             "delete": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "deletes handshake",
                 "description": "deletes the handshake dataset identified by the handshake id",
@@ -780,7 +845,8 @@
             "get": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "returns open handshakes",
                 "description": "returns a full list of all handshakes in an open state for this pubKeyId as an array;  handshakeObjects are returned",
@@ -816,7 +882,8 @@
             "get": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "returns handshake state",
                 "description": "returns the state of the handshake identified by the handshake id",
@@ -847,7 +914,8 @@
             "put": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "updates handshake state",
                 "description": "updates the state of the handshake identified by the handshake id",
@@ -889,7 +957,8 @@
             "get": {
                 "tags": [
                     "handshake",
-                    "2BImplemented"
+                    "2BImplemented",
+                    "revisionNeeded"
                 ],
                 "summary": "returns states of all open handshakes",
                 "description": "returns a full list of states for all handshakes in an open state for this pubKeyId as an array",
@@ -920,10 +989,140 @@
                     }
                 }
             }
+        },
+        "/trackleService/nightTempCurve/{nightCurveId}": {
+            "get": {
+                "tags": [
+                    "trackle",
+                    "2BImplemented"
+                ],
+                "summary": "night temperature curve",
+                "description": "return the data that has been measured during the night",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "nightCurveId",
+                        "description": "id of the nightCurve",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the requested night temperature curve",
+                        "schema": {
+                            "$ref": "#/definitions/NightTemperatureCurveObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/trackleService/cycleCurve": {
+            "get": {
+                "tags": [
+                    "trackle",
+                    "2BImplemented"
+                ],
+                "summary": "list all cycles of a user",
+                "description": "returns a list of all cycles of a user as stubs\n- sorted by timestamp of cycledates - in descending order, newest cycle first, the oldest at the end of list - the current cycle is the element 0 of the list",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns list of cycle stubs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CycleStubObject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/trackleService/cycleCurve/{cycleId}": {
+            "get": {
+                "tags": [
+                    "trackle",
+                    "2BImplemented"
+                ],
+                "summary": "cycle basal temperature curve",
+                "description": "return\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of that cycle - information about - menstruation - ovulation - fertile phase - possibly additional properties",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "cycleId",
+                        "description": "id of the cycle curve",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the requested night temperature curve",
+                        "schema": {
+                            "$ref": "#/definitions/CycleCurveObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "DeviceStubObject": {
+            "description": "stub for devices CRUD, especcially for listing devices",
+            "type": "object",
+            "required": [
+                "deviceId"
+            ],
+            "properties": {
+                "deviceId": {
+                    "description": "UUID, unique",
+                    "type": "string"
+                },
+                "deviceName": {
+                    "description": "name of the device, used in the UI; specified by user or generated on server; not necessarily unique",
+                    "type": "string"
+                },
+                "deviceTypeKey": {
+                    "description": "key of the device type; all specified device types can be accessed from the deviceType endpoint",
+                    "type": "string"
+                },
+                "deviceLastUpdated": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the device sent or requested data the last time"
+                },
+                "inSync": {
+                    "type": "boolean",
+                    "description": "tells us if device and avatar are synchronised which means if they have the same state false = outofsync true = insync if not specified the syncState is unknown"
+                }
+            },
+            "example": {
+                "deviceId": "06983253-9097-47a9-b041-b56b054e160a",
+                "deviceTypeKey": "lightsSensorTypeKey",
+                "deviceName": "light_DE_Berlin_014",
+                "deviceLastUpdated": "2016-06-29T21:50:13Z",
+                "inSync": false
+            }
+        },
+        "DeviceObject": {
             "description": "object for devices CRUD",
             "type": "object",
             "required": [
@@ -931,95 +1130,77 @@
             ],
             "properties": {
                 "deviceId": {
+                    "description": "UUID, unique",
                     "type": "string"
                 },
                 "deviceName": {
+                    "description": "name of the device, used in the UI; specified by user or generated on server; not necessarily unique",
                     "type": "string"
                 },
-                "deviceType": {
+                "deviceTypeKey": {
+                    "description": "key of the device type; all specified device types can be accessed from the deviceType endpoint",
                     "type": "string"
                 },
-                "deviceLastUpdated": {
+                "created": {
+                    "description": "timestamp when record of this device is created in database",
                     "type": "string",
-                    "format": "date-time",
-                    "description": "timestamp when the device sent of requested data the last time"
+                    "format": "date-time"
                 },
-                "syncState": {
-                    "type": "integer",
-                    "description": "0 = outofsync 1 = insync 100 = unknown",
-                    "enum": [
-                        0,
-                        1,
-                        100
-                    ]
-                }
-            },
-            "example": {
-                "deviceId": "06983253-9097-47a9-b041-b56b054e160a",
-                "deviceType": "lightsSensor",
-                "deviceName": "light_DE_Berlin_014",
-                "deviceLastUpdated": "2016-06-29T21:50:13Z",
-                "syncState": "0"
-            }
-        },
-        "DeviceObject": {
-            "description": "object for devices CRUD",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/DeviceStubObject"
+                "updated": {
+                    "description": "timestamp of the last update of this database record",
+                    "type": "string",
+                    "format": "date-time"
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "created": {
-                            "type": "string",
-                            "format": "date-time"
-                        },
-                        "updated": {
-                            "type": "string",
-                            "format": "date-time"
-                        },
-                        "avatarLastUpdated": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "timestamp when the avatar (digital representation of this device) of this device was updated the last time"
-                        },
-                        "hwDeviceId": {
-                            "type": "string"
-                        },
-                        "tags": {
-                            "type": "array",
-                            "description": "tags for filtering groups of devices",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "avatarState": {
-                            "type": "object",
-                            "properties": {
-                                "desired": {
-                                    "type": "object"
-                                },
-                                "reported": {
-                                    "type": "object"
-                                }
-                            }
-                        },
-                        "deviceProperties": {
-                            "type": "object"
-                        },
-                        "subscriptions": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
-                        },
-                        "deviceConfig": {
-                            "type": "object"
-                        }
+                "hwDeviceId": {
+                    "description": "hardware device id",
+                    "type": "string"
+                },
+                "hashedHwDeviceId": {
+                    "description": "hashed hardware device id",
+                    "type": "string"
+                },
+                "deviceProperties": {
+                    "$ref": "#/definitions/DeviceProperties"
+                },
+                "deviceConfig": {
+                    "$ref": "#/definitions/DeviceConfig"
+                },
+                "tags": {
+                    "type": "array",
+                    "description": "tags for filtering groups of devices",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subscriptions": {
+                    "type": "array",
+                    "description": "list of devices this device has subscribed to - this device will receive values from them",
+                    "items": {
+                        "$ref": "#/definitions/Subscription"
                     }
                 }
-            ]
+            }
+        },
+        "DeviceProperties": {
+            "description": "object with the properties of a device",
+            "type": "object",
+            "example": {
+                "language": "de",
+                "testparam": "123"
+            }
+        },
+        "DeviceConfig": {
+            "description": "object with the configuration of a device",
+            "type": "object",
+            "example": {
+                "i": 3600,
+                "ir": 191,
+                "s": 0
+            }
+        },
+        "Subscription": {
+            "description": "subscription of another device; new measurements of a device will be reported to its supscribers",
+            "type": "object"
         },
         "DeviceState": {
             "description": "object with a state of a device",
@@ -1052,34 +1233,43 @@
                 "deviceMessage": {
                     "type": "object",
                     "description": "device type dependent object containing the properties which describe the state of the device"
+                },
+                "avatarLastUpdated": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the avatar (digital representation of this device) was updated the last time; if e.g. a lamp gets its color value from a sensor, the avatar of the lamp is updated when the sensor sends new data; the avatar has different states in desired and reported until the lamps fetches the new values"
                 }
             }
         },
-        "DeviceStateObject": {
-            "description": "envelope for a state of a device",
+        "DeviceType": {
+            "description": "object containing properties of a device type",
             "type": "object",
             "properties": {
-                "_id": {
-                    "type": "string",
-                    "description": "message id of this state message"
+                "key": {
+                    "type": "string"
+                }
+            },
+            "example": {
+                "key": "lightsSensorTypeKey",
+                "name": {
+                    "de": "Lichtsensor",
+                    "en": "lightssensor"
                 },
-                "_index": {
-                    "type": "string",
-                    "description": "data source index (from elastic search)"
-                },
-                "_score": {
-                    "type": "integer"
-                },
-                "_type": {
-                    "type": "string",
-                    "description": "message id"
-                },
-                "_source": {
-                    "$ref": "#/definitions/DeviceState"
+                "icon": "ion-ios-lightbulb",
+                "defaults": {
+                    "properties": {
+                        "countryCode": "unknown"
+                    },
+                    "config": {
+                        "i": 3600,
+                        "ir": 191,
+                        "s": 0
+                    },
+                    "tags": []
                 }
             }
         },
-        "SignedPackge": {
+        "SignedPackage": {
             "description": "signature wrapper for any payload",
             "type": "object",
             "discriminator": "signedPackage",
@@ -1195,7 +1385,7 @@
             "description": "public key object with the pubKey and it's unique pubKeyId",
             "allOf": [
                 {
-                    "$ref": "#/definitions/SignedPackge"
+                    "$ref": "#/definitions/SignedPackage"
                 },
                 {
                     "type": "object",
@@ -1223,7 +1413,7 @@
             "description": "handshake object transfers content required to perform a handshake between two parties",
             "allOf": [
                 {
-                    "$ref": "#/definitions/SignedPackge"
+                    "$ref": "#/definitions/SignedPackage"
                 },
                 {
                     "type": "object",
@@ -1251,7 +1441,7 @@
             "description": "transfers the state of a handshake",
             "allOf": [
                 {
-                    "$ref": "#/definitions/SignedPackge"
+                    "$ref": "#/definitions/SignedPackage"
                 },
                 {
                     "type": "object",
@@ -1337,6 +1527,340 @@
         "NotaryAnchor": {
             "type": "object",
             "description": "bitcoin or etherium anchor to notarize this block and the predecessing blocks"
+        },
+        "NightTemperatureCurveObject": {
+            "type": "object",
+            "required": [
+                "nightCurveId",
+                "date",
+                "data"
+            ],
+            "description": "contains the measured temperature values of one night\nthe data has already been cleaned\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled",
+            "properties": {
+                "nightCurveId": {
+                    "type": "string",
+                    "description": "unique id of this night temperature curve"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "date of day that starts in this night"
+                },
+                "data": {
+                    "description": "all measured temperature values of the night in a highcharts compatible format\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - items consist of arrays;\n- first item contains a time-date string - the second one a float value with two digits after decimal point",
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "dataprops": {
+                    "description": "every item of data can have additional properties; referenced by timestamp; especially the basal values of the measured night temperature values are flagged in this way",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "timestamp": {
+                                "type": "string",
+                                "format": "time-date",
+                                "description": "reference to the item of data array, this properties are assigned to"
+                            },
+                            "attributes": {
+                                "type": "object",
+                                "description": "key value pairs of properties"
+                            }
+                        }
+                    }
+                }
+            },
+            "example": {
+                "nightCurveId": "2016-10-01",
+                "date": "2016-10-01",
+                "data": [
+                    [
+                        "2016-09-01T23:50:38",
+                        35.51
+                    ],
+                    [
+                        "2016-09-01T23:51:36",
+                        36.23
+                    ],
+                    [
+                        "2016-09-01T23:52:33",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:53:31",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:54:28",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:55:26",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:56:23",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:57:20",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:58:18",
+                        36.22
+                    ],
+                    [
+                        "2016-09-01T23:59:15",
+                        36.22
+                    ],
+                    [
+                        "2016-10-01T00:00:18",
+                        36.21
+                    ],
+                    [
+                        "2016-10-01T00:01:19",
+                        36.21
+                    ],
+                    [
+                        "2016-10-01T00:02:17",
+                        36.21
+                    ],
+                    [
+                        "2016-10-01T00:03:21",
+                        36.2
+                    ]
+                ],
+                "dataprops": [
+                    {
+                        "timestamp": "2016-09-01T23:50:38",
+                        "attributes": {
+                            "ignore": true
+                        }
+                    },
+                    {
+                        "timestamp": "2016-10-01T00:03:21",
+                        "attributes": {
+                            "basal": true
+                        }
+                    }
+                ]
+            }
+        },
+        "DateWithPrognosis": {
+            "description": "date object with flag, if this date is specified by user or is a calculated prognosis",
+            "type": "object",
+            "required": [
+                "date"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "time-date"
+                },
+                "prognosis": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "CycleStubObject": {
+            "type": "object",
+            "description": "stub for cycle curves, especcially for listing cycles and to organize all cycles of a user",
+            "properties": {
+                "cycleId": {
+                    "type": "string",
+                    "description": "unique id of this cycle curve"
+                },
+                "cycledates": {
+                    "type": "object",
+                    "properties": {
+                        "from": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        },
+                        "to": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        }
+                    }
+                }
+            }
+        },
+        "CycleCurveObject": {
+            "type": "object",
+            "required": [
+                "cycleId",
+                "cycledates",
+                "data"
+            ],
+            "description": "contains the cycle relevant data like\n- all calculated basal temperature values of this cycle - start and end of the cycle, possibly prognosticated - start and end of the menstruation - start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated - optionally addition properties",
+            "properties": {
+                "cycleId": {
+                    "type": "string",
+                    "description": "unique id of this cycle curve"
+                },
+                "cycledates": {
+                    "type": "object",
+                    "properties": {
+                        "from": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        },
+                        "to": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        }
+                    }
+                },
+                "data": {
+                    "description": "all calculated basal temperature values of this cycle\n- sorted by timestamp - in ascending order - at most one item per day - intervals between timestamps do not need to be equal",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "t": {
+                                "description": "basal temperature value",
+                                "type": "number",
+                                "format": "float"
+                            },
+                            "date": {
+                                "description": "date of the night; displayed in the chart",
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "nightCurveId": {
+                                "description": "id of the nightTemperatureCurve; for drilldown to night temperature in cycle chart",
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "menstruation": {
+                    "type": "object",
+                    "properties": {
+                        "from": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        },
+                        "to": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        }
+                    }
+                },
+                "fertile": {
+                    "type": "object",
+                    "properties": {
+                        "from": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        },
+                        "to": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        },
+                        "ovulation": {
+                            "$ref": "#/definitions/DateWithPrognosis"
+                        }
+                    }
+                },
+                "dataprops": {
+                    "description": "every item of data can have additional properties; referenced by timestamp",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "timestamp": {
+                                "type": "string",
+                                "format": "date",
+                                "description": "reference to the item of data array, this properties are assigned to"
+                            },
+                            "attributes": {
+                                "type": "object",
+                                "description": "key value pairs of properties"
+                            }
+                        }
+                    }
+                }
+            },
+            "example": {
+                "cycleId": "2016-10-01",
+                "cycledates": {
+                    "from": {
+                        "date": "2016-10-01"
+                    },
+                    "to": {
+                        "date": "2016-10-28",
+                        "prognosis": true
+                    }
+                },
+                "data": [
+                    {
+                        "t": 36.22,
+                        "date": "2016-10-05",
+                        "nightCurveId": "2016-10-05"
+                    },
+                    {
+                        "t": 36.06,
+                        "date": "2016-10-06",
+                        "nightCurveId": "2016-10-06"
+                    },
+                    {
+                        "t": 36.15,
+                        "date": "2016-10-07",
+                        "nightCurveId": "2016-10-07"
+                    },
+                    {
+                        "t": 36.06,
+                        "date": "2016-10-08",
+                        "nightCurveId": "2016-10-08"
+                    },
+                    {
+                        "t": 36.09,
+                        "date": "2016-10-10",
+                        "nightCurveId": "2016-10-10"
+                    },
+                    {
+                        "t": 36.22,
+                        "date": "2016-10-15",
+                        "nightCurveId": "2016-10-15"
+                    }
+                ],
+                "menstruation": {
+                    "from": {
+                        "date": "2016-10-01"
+                    },
+                    "to": {
+                        "date": "2016-10-05"
+                    }
+                },
+                "fertile": {
+                    "from": {
+                        "date": "2016-10-07",
+                        "prognosis": true
+                    },
+                    "to": {
+                        "date": "2016-10-15",
+                        "prognosis": true
+                    },
+                    "ovulation": {
+                        "date": "2016-10-13",
+                        "prognosis": true
+                    }
+                },
+                "dataprops": [
+                    {
+                        "date": "2016-05-19",
+                        "attributes": {
+                            "cervixconsistence": 3
+                        }
+                    },
+                    {
+                        "date": "2016-05-24",
+                        "attributes": {
+                            "sickness": 6
+                        }
+                    }
+                ]
+            }
         },
         "ErrorResponse": {
             "type": "object",
