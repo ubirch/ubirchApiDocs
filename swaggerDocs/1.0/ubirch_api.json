@@ -1036,7 +1036,7 @@
                     "2BImplemented"
                 ],
                 "summary": "list all cycles of a user",
-                "description": "returns a list of all cycles of a user as info object\n- sorted by timestamp of cycledates - in descending order, newest cycle first, the oldest at the end of list - the current cycle is the element 0 of the list",
+                "description": "returns a list of all cycles of a user as info object\n\n- sorted by timestamp of cycledates\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list",
                 "responses": {
                     "200": {
                         "description": "Successful response; returns list of cycle info objects",
@@ -1063,7 +1063,7 @@
                     "2BImplemented"
                 ],
                 "summary": "list of cycle infos for pagination with start index",
-                "description": "returns a list of info cycle objects of a user starting from defined position\n- sorted by timestamp of cycledates - in descending order, newest cycle first, the oldest at the end of list - the current cycle is the element 0 of the list - the cycle no. 'from' is the last element of the list",
+                "description": "returns a list of info cycle objects of a user starting from defined position\n\n- sorted by timestamp of cycledates\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list\n- the cycle no. 'from' is the last element of the list",
                 "parameters": [
                     {
                         "in": "path",
@@ -1099,7 +1099,7 @@
                     "2BImplemented"
                 ],
                 "summary": "list of cycle infos for pagination with start index and length",
-                "description": "returns a list of 'size' elements of info cycle objects of a user starting from defined position\n- sorted by timestamp of cycledates - in descending order, newest cycle first, the oldest at the end of list - the cycle no. 'from' is the last element of the list - the cycle number 'from' - 'size' is the element 0 of the list",
+                "description": "returns a list of 'size' elements of info cycle objects of a user starting from defined position\n\n- sorted by timestamp of cycledates\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle no. 'from' is the last element of the list\n- the cycle number 'from' - 'size' is the element 0 of the list",
                 "parameters": [
                     {
                         "in": "path",
@@ -1142,7 +1142,7 @@
                     "2BImplemented"
                 ],
                 "summary": "GET cycle data",
-                "description": "returns\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle - information about - menstruation - ovulation - fertile phase - possibly additional properties",
+                "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties",
                 "parameters": [
                     {
                         "in": "path",
@@ -1213,7 +1213,7 @@
                     "2BImplemented"
                 ],
                 "summary": "DELETE cycle data",
-                "description": "deletes the specified cycle\n- a normal trackle user can only delete the current cycle - with admin rights all cycles can be removed - only the cycle structure is removed - the underlying stored temperature data are not deleted by this endpoint - because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle - if a user deletes the current cycle, the previous cycles becomes the current cycle",
+                "description": "deletes the specified cycle\n\n- a normal trackle user can only delete the current cycle\n- with admin rights all cycles can be removed\n- only the cycle structure is removed\n- the underlying stored temperature data are not deleted by this endpoint\n- because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle\n- if a user deletes the current cycle, the previous cycles becomes the current cycle",
                 "parameters": [
                     {
                         "in": "path",
@@ -1270,7 +1270,7 @@
                     "2BImplemented"
                 ],
                 "summary": "sets the next period start date",
-                "description": "the user inserts the date, when her next menstruation starts\n- only possible for the current menstrual cycle - finishes the currents cycle - creates a new 'current' cycle, starting with the inserted period start date",
+                "description": "the user inserts the date, when her next menstruation starts\n\n- only possible for the current menstrual cycle\n- finishes the currents cycle\n- creates a new 'current' cycle, starting with the inserted period start date",
                 "parameters": [
                     {
                         "in": "body",
@@ -1894,16 +1894,22 @@
         "CycleInfoObject": {
             "type": "object",
             "description": "info object for cycle curves; short info of a cycle; especcially for listing cycles and to organize all cycles of a user",
+            "required": [
+                "id",
+                "begin"
+            ],
             "properties": {
                 "id": {
                     "type": "string",
                     "description": "unique id of this cycle curve"
                 },
                 "begin": {
-                    "$ref": "#/definitions/DateWithPrognosis"
+                    "type": "string",
+                    "format": "time-date"
                 },
                 "end": {
-                    "$ref": "#/definitions/DateWithPrognosis"
+                    "type": "string",
+                    "format": "time-date"
                 }
             }
         },
@@ -1913,7 +1919,7 @@
                 "id",
                 "basalTemperatures"
             ],
-            "description": "contains the cycle relevant data like\n- all calculated basal temperature values of this cycle - start and end of the cycle, possibly prognosticated - start and end of the menstruation - start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated - optionally addition properties",
+            "description": "contains the cycle relevant data like\n\n- all calculated basal temperature values of this cycle\n- start and end of the cycle, possibly prognosticated\n- start and end of the menstruation\n- start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated\n- optionally addition properties",
             "properties": {
                 "id": {
                     "type": "string",
