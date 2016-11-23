@@ -1,6 +1,6 @@
 # Documentation of the trackle REST API
 # created 23.11.2016, 10:50 from Beate Fiss
-# last update: 23.11.2016, 10:50
+# last update: 23.11.2016, 11:10
 swagger: '2.0'
 info:
   version: "1.0.0"
@@ -48,7 +48,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  /cycle/list:
+  /cycle/info/list:
     get:
       tags:
         - trackle
@@ -74,7 +74,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/cycle/list/{from}':
+  '/cycle/info/list/{from}':
     get:
       tags:
         - trackle
@@ -108,7 +108,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/cycle/list/{from}/{size}':
+  '/cycle/info/list/{from}/{size}':
     get:
       tags:
         - trackle

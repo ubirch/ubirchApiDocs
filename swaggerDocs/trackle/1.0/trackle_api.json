@@ -43,7 +43,7 @@
                 }
             }
         },
-        "/cycle/list": {
+        "/cycle/info/list": {
             "get": {
                 "tags": [
                     "trackle",
@@ -70,7 +70,7 @@
                 }
             }
         },
-        "/cycle/list/{from}": {
+        "/cycle/info/list/{from}": {
             "get": {
                 "tags": [
                     "trackle",
@@ -106,7 +106,7 @@
                 }
             }
         },
-        "/cycle/list/{from}/{size}": {
+        "/cycle/info/list/{from}/{size}": {
             "get": {
                 "tags": [
                     "trackle",
