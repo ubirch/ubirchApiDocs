@@ -363,6 +363,12 @@ definitions:
       deviceTypeKey:
         type: string
         description: one of the keys, delivered by the device type list REST endpoint of the ubirch REST API; should be 'trackleSensor' here
+    example:
+      {
+        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+        "deviceName": "trackle d971aca0-7769-401b-a402-6c42c22be847",
+        "deviceTypeKey": "trackleSensor"
+      }
 
   TemperatureObject:
     type: object
@@ -482,7 +488,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/TemperatureObject'
-
     example:
       {
         "id": 'fb8bce6a-d7cb-4288-9aee-04ca627ab364',
@@ -584,6 +589,31 @@ definitions:
           prognosis:
             type: boolean
             default: false
+    example:
+      {
+        "id": "8f77620e-cfb3-4d4b-b12e-631d7485496c",
+        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+        "periodBegin": "2016-05-27T00:00:00.000Z",
+        "periodEnd": {
+          "timestamp": "2016-06-01T00:00:00.000Z"
+        },
+        "cycleEnd": {
+          "timestamp": "2016-06-24T00:00:00.000Z",
+          "prognosis": true
+        },
+        "ovulation": {
+          "timestamp": "2016-06-10T00:00:00.000Z",
+          "prognosis": true
+        },
+        "fertileBegin": {
+          "timestamp": "2016-06-05T00:00:00.000Z",
+          "prognosis": true
+        },
+        "fertileEnd": {
+          "timestamp": "2016-06-12T00:00:00.000Z",
+          "prognosis": true
+        }
+      }
 
   CycleObject:
     description: contains the cycle relevant data like
