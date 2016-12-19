@@ -3,35 +3,29 @@
     "info": {
         "version": "1.0.0",
         "title": "trackle REST API",
-        "description": "This is the definition of the trackle REST API containing the following parts:|\n- managing cycle data - CRUD\n- getting trackle RAW data of nights\n- endpoint to insert menstruation dates"
+        "description": "This is the definition of the trackle REST API containing the following parts:|\n- managing cycle data - CRUD\n- getting trackle RAW data of nights\n- endpoint to insert menstruation dates\n- get trackle devices of authenticated user"
     },
     "basePath": "/api/trackleService/v1",
     "produces": [
         "application/json"
     ],
     "paths": {
-        "/cycle/night/{nightId}": {
+        "/device/info/list": {
             "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "device"
                 ],
-                "summary": "night temperature curve",
-                "description": "return the data that has been measured during the night",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "nightId",
-                        "description": "id of the nightCurve; UUID",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
+                "summary": "list of devices",
+                "description": "Query all available devices of authenticated user",
                 "responses": {
                     "200": {
-                        "description": "Successful response; returns the requested night temperature curve",
+                        "description": "Successful response; returns an array of trackle device info objects",
                         "schema": {
-                            "$ref": "#/definitions/NightTemperatureCurveObject"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceInfoObject"
+                            }
                         }
                     },
                     "400": {
@@ -43,14 +37,57 @@
                 }
             }
         },
-        "/cycle/info/list": {
+        "/period/begin": {
+            "post": {
+                "tags": [
+                    "trackle",
+                    "cycle"
+                ],
+                "summary": "sets a period begin date",
+                "description": "the user inserts the date, when her menstruation has begun; used to finish the current cycle or to start to initial cycle, when the user opens the app the first time\n\n- only possible for the current or initial menstrual cycle\n\n- creates a new 'current' cycle, starting with the inserted period start date\n\n- finishes the currents cycle if exists",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "period",
+                        "description": "period object containing the date of the beginning of the period and the device id of the used device",
+                        "schema": {
+                            "$ref": "#/definitions/PeriodObject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the new created current cycle beginning with the inserted period start date",
+                        "schema": {
+                            "$ref": "#/definitions/CycleObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/cycle/info/list/{deviceId}": {
             "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "cycle"
                 ],
-                "summary": "list all cycles of a user",
-                "description": "returns a list of all cycles of a user as info object\n\n- sorted by timestamp of cycledates\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list",
+                "summary": "list of newest cycles of a user",
+                "description": "returns a list of the 10 (at most) newest cycles of a user as info object (the same as /cycle/info/list/0/10 )\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list\n- maximal 10 cycles - if exist - are returned in a list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the device used to measure the temperatures",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful response; returns list of cycle info objects",
@@ -70,19 +107,26 @@
                 }
             }
         },
-        "/cycle/info/list/{from}": {
+        "/cycle/info/list/{deviceId}/{from}": {
             "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "cycle"
                 ],
                 "summary": "list of cycle infos for pagination with start index",
-                "description": "returns a list of info cycle objects of a user starting from defined position\n\n- sorted by timestamp of cycledates\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list\n- the cycle no. 'from' is the last element of the list",
+                "description": "returns a list of 10 (at most) info cycle objects of a user starting from defined index\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 10 cycles - if exist - that are older than the the 'from' cycle are returned in a list",
                 "parameters": [
                     {
                         "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the device used to measure the temperatures",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
                         "name": "from",
-                        "description": "index of the oldest cycle we request; cycles ordered by ascending start dates",
+                        "description": "index of the newest cycle we request; cycles ordered by ascending start dates",
                         "required": true,
                         "type": "string"
                     }
@@ -106,19 +150,26 @@
                 }
             }
         },
-        "/cycle/info/list/{from}/{size}": {
+        "/cycle/info/list/{deviceId}/{from}/{size}": {
             "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "cycle"
                 ],
-                "summary": "list of cycle infos for pagination with start index and length",
-                "description": "returns a list of 'size' elements of info cycle objects of a user starting from defined position\n\n- sorted by timestamp of cycledates\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle no. 'from' is the last element of the list\n- the cycle number 'from' - 'size' is the element 0 of the list",
+                "summary": "list of cycle infos for pagination with start index and number of maximum list items",
+                "description": "returns a list of info cycle objects of a user starting from defined in 'from' index with at most 'size' number of items\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 'size' number of cycles - if exist - that are older than the the 'from' cycle are returned in a list",
                 "parameters": [
                     {
                         "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the device used to measure the temperatures",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
                         "name": "from",
-                        "description": "index of the oldest cycle we request; cycles ordered by ascending start dates",
+                        "description": "index of the newest cycle we request; cycles ordered by ascending start dates",
                         "required": true,
                         "type": "string"
                     },
@@ -153,7 +204,7 @@
             "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "cycle"
                 ],
                 "summary": "GET cycle data",
                 "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties",
@@ -161,7 +212,7 @@
                     {
                         "in": "path",
                         "name": "cycleId",
-                        "description": "id of the cycle curve",
+                        "description": "id of the cycle",
                         "required": true,
                         "type": "string"
                     }
@@ -170,7 +221,7 @@
                     "200": {
                         "description": "Successful response; returns the requested cycle data",
                         "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
+                            "$ref": "#/definitions/CycleObject"
                         }
                     },
                     "400": {
@@ -184,7 +235,7 @@
             "put": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "cycle"
                 ],
                 "summary": "EDIT cycle data",
                 "description": "edits the data supplied in the request body of the specified cycle",
@@ -192,7 +243,7 @@
                     {
                         "in": "path",
                         "name": "cycleId",
-                        "description": "id of the cycle curve that shall be edited",
+                        "description": "id of the cycle that shall be edited",
                         "required": true,
                         "type": "string"
                     },
@@ -202,7 +253,7 @@
                         "description": "cycle object specifying the data of the curve that shall be edited",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
+                            "$ref": "#/definitions/CycleObject"
                         }
                     }
                 ],
@@ -210,7 +261,7 @@
                     "200": {
                         "description": "Successful response; returns the updated cycle data",
                         "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
+                            "$ref": "#/definitions/CycleObject"
                         }
                     },
                     "400": {
@@ -224,6 +275,7 @@
             "delete": {
                 "tags": [
                     "trackle",
+                    "cycle",
                     "2BImplemented"
                 ],
                 "summary": "DELETE cycle data",
@@ -241,7 +293,7 @@
                     "200": {
                         "description": "Successful response; returns the data of the previous cycle",
                         "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
+                            "$ref": "#/definitions/CycleObject"
                         }
                     },
                     "400": {
@@ -253,19 +305,28 @@
                 }
             }
         },
-        "/cycle/id/current": {
+        "/cycle/id/current/{deviceId}": {
             "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "cycle"
                 ],
                 "summary": "GET current cycle data",
                 "description": "returns the current, not finished cycle",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the device used to measure the temperatures",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful response; returns the data of the current cycle",
                         "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
+                            "$ref": "#/definitions/CycleObject"
                         }
                     },
                     "400": {
@@ -277,29 +338,28 @@
                 }
             }
         },
-        "/period/begin": {
-            "post": {
+        "/cycle/night/{nightId}": {
+            "get": {
                 "tags": [
                     "trackle",
-                    "2BImplemented"
+                    "night"
                 ],
-                "summary": "sets the next period start date",
-                "description": "the user inserts the date, when her next menstruation starts\n\n- only possible for the current menstrual cycle\n- finishes the currents cycle\n- creates a new 'current' cycle, starting with the inserted period start date",
+                "summary": "night temperature curve",
+                "description": "return the data that has been measured during the night",
                 "parameters": [
                     {
-                        "in": "body",
-                        "name": "period",
-                        "description": "cycle object containing the start date of the period; if a cycle id is contained it is ignored and replaced with a server created new cycle id; it is contained in the response object",
-                        "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
-                        }
+                        "in": "path",
+                        "name": "nightId",
+                        "description": "id of the nightCurve; UUID",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful response; returns the new created current cycle beginning with the inserted period start date",
+                        "description": "Successful response; returns the requested night temperature curve",
                         "schema": {
-                            "$ref": "#/definitions/CycleCurveObject"
+                            "$ref": "#/definitions/NightObject"
                         }
                     },
                     "400": {
@@ -313,16 +373,52 @@
         }
     },
     "definitions": {
+        "DeviceInfoObject": {
+            "type": "object",
+            "description": "short device info; should be a trackle device",
+            "required": [
+                "deviceId",
+                "deviceName",
+                "deviceTypeKey"
+            ],
+            "properties": {
+                "deviceId": {
+                    "type": "string",
+                    "description": "UUID of this device"
+                },
+                "deviceName": {
+                    "type": "string",
+                    "description": "name or description of this device so that the user will know which device it is; can be set by a user or the administrator via ubirch admin ui"
+                },
+                "deviceTypeKey": {
+                    "type": "string",
+                    "description": "one of the keys, delivered by the device type list REST endpoint of the ubirch REST API; should be 'trackleSensor' here"
+                }
+            }
+        },
         "TemperatureObject": {
             "type": "object",
             "description": "temperature value with timestamp of the measurement; can contain additional properties especially that this item is one of the lowest, a basal value, or a flag that and why this value should be ignored",
+            "required": [
+                "id",
+                "timestamp",
+                "temp"
+            ],
             "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "UUID of the message sent from sensor containing this temperature value"
+                },
+                "deviceId": {
+                    "type": "string",
+                    "description": "UUID of the trackle sensor the message containing this temperature value was sent from"
+                },
                 "timestamp": {
                     "type": "string",
                     "format": "date-time",
-                    "description": "the timestamp when this temperature is measured by the trackle sensor"
+                    "description": "the timestamp of the message; when this temperature value is measured by the trackle sensor"
                 },
-                "temperature": {
+                "temp": {
                     "type": "number",
                     "format": "float",
                     "description": "temperature value"
@@ -343,8 +439,10 @@
                 }
             },
             "example": {
-                "timestamp": "2016-09-01T23:50:38.001Z",
-                "temperature": 35.2,
+                "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
+                "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+                "timestamp": "2016-06-04T23:41:58.887Z",
+                "temp": 36.019999999999996,
                 "basal": true,
                 "ignore": true,
                 "ignoreComment": "out of body"
@@ -353,6 +451,11 @@
         "BasalTemperatureObject": {
             "type": "object",
             "description": "basal temperature value\n- the lowest measured temperature value in the corresponding night - with timestamp of the first measurement of this value - can contain additional properties, the user has inserted in the UI for this day/night",
+            "required": [
+                "nightId",
+                "timestamp",
+                "temperature"
+            ],
             "properties": {
                 "nightId": {
                     "type": "string",
@@ -371,24 +474,39 @@
             },
             "example": {
                 "timestamp": "2016-09-01T23:50:38.001Z",
-                "temperature": 35.2,
+                "temperature": 36.040000000000006,
                 "nightId": "fb8bce6a-d7cb-4288-9aee-04ca627ab364"
             }
         },
-        "NightTemperatureCurveObject": {
+        "NightObject": {
             "type": "object",
             "required": [
                 "id",
+                "deviceId",
                 "temperatures"
             ],
-            "description": "contains the measured temperature values of one night\nthe data has already been cleaned\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled",
+            "description": "contains the measured temperature values of one night\nthe data has been cleaned already\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled\nthe data whith the basal values (minimum) are marked",
             "properties": {
                 "id": {
                     "type": "string",
-                    "description": "unique id of this night temperature curve"
+                    "description": "unique id of this night temperature curve; is used to drill down from cycle curve to night curve"
+                },
+                "deviceId": {
+                    "type": "string",
+                    "description": "UUID of the trackle sensor this temperature values were measured with"
+                },
+                "from": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "the timestamp of the first temperature value measured in this night"
+                },
+                "to": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "the timestamp of the last temperature value measured in this night"
                 },
                 "temperatures": {
-                    "description": "all measured temperature values of the night\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal\n- first item contains a time-date string - the second one a float value with two digits after decimal point",
+                    "description": "all measured temperature values of the night\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/TemperatureObject"
@@ -397,220 +515,239 @@
             },
             "example": {
                 "id": "fb8bce6a-d7cb-4288-9aee-04ca627ab364",
+                "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+                "from": "2016-06-04T23:41:58.887Z",
+                "to": "2016-06-05T08:27:24.413Z",
                 "temperatures": [
                     {
-                        "timestamp": "2016-09-01T23:50:38.001Z",
+                        "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
+                        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+                        "timestamp": "2016-06-04T23:42:56.323Z",
                         "temperature": 35.2,
                         "ignore": true,
                         "ignoreComment": "out of body"
                     },
                     {
-                        "timestamp": "2016-09-01T23:51:38.001Z",
+                        "id": "1291b73e-bb7c-440c-a93b-9d75f3bcdb1c",
+                        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+                        "timestamp": "2016-06-04T23:41:58.887Z",
+                        "temp": 36.019999999999996,
+                        "basal": true
+                    },
+                    {
+                        "id": "d90ee0a6-e7b6-45c6-bf59-028d960bdeec",
+                        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+                        "timestamp": "2016-06-04T23:43:53.776Z",
                         "temperature": 36.25
-                    },
-                    {
-                        "timestamp": "2016-09-01T23:52:49.001Z",
-                        "temperature": 36.24
-                    },
-                    {
-                        "timestamp": "2016-09-01T23:54:00.001Z",
-                        "temperature": 36.2,
-                        "basal": true
-                    },
-                    {
-                        "timestamp": "2016-09-01T23:56:10.001Z",
-                        "temperature": 35.21
-                    },
-                    {
-                        "timestamp": "2016-09-01T23:57:20.001Z",
-                        "temperature": 36.2,
-                        "basal": true
-                    },
-                    {
-                        "timestamp": "2016-09-01T23:58:27.001Z",
-                        "temperature": 35.21
-                    },
-                    {
-                        "timestamp": "2016-09-02T00:00:01.001Z",
-                        "temperature": 35.21
-                    },
-                    {
-                        "timestamp": "2016-09-02T00:01:13.001Z",
-                        "temperature": 35.22
                     }
                 ]
-            }
-        },
-        "DateWithPrognosis": {
-            "description": "date object with flag, if this date is specified by user or is a calculated prognosis",
-            "type": "object",
-            "required": [
-                "date"
-            ],
-            "properties": {
-                "date": {
-                    "type": "string",
-                    "format": "time-date"
-                },
-                "prognosis": {
-                    "type": "boolean",
-                    "default": false
-                }
-            },
-            "example": {
-                "date": "2016-09-01",
-                "prognosis": true
             }
         },
         "CycleInfoObject": {
             "type": "object",
-            "description": "info object for cycle curves; short info of a cycle; especcially for listing cycles and to organize all cycles of a user",
+            "description": "info object for cycles; short info of a cycle; contains every info except the basalTemperatures array; especcially for listing cycles and to organize all cycles of a user",
             "required": [
                 "id",
-                "begin"
+                "deviceId",
+                "periodBegin",
+                "periodEnd",
+                "cycleEnd"
             ],
             "properties": {
                 "id": {
                     "type": "string",
-                    "description": "unique id of this cycle curve"
+                    "description": "unique id of this cycle"
                 },
-                "begin": {
+                "deviceId": {
                     "type": "string",
-                    "format": "time-date"
+                    "description": "UUID of the used device"
                 },
-                "end": {
+                "periodBegin": {
                     "type": "string",
-                    "format": "time-date"
+                    "format": "time-date",
+                    "description": "day when the menstruation of this cycle started; because a cycle starts with the menstruation phase this is also the cycle begin date"
+                },
+                "periodEnd": {
+                    "type": "object",
+                    "description": "date when the menstruation ended; a 'prognosis' flag can be set if it's not clear if the menstruation is finished yet",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "format": "time-date"
+                        },
+                        "prognosis": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                },
+                "cycleEnd": {
+                    "type": "object",
+                    "description": "date of the cycle end; a cycle ends if the user inserts the next menstruation begin date; a 'prognosis' flag can be set if the cycle has not yet been finished by the insertion of the next menstruation begin",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "format": "time-date"
+                        },
+                        "prognosis": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                },
+                "fertileBegin": {
+                    "type": "object",
+                    "description": "optional the ovulation and fertile phase can be calculated; fertileBegin is the date of the begin of the fertile phase; before the ovulation is measured time range of the fertile phase is not clear and a 'prognosis' flag will be set",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "format": "time-date"
+                        },
+                        "prognosis": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                },
+                "fertileEnd": {
+                    "type": "object",
+                    "description": "optional the ovulation and fertile phase can be calculated; fertileEnd is the date of the end of the fertile phase; before the ovulation is measured time range of the fertile phase is not clear and a 'prognosis' flag will be set",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "format": "time-date"
+                        },
+                        "prognosis": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                },
+                "ovulation": {
+                    "type": "object",
+                    "description": "optional the ovulation and fertile phase can be calculated; ovulation contains the date of the ovulation; before the ovulation is measured it can be calculated from existing cycles and will be marked with a 'prognosis' flag",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "format": "time-date"
+                        },
+                        "prognosis": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
                 }
             }
         },
-        "CycleCurveObject": {
-            "type": "object",
-            "required": [
-                "id",
-                "basalTemperatures"
-            ],
+        "CycleObject": {
             "description": "contains the cycle relevant data like\n\n- all calculated basal temperature values of this cycle\n- start and end of the cycle, possibly prognosticated\n- start and end of the menstruation\n- start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated\n- optionally addition properties",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "description": "unique id of this cycle curve"
+            "allOf": [
+                {
+                    "$ref": "#/definitions/CycleInfoObject"
                 },
-                "begin": {
-                    "$ref": "#/definitions/DateWithPrognosis"
-                },
-                "end": {
-                    "$ref": "#/definitions/DateWithPrognosis"
-                },
-                "basalTemperatures": {
-                    "type": "array",
-                    "description": "all calculated basal temperature values of this cycle\n- sorted by timestamp - in ascending order - at most one item per day - intervals between timestamps do not need to be equal",
-                    "items": {
-                        "$ref": "#/definitions/BasalTemperatureObject"
-                    }
-                },
-                "period": {
+                {
                     "type": "object",
-                    "description": "values to display the area of menstruation at the beginning of the cycle",
+                    "required": [
+                        "basalTemperatures"
+                    ],
                     "properties": {
-                        "begin": {
-                            "$ref": "#/definitions/DateWithPrognosis"
+                        "basalTemperatures": {
+                            "type": "array",
+                            "description": "all calculated basal temperature values of this cycle\n- sorted by timestamp - in ascending order - at most one item per day - intervals between timestamps do not need to be equal",
+                            "items": {
+                                "$ref": "#/definitions/BasalTemperatureObject"
+                            }
                         },
-                        "end": {
-                            "$ref": "#/definitions/DateWithPrognosis"
-                        }
-                    }
-                },
-                "fertile": {
-                    "type": "object",
-                    "description": "values to display the area of fertile phase and ovulation",
-                    "properties": {
-                        "begin": {
-                            "$ref": "#/definitions/DateWithPrognosis"
-                        },
-                        "end": {
-                            "$ref": "#/definitions/DateWithPrognosis"
-                        },
-                        "ovulation": {
-                            "$ref": "#/definitions/DateWithPrognosis"
-                        }
-                    }
-                },
-                "additionalInfos": {
-                    "description": "every item of data can have additional properties; referenced by timestamp",
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "timestamp": {
-                                "type": "string",
-                                "format": "date",
-                                "description": "reference to the item of data array, this properties are assigned to"
-                            },
-                            "attributes": {
+                        "additionalInfos": {
+                            "description": "every item of data can have additional properties; referenced by timestamp",
+                            "type": "array",
+                            "items": {
                                 "type": "object",
-                                "description": "key value pairs of properties"
+                                "properties": {
+                                    "timestamp": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "description": "reference to the item of data array, this properties are assigned to"
+                                    },
+                                    "attributes": {
+                                        "type": "object",
+                                        "description": "key value pairs of properties"
+                                    }
+                                }
                             }
                         }
+                    },
+                    "example": {
+                        "id": "3652c261-7d0c-4436-920c-2164fc074529",
+                        "deviceId": "d6b178dd-1d2f-44f9-9589-8390d3b0f33a",
+                        "periodBegin": "2016-06-28T12:14:45.370Z",
+                        "periodEnd": {
+                            "timestamp": "2016-07-03T12:14:45.370Z"
+                        },
+                        "cycleEnd": {
+                            "timestamp": "2016-07-26T12:14:45.369Z"
+                        },
+                        "ovulation": {
+                            "timestamp": "2016-07-12T12:14:45.370Z"
+                        },
+                        "fertileBegin": {
+                            "timestamp": "2016-07-07T12:14:45.370Z"
+                        },
+                        "fertileEnd": {
+                            "timestamp": "2016-07-14T12:14:45.370Z"
+                        },
+                        "basalTemperatures": [
+                            {
+                                "nightId": "31fc661c-2b99-4884-a605-ff0f99760906",
+                                "timestamp": "2016-07-04T12:14:45.370Z",
+                                "temperature": 36.31
+                            },
+                            {
+                                "nightId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
+                                "timestamp": "2016-07-05T12:14:45.370Z",
+                                "temperature": 36.29
+                            },
+                            {
+                                "nightId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
+                                "timestamp": "2016-07-06T12:14:45.370Z",
+                                "temperature": 36.28
+                            },
+                            {
+                                "nightId": "1643412c-fff4-4022-b2b8-2b369b227776",
+                                "timestamp": "2016-07-07T12:14:45.370Z",
+                                "temperature": 36.34
+                            }
+                        ]
                     }
+                }
+            ]
+        },
+        "PeriodObject": {
+            "type": "object",
+            "description": "period object containing the date of the beginning of the period and the device id of the used device",
+            "required": [
+                "deviceId",
+                "periodBegin"
+            ],
+            "properties": {
+                "deviceId": {
+                    "type": "string",
+                    "description": "UUID of the used device"
+                },
+                "periodBegin": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp of the day, when the period began"
+                },
+                "additionalInfos": {
+                    "type": "object",
+                    "description": "optionally additional properties can be added; any valid json will be accepted"
                 }
             },
             "example": {
-                "id": "fb8bce6a-d7cb-4288-9aee-04ca627ea312",
-                "begin": {
-                    "date": "2016-10-01"
-                },
-                "end": {
-                    "date": "2016-10-28",
-                    "prognosis": true
-                },
-                "basalTemperatures": [
-                    {
-                        "timestamp": "2016-09-01T03:50:38.001Z",
-                        "temperature": 36.22,
-                        "nightId": "fb8bce6a-d7cb-4288-9aee-04ca627ab364"
-                    },
-                    {
-                        "timestamp": "2016-09-02T04:01:38.001Z",
-                        "temperature": 36.2,
-                        "nightId": "04ca627ab-d7cb-4288-9aee-36fb8bce6a4"
-                    },
-                    {
-                        "timestamp": "2016-09-05T04:34:02.001Z",
-                        "temperature": 36.35,
-                        "nightId": "d7cbce6a-fb8b-4288-04ca6-9aee27ab364"
-                    }
-                ],
-                "period": {
-                    "begin": {
-                        "date": "2016-10-01"
-                    },
-                    "end": {
-                        "date": "2016-10-05"
-                    }
-                },
-                "fertile": {
-                    "begin": {
-                        "date": "2016-10-07",
-                        "prognosis": true
-                    },
-                    "end": {
-                        "date": "2016-10-15",
-                        "prognosis": true
-                    },
-                    "ovulation": {
-                        "date": "2016-10-13",
-                        "prognosis": true
-                    }
-                },
-                "dataprops": [
-                    {
-                        "timestamp": "2016-09-01T03:50:38.001Z",
-                        "properties": {
-                            "wellness": 3
-                        }
-                    }
-                ]
+                "deviceId": "881984e7-4808-46aa-93df-45ede4e7d7a4",
+                "periodBegin": "2016-11-16T00:00:00.000Z",
+                "additionalInfos": {}
             }
         },
         "ErrorResponse": {
