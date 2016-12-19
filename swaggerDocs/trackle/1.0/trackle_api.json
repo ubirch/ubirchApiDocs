@@ -682,7 +682,7 @@
                     "properties": {
                         "basalTemperatures": {
                             "type": "array",
-                            "description": "all calculated basal temperature values of this cycle\n- sorted by timestamp - in ascending order - at most one item per day - intervals between timestamps do not need to be equal",
+                            "description": "all calculated basal temperature values of this cycle\n- sorted by timestamp\n- in ascending order\n- at most one item per day\n- intervals between timestamps do not need to be equal",
                             "items": {
                                 "$ref": "#/definitions/BasalTemperatureObject"
                             }
@@ -705,51 +705,51 @@
                                 }
                             }
                         }
-                    },
-                    "example": {
-                        "id": "3652c261-7d0c-4436-920c-2164fc074529",
-                        "deviceId": "d6b178dd-1d2f-44f9-9589-8390d3b0f33a",
-                        "periodBegin": "2016-06-28T12:14:45.370Z",
-                        "periodEnd": {
-                            "timestamp": "2016-07-03T12:14:45.370Z"
-                        },
-                        "cycleEnd": {
-                            "timestamp": "2016-07-26T12:14:45.369Z"
-                        },
-                        "ovulation": {
-                            "timestamp": "2016-07-12T12:14:45.370Z"
-                        },
-                        "fertileBegin": {
-                            "timestamp": "2016-07-07T12:14:45.370Z"
-                        },
-                        "fertileEnd": {
-                            "timestamp": "2016-07-14T12:14:45.370Z"
-                        },
-                        "basalTemperatures": [
-                            {
-                                "nightId": "31fc661c-2b99-4884-a605-ff0f99760906",
-                                "timestamp": "2016-07-04T12:14:45.370Z",
-                                "temperature": 36.31
-                            },
-                            {
-                                "nightId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
-                                "timestamp": "2016-07-05T12:14:45.370Z",
-                                "temperature": 36.29
-                            },
-                            {
-                                "nightId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
-                                "timestamp": "2016-07-06T12:14:45.370Z",
-                                "temperature": 36.28
-                            },
-                            {
-                                "nightId": "1643412c-fff4-4022-b2b8-2b369b227776",
-                                "timestamp": "2016-07-07T12:14:45.370Z",
-                                "temperature": 36.34
-                            }
-                        ]
                     }
                 }
-            ]
+            ],
+            "example": {
+                "id": "3652c261-7d0c-4436-920c-2164fc074529",
+                "deviceId": "d6b178dd-1d2f-44f9-9589-8390d3b0f33a",
+                "periodBegin": "2016-06-28T12:14:45.370Z",
+                "periodEnd": {
+                    "timestamp": "2016-07-03T12:14:45.370Z"
+                },
+                "cycleEnd": {
+                    "timestamp": "2016-07-26T12:14:45.369Z"
+                },
+                "ovulation": {
+                    "timestamp": "2016-07-12T12:14:45.370Z"
+                },
+                "fertileBegin": {
+                    "timestamp": "2016-07-07T12:14:45.370Z"
+                },
+                "fertileEnd": {
+                    "timestamp": "2016-07-14T12:14:45.370Z"
+                },
+                "basalTemperatures": [
+                    {
+                        "nightId": "31fc661c-2b99-4884-a605-ff0f99760906",
+                        "timestamp": "2016-07-04T12:14:45.370Z",
+                        "temperature": 36.31
+                    },
+                    {
+                        "nightId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
+                        "timestamp": "2016-07-05T12:14:45.370Z",
+                        "temperature": 36.29
+                    },
+                    {
+                        "nightId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
+                        "timestamp": "2016-07-06T12:14:45.370Z",
+                        "temperature": 36.28
+                    },
+                    {
+                        "nightId": "1643412c-fff4-4022-b2b8-2b369b227776",
+                        "timestamp": "2016-07-07T12:14:45.370Z",
+                        "temperature": 36.34
+                    }
+                ]
+            }
         },
         "PeriodObject": {
             "type": "object",
