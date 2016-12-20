@@ -1,6 +1,6 @@
 # Documentation of the ubirch REST API
 # created 02.08.2016, 13:45 from Beate Fiss
-# last update: 20.12.2016, 12:50
+# last update: 20.12.2016, 14:46
 swagger: '2.0'
 info:
   version: "1.0.0"
@@ -29,7 +29,7 @@ paths:
         - avatar service
         - raw data
       summary: state update of device
-      description: over this endpoint the devices send regularly its state in a raw format; to syncronize the device with its avatar and minimize the overhead and communication the response contains already the avatar's state in device readable raw format to update the device
+      description: over this endpoint the devices send regularly their states in a raw format; to synchronize the device with its avatar and minimize the overhead and communication the response contains already the differences to its avatars state in device readable raw format to update the device
       parameters:
         - in: body
           name: rawData
@@ -39,7 +39,7 @@ paths:
             $ref: '#/definitions/DeviceDataRawObject'
       responses:
         200:
-          description: Successful response; returnes the delta between device's and avatar's state in device readable raw format to update the device 
+          description: Successful response; returnes the delta between devices and avatars state in device readable raw format to update the device 
           schema:
             $ref: '#/definitions/DeviceDataRawObject'
         '400':
