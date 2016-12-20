@@ -1,0 +1,200 @@
+# Documentation of the ubirch REST API
+# created 02.08.2016, 13:45 from Beate Fiss
+# last update: 20.12.2016, 15:12
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: ubirch REST API
+  description:
+  
+    This is the definition of the ubirch chain service REST API containing the following parts:|
+    
+    - chain service endpoints, to get information about certificates, blockchain entries and bitcoin/etherium anchors to notarize that a message was sent 
+    
+basePath: '/api'
+produces: 
+  - application/json
+  
+paths:
+
+###############################################
+#####             chain service           #####
+###############################################
+
+  '/chainService/explorer/eventHash/{eventHash}':
+    get:
+      tags:
+        - chainservice
+        - revisionNeeded
+      summary: short block Info for an event hash
+      description: returns blockInfo of the block in which this event hash has been inserted
+      parameters:
+        - in: path
+          name: eventHash
+          description: event hash of the message for which the notorization state should be checked
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response; returns the short info of the block in which this message is part of
+          schema:
+            $ref: '#/definitions/BlockInfo'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  '/chainService/explorer/blockInfo/{blockHash}':
+    get:
+      tags:
+        - chainservice
+        - revisionNeeded
+      summary: short block Info of the referenced block
+      description: returns blockInfo of the block with the given block hash
+      parameters:
+        - in: path
+          name: blockHash
+          description: block hash of the requested block
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response; returns the short info of the requested block
+          schema:
+            $ref: '#/definitions/BlockInfo'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  '/chainService/explorer/nextBlockInfo/{blockHash}':
+    get:
+      tags:
+        - chainservice
+        - revisionNeeded
+      summary: short block Info of the next block
+      description: returns blockInfo of the next block
+      parameters:
+        - in: path
+          name: blockHash
+          description: block hash of the block previous of the requested block
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response; returns the short info of the requested block
+          schema:
+            $ref: '#/definitions/BlockInfo'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+  '/chainService/explorer/fullBlock/{blockHash}':
+    get:
+      tags:
+        - chainservice
+        - revisionNeeded
+      summary: full block data of the referenced block
+      description: returns all data stored in the block with the given block hash
+      parameters:
+        - in: path
+          name: blockHash
+          description: block hash of the requested block
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successful response; returns full block data of the requested block
+          schema:
+            $ref: '#/definitions/FullBlock'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+
+definitions:
+###########  block chain service  ###########
+  BlockInfo:
+    type: object
+    description: short information abaut this chaining block
+    properties:
+      hash:
+        type: string
+        description: the hash value of the block, in which the event hash of the message has been mined
+      previousBlockHash:
+        type: string
+        description: the hash value of the previous block of the block, in which the event hash of the message has been mined
+      number:
+        type: integer
+        description: block number
+      created:
+        type: string
+        format: time-date
+        description: timestamp of the creation of this block
+      version:
+        type: string
+        description: version of format
+      anchors:
+        type: array
+        description: anchors which which this block and the previous blocks are anchored in bitcoin or etherium chain for notarization
+        items:
+          $ref: '#/definitions/NotaryAnchor'
+
+  FullBlock:
+    type: object
+    description: full information abaut this chaining block containing the merkle tree
+    allOf:
+      - $ref: '#/definitions/BlockInfo'
+      - type: object
+        properties:
+          hashes:
+            type: array
+            description: array of all hashes this block contains
+            items:
+              type: string
+
+  NotaryAnchor:
+    type: object
+    description: bitcoin or etherium anchor to notarize this block and the predecessing blocks
+  
+###########  errors  ###########
+  ErrorResponse:
+    type: object
+    description:
+    
+      error object with error code and message
+      
+    required:
+      - apiVersion
+      - status
+      - error
+    properties:
+      apiVersion:
+        type: string
+      status:
+        type: string
+        description: KO because it's an error
+      error:
+        type: object
+        required:
+          - errorId
+          - errorMessage
+        properties:
+          errorId:
+            type: string
+            enum:
+              - "ErrorTimeOut"
+              - "ErrorNotHandled"
+              - "ErrorFatalIntern"
+              - "ErrorMissingParams"
+              - "ErrorParseJson"
+
+          errorMessage:
+            type: string
+            enum:
+              - "request could not be processed in time"
+              - "request could not be handled"
+              - "fatal internal error"
+              - "missing parameters"
+              - "cannot parse incoming json doc"
