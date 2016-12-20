@@ -1,6 +1,6 @@
 # Documentation of the ubirch REST API
 # created 02.08.2016, 13:45 from Beate Fiss
-# last update: 20.12.2016, 12:39
+# last update: 20.12.2016, 12:50
 swagger: '2.0'
 info:
   version: "1.0.0"
@@ -235,7 +235,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/device/{deviceId}/history':
+  '/device/{deviceId}/data/history':
     get:
       tags:
         - avatar service
@@ -266,7 +266,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/device/{deviceId}/history/{from}':
+  '/device/{deviceId}/data/history/{from}':
     get:
       tags:
         - avatar service
@@ -304,7 +304,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/device/{deviceId}/history/{from}/{size}':
+  '/device/{deviceId}/data/history/{from}/{size}':
     get:
       tags:
         - avatar service

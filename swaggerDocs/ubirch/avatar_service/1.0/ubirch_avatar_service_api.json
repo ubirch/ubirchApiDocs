@@ -302,7 +302,7 @@
                 }
             }
         },
-        "/device/{deviceId}/history": {
+        "/device/{deviceId}/data/history": {
             "get": {
                 "tags": [
                     "avatar service",
@@ -338,7 +338,7 @@
                 }
             }
         },
-        "/device/{deviceId}/history/{from}": {
+        "/device/{deviceId}/data/history/{from}": {
             "get": {
                 "tags": [
                     "avatar service",
@@ -381,7 +381,7 @@
                 }
             }
         },
-        "/device/{deviceId}/history/{from}/{size}": {
+        "/device/{deviceId}/data/history/{from}/{size}": {
             "get": {
                 "tags": [
                     "avatar service",
