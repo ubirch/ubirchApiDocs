@@ -1,6 +1,6 @@
 # Documentation of the trackle REST API
 # created 23.11.2016, 10:50 from Beate Fiss
-# last update: 14.12.2016, 15:48
+# last update: 19.12.2016, 12:25
 swagger: '2.0'
 info:
   version: "1.0.0"

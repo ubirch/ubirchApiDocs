@@ -1,0 +1,965 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "ubirch avatar service REST API",
+        "description": "This is the definition of the ubirch avatar service REST API containing the following parts:|\n- RAW data interface for syncronizing devices with their avatars\n- devices CRUD endpoints"
+    },
+    "basePath": "/api/avatarService/v1",
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/device/data/raw": {
+            "post": {
+                "tags": [
+                    "avatar service",
+                    "raw data"
+                ],
+                "summary": "state update of device",
+                "description": "over this endpoint the devices send regularly its state in a raw format; to syncronize the device with its avatar and minimize the overhead and communication the response contains already the avatar's state in device readable raw format to update the device",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "rawData",
+                        "description": "the device sends its current state in a raw format",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceDataRawObject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returnes the delta between device's and avatar's state in device readable raw format to update the device",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceDataRawObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device": {
+            "post": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "CREATE device",
+                "description": "creates a new device; a unique device id is required; several other properties of the device can be added optionally; some properties are created with default values on server if not specified; everything except the device id and hardware device id (hashed and unhashed) can be changed later with an update request",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "device",
+                        "description": "the device object with the new device data that should be created; MUST contain the new unique device id, that MUST NOT exist already",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceObject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns data of the new created device",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "LIST all devices",
+                "description": "returns an array of all devices the authenticated user has connected",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of devices",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceObject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/{deviceId}": {
+            "put": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "UPDATE device",
+                "description": "updates the device referenced by the given id with the sent data, if the authenticated user is autorized to do this",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "unique id of the device that shall be updated",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "device",
+                        "description": "the device object with the new data to update the existing device data with; overwrites every given property; properties that are not defined in the request body device object are filled with default values or removed",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceObject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the updated data of the device",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "READ device",
+                "description": "returns data of device with the given id, if the authenticated user is autorized to get it",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns data of requested device",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "DELETE device",
+                "description": "deletes device with the given id, if the authenticated user is autorized to do",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the device, that shall be delete",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns data of the device before deleting it",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/stub": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "LIST all devices as short info objects (stubs)",
+                "description": "returns an array of short info stubs of all devices the authenticated user has connected; the stubs contain a mix of device properties and state items as needed in devices overviews",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device stubs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceStubObject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/stub/{deviceId}": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device CRUD"
+                ],
+                "summary": "READ device as stub",
+                "description": "returns a short info objects (stubs) of the device with the given id, if the authenticated user is autorized to get it; the stub contains a mix of device properties and state items",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns stub of the requested device",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceStubObject"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/{deviceId}/state": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device state"
+                ],
+                "summary": "current state of device",
+                "description": "returns the current state of the device with the given id and its avatar containing the information if they are in sync and what are the differences",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the device from which we request the current state",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the current state of the device and its avatar",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceState"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/{deviceId}/history": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device history"
+                ],
+                "summary": "LIST latest device messages",
+                "description": "returns a list of the 10 (at most) newest device messages in a processed format (transformed from raw data sent by the device); the same as calling /device/{deviceId}/history/0/10\n- sorted by message timestamp\n- in descending order, newest message first, the oldest at the end of list\n- maximal 10 messages - if exist - are returned in a list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of processed device messages",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceMessage"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/{deviceId}/history/{from}": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device history"
+                ],
+                "summary": "list of device states for pagination",
+                "description": "returns a list of the 10 (at most) device messages in a processed format (transformed from raw data sent by the device) starting from defined index\n- sorted by message timestamp\n- in descending order, newest message first, the oldest at the end of list\n- the message number 'from' is the newest one, so it is element 0 of the list\n- at most 10 messages - if exist - that are older than the the 'from' message are returned in a list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "from",
+                        "description": "the number of the jongest device state message we request; messages ordered by descending timestamps",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device states",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceMessage"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/{deviceId}/history/{from}/{size}": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device history"
+                ],
+                "summary": "list of device states for pagination",
+                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) starting from defined in 'from' index with at most 'size' number of items\n- sorted by message timestamp\n- in descending order, newest message first, the oldest at the end of list\n- the message number 'from' is the newest one, so it is element 0 of the list\n- at most 'size' number of messages - if exist - that are older than the the 'from' message are returned in a list",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "deviceId",
+                        "description": "id of the requested device",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "from",
+                        "description": "the number of the jongest device state message we request; messages ordered by descending timestamps",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "path",
+                        "name": "size",
+                        "description": "number of device state message we request; starting from the message defined by 'from' to the past",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device states",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceMessage"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/deviceType": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device types"
+                ],
+                "summary": "LIST all device types",
+                "description": "returns an array of all configured device types",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of device types",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceType"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "avatar service",
+                    "device types"
+                ],
+                "summary": "CREATE device types",
+                "description": "creates a new device type",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "deviceType",
+                        "description": "the definition of the new device type; with a new key that MUST NOT exist already",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the new created device type",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceType"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "avatar service",
+                    "device types"
+                ],
+                "summary": "UPDATE device type",
+                "description": "updates an existing device type with the sent data; get the key of the device type which should be updated from the request body device type object",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "deviceType",
+                        "description": "the new definition of an existing device type; the given key in the request body device type object MUST exist already",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/DeviceType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns the updated device type",
+                        "schema": {
+                            "$ref": "#/definitions/DeviceType"
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/device/deviceType/init": {
+            "get": {
+                "tags": [
+                    "avatar service",
+                    "device types"
+                ],
+                "summary": "CREATE default device type",
+                "description": "if no device types exist already a default device type set is created",
+                "responses": {
+                    "200": {
+                        "description": "Successful response; returns an array of all existing device types",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DeviceType"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Not successful response",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "DeviceStubObject": {
+            "description": "short info object for devices CRUD, especcially for listing devices; contains mixed infos from device and its state",
+            "type": "object",
+            "required": [
+                "deviceId",
+                "deviceName",
+                "deviceTypeKey"
+            ],
+            "properties": {
+                "deviceId": {
+                    "description": "UUID, unique",
+                    "type": "string"
+                },
+                "deviceName": {
+                    "description": "name of the device, used in the UI; specified by user or generated on server; not necessarily unique",
+                    "type": "string"
+                },
+                "deviceTypeKey": {
+                    "description": "key of the device type; all specified device types can be accessed from the deviceType endpoint",
+                    "type": "string"
+                },
+                "deviceLastUpdated": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the device sent or requested data the last time"
+                },
+                "inSync": {
+                    "type": "boolean",
+                    "description": "tells us if device and avatar are synchronised which means if they have the same state false = outofsync true = insync if not specified the syncState is unknown"
+                }
+            },
+            "example": {
+                "deviceId": "06983253-9097-47a9-b041-b56b054e160a",
+                "deviceTypeKey": "lightsSensor",
+                "deviceName": "light_DE_Berlin_014",
+                "deviceLastUpdated": "2016-06-29T21:50:13Z",
+                "inSync": false
+            }
+        },
+        "DeviceObject": {
+            "description": "object for devices CRUD",
+            "type": "object",
+            "required": [
+                "deviceId",
+                "hwDeviceId"
+            ],
+            "properties": {
+                "deviceId": {
+                    "description": "UUID, unique id of the device",
+                    "type": "string"
+                },
+                "deviceName": {
+                    "description": "name of the device, used in the UI; specified by user or generated on server; not necessarily unique",
+                    "type": "string"
+                },
+                "deviceTypeKey": {
+                    "description": "key of the device type; all specified device types can be accessed from the avatar service deviceType endpoint /device/deviceType",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "timestamp when record of this device is created in database",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated": {
+                    "description": "timestamp of the last update of this database record",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "hwDeviceId": {
+                    "description": "hardware device id",
+                    "type": "string"
+                },
+                "hashedHwDeviceId": {
+                    "description": "hashed hardware device id",
+                    "type": "string"
+                },
+                "deviceProperties": {
+                    "$ref": "#/definitions/DeviceProperties"
+                },
+                "deviceConfig": {
+                    "$ref": "#/definitions/DeviceConfig"
+                },
+                "tags": {
+                    "type": "array",
+                    "description": "tags for filtering groups of devices",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subscriptions": {
+                    "type": "array",
+                    "description": "list of devices this device has subscribed to - this device will receive values from them",
+                    "items": {
+                        "$ref": "#/definitions/Subscription"
+                    }
+                }
+            },
+            "example": {
+                "deviceId": "756c348e-c17a-4bde-9c26-b8265877650c",
+                "deviceTypeKey": "envSensor",
+                "deviceName": "testHans001",
+                "hwDeviceId": "7ef3da31-4223-4ddc-ad51-0f11750b1613",
+                "hashedHwDeviceId": "OO0qCisAGHrly4t5Hpa8HYznnF4VFwtmvOMl1beelYw2yd57NyX8gTXKwSDo9i7xXYmqV4n3Xkk56row9rOoKw==",
+                "tags": [
+                    "ubirch#1",
+                    "sensor",
+                    "btcDemo"
+                ],
+                "deviceConfig": {
+                    "i": 900,
+                    "th": 3600
+                },
+                "deviceProperties": {
+                    "storesdata": "true",
+                    "blockChain": "true"
+                },
+                "created": "2016-12-08T11:59:00.942Z"
+            }
+        },
+        "DeviceProperties": {
+            "description": "object with the properties of a device",
+            "type": "object",
+            "example": {
+                "language": "de",
+                "testparam": "123"
+            }
+        },
+        "DeviceConfig": {
+            "description": "object with the configuration of a device; contains device specific items, e.g.\n- i = update interval\n- ir = infrared filtering of a lights sensor\n- s = sensitivity of the sensor\n- bf = 0/1",
+            "type": "object",
+            "example": {
+                "i": 3600,
+                "ir": 191,
+                "s": 0
+            }
+        },
+        "Subscription": {
+            "description": "subscription of another device; new measurements of a device will be reported to its supscribers",
+            "type": "object"
+        },
+        "DeviceState": {
+            "description": "object with a state of a device",
+            "type": "object",
+            "properties": {
+                "inSync": {
+                    "type": "boolean",
+                    "description": "tells us if device and avatar are currently synchronised (if they have the same state) false = outofsync true = insync if not specified the syncState is unknown"
+                },
+                "deviceLastUpdated": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the device was updated the last time; regardless of whether it is a sensor or a subscriber each device sends its current state frequently and receives its avatar state as a response to get updated; for a sensor this could be changes in the configuration (e.g. update interval)"
+                },
+                "avatarLastUpdated": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the avatar (digital representation of this device) was updated the last time; if e.g. a lamp gets its color value from a sensor, the avatar of the lamp is updated when the sensor sends new data; the avatar has different states in desired and reported until the lamps fetches the new values; a sensor could be out of sync if the avatar already knows abaut changes in the configuration"
+                },
+                "desired": {
+                    "type": "object",
+                    "description": "the current state of the avatar is the desired state of the corresponding device"
+                },
+                "reported": {
+                    "type": "object",
+                    "description": "the state that has been last reported to the device"
+                },
+                "delta": {
+                    "type": "object",
+                    "description": "delta between last reported and currently desired state of the device"
+                }
+            },
+            "example": {
+                "inSync": false,
+                "desired": {
+                    "i": 900,
+                    "th": 3600
+                },
+                "delta": {
+                    "i": 900,
+                    "th": 3600
+                },
+                "deviceLastUpdated": "1970-01-05T12:43:05.880Z",
+                "avatarLastUpdated": "1970-01-05T12:43:05.880Z"
+            }
+        },
+        "DeviceMessage": {
+            "description": "object containing the state of a device as raw data and processed data",
+            "type": "object",
+            "properties": {
+                "deviceDataRaw": {
+                    "$ref": "#/definitions/DeviceDataRawObject"
+                },
+                "deviceDataRawId": {
+                    "type": "string",
+                    "description": "unique message id extracted from raw data"
+                },
+                "messageId": {
+                    "type": "string",
+                    "description": "unique message id to access this message in the data base with; probably the same as deviceDataRawId"
+                },
+                "deviceMessage": {
+                    "type": "object",
+                    "description": "processed message transformed by the avatar service from the raw data sent from device into a device type dependent object containing the properties describing the device's state"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "timestamp when the device sent this state; extracted from raw data"
+                },
+                "deviceId": {
+                    "type": "string",
+                    "description": "unique device id which sent this data; is also part of the raw data; probably sent hashed"
+                },
+                "deviceType": {
+                    "type": "string",
+                    "description": "key of the device type; all specified device types can be accessed from the avatar service deviceType endpoint /device/deviceType"
+                },
+                "deviceTags": {
+                    "type": "array",
+                    "description": "list of user defined tags for this device",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "example": {
+                "deviceId": "756c348e-c17a-4bde-9c26-b8265877650c",
+                "messageId": "088cbf99-4cb3-44cb-bb0c-e507bd7ff150",
+                "deviceDataRawId": "088cbf99-4cb3-44cb-bb0c-e507bd7ff150",
+                "deviceType": "envSensor",
+                "timestamp": "2016-12-08T11:59:03.896Z",
+                "deviceTags": [
+                    "ubirch#1",
+                    "sensor",
+                    "btcDemo"
+                ],
+                "deviceMessage": {
+                    "temperature": 34.24,
+                    "presure": 1014.6,
+                    "humidity": 64.24
+                },
+                "deviceDataRaw": {
+                    "id": "088cbf99-4cb3-44cb-bb0c-e507bd7ff150",
+                    "v": "0.0.3",
+                    "a": "OO0qCisAGHrly4t5Hpa8HYznnF4VFwtmvOMl1beelYw2yd57NyX8gTXKwSDo9i7xXYmqV4n3Xkk56row9rOoKw==",
+                    "k": "MC0wCAYDK2VkCgEBAyEARlZtLMiu5mDQ6rAvmobL76qSR9wW5PGBl/mp0uHW4BY=",
+                    "ts": "2016-12-08T11:59:03.896Z",
+                    "s": "ImBJ9ehi7xmpIYtVOX57OApx7QeHWhHcVvX4n5R96ljjTEdgmmxncuL3SoEUiCqroqXgZmEIJxj2tv3r4ONyBg==",
+                    "p": [
+                        {
+                            "t": 3424,
+                            "p": 101460,
+                            "h": 6424
+                        }
+                    ]
+                }
+            }
+        },
+        "DeviceDataRawObject": {
+            "description": "raw data sent from device as its current state; is stored as it is in the raw data base and transformed by the avatar service into a processed message stored in the processed data base",
+            "type": "object",
+            "example": {
+                "id": "088cbf99-4cb3-44cb-bb0c-e507bd7ff150",
+                "v": "0.0.3",
+                "a": "OO0qCisAGHrly4t5Hpa8HYznnF4VFwtmvOMl1beelYw2yd57NyX8gTXKwSDo9i7xXYmqV4n3Xkk56row9rOoKw==",
+                "k": "MC0wCAYDK2VkCgEBAyEARlZtLMiu5mDQ6rAvmobL76qSR9wW5PGBl/mp0uHW4BY=",
+                "ts": "2016-12-08T11:59:03.896Z",
+                "s": "ImBJ9ehi7xmpIYtVOX57OApx7QeHWhHcVvX4n5R96ljjTEdgmmxncuL3SoEUiCqroqXgZmEIJxj2tv3r4ONyBg==",
+                "p": [
+                    {
+                        "t": 3424,
+                        "p": 101460,
+                        "h": 6424
+                    }
+                ]
+            }
+        },
+        "DeviceType": {
+            "description": "object containing properties of a device type",
+            "type": "object",
+            "required": [
+                "key",
+                "name",
+                "icon"
+            ],
+            "properties": {
+                "key": {
+                    "type": "string",
+                    "description": "key to map this device type to a device"
+                },
+                "name": {
+                    "type": "object",
+                    "description": "name of this device type; contains an object with the different language keys and the respective translation"
+                },
+                "icon": {
+                    "type": "string",
+                    "description": "contains the font icon shortcut to be inserted into an i-tag from ionicons (http://ionicons.com) or Bootstrap Glyphicons (http://getbootstrap.com/components/#glyphicons)"
+                },
+                "displayKeys": {
+                    "type": "array",
+                    "description": "a list of keys; defines which items of the processed message shall be displayed in the history chart of devices of this type; if displayKeys is an empty array and no keys are defined all items with numerical values are displayed",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "transformerQueue": {
+                    "type": "string",
+                    "description": "queue where to push raw data of devices of this type; this transformer knows how to transform raw data of devices of this type into processed data"
+                },
+                "defaults": {
+                    "type": "object",
+                    "description": "for every device type default values for properties, config and tags can be defined; when an user creates a new device with the admin UI and switches the device type these values are prefilled in the creation dialog",
+                    "properties": {
+                        "properties": {
+                            "$ref": "#/definitions/DeviceProperties"
+                        },
+                        "config": {
+                            "$ref": "#/definitions/DeviceConfig"
+                        },
+                        "tags": {
+                            "type": "array",
+                            "description": "tags for filtering groups of devices",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "example": {
+                "key": "envSensor",
+                "name": {
+                    "de": "Umweltsensor",
+                    "en": "Environment Sensor"
+                },
+                "icon": "ion-speedometer",
+                "displayKeys": [
+                    "temperature",
+                    "presure",
+                    "humidity",
+                    "batteryLevel"
+                ],
+                "transformerQueue": "ubirch.transformer.envsensor",
+                "defaults": {
+                    "properties": {
+                        "storesdata": "true",
+                        "blockChain": "true"
+                    },
+                    "config": {
+                        "i": 900,
+                        "th": 3600
+                    },
+                    "tags": [
+                        "ubirch#1",
+                        "sensor",
+                        "btcDemo"
+                    ]
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "object",
+            "description": "error object with error code and message",
+            "required": [
+                "apiVersion",
+                "status",
+                "error"
+            ],
+            "properties": {
+                "apiVersion": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "KO because it's an error"
+                },
+                "error": {
+                    "type": "object",
+                    "required": [
+                        "errorId",
+                        "errorMessage"
+                    ],
+                    "properties": {
+                        "errorId": {
+                            "type": "string",
+                            "enum": [
+                                "ErrorTimeOut",
+                                "ErrorNotHandled",
+                                "ErrorFatalIntern",
+                                "ErrorMissingParams",
+                                "ErrorParseJson"
+                            ]
+                        },
+                        "errorMessage": {
+                            "type": "string",
+                            "enum": [
+                                "request could not be processed in time",
+                                "request could not be handled",
+                                "fatal internal error",
+                                "missing parameters",
+                                "cannot parse incoming json doc"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
