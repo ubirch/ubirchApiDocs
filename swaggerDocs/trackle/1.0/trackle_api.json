@@ -250,10 +250,10 @@
                     {
                         "in": "body",
                         "name": "cycle",
-                        "description": "cycle object specifying the data of the curve that shall be edited",
+                      "description": "cycle object specifying the data of the curve that shall be edited; missing parameters will be deleted",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/CycleObject"
+                          "$ref": "#/definitions/CycleInfoObject"
                         }
                     }
                 ],
@@ -275,8 +275,7 @@
             "delete": {
                 "tags": [
                     "trackle",
-                    "cycle",
-                    "2BImplemented"
+                  "cycle"
                 ],
                 "summary": "DELETE cycle data",
                 "description": "deletes the specified cycle\n\n- a normal trackle user can only delete the current cycle\n- with admin rights all cycles can be removed\n- only the cycle structure is removed\n- the underlying stored temperature data are not deleted by this endpoint\n- because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle\n- if a user deletes the current cycle, the previous cycles becomes the current cycle",
@@ -305,7 +304,7 @@
                 }
             }
         },
-        "/cycle/id/current/{deviceId}": {
+      "/cycle/current/{deviceId}": {
             "get": {
                 "tags": [
                     "trackle",

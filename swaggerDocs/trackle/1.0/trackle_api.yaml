@@ -247,10 +247,10 @@ paths:
           type: string
         - in: body
           name: cycle
-          description: cycle object specifying the data of the curve that shall be edited
+          description: cycle object specifying the data of the curve that shall be edited; missing parameters will be deleted
           required: true
           schema:
-              $ref: '#/definitions/CycleObject'
+              $ref: '#/definitions/CycleInfoObject'
       responses:
         200:
           description: Successful response; returns the updated cycle data
@@ -265,7 +265,6 @@ paths:
       tags:
         - trackle
         - cycle
-        - 2BImplemented
       summary: DELETE cycle data
       description: deletes the specified cycle
       
@@ -297,7 +296,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 
-  '/cycle/id/current/{deviceId}':
+  '/cycle/current/{deviceId}':
     get:
       tags:
         - trackle
