@@ -438,7 +438,7 @@
                     "device history"
                 ],
                 "summary": "list of transformated (human readable) device messages based on 'from' and 'to' date (including both)",
-                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) starting from the date defined by 'from' and ending at the date defined by 'to'. Messages are sorted in by theit 'timestamp' in ascending order.",
+                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) starting from the date defined by 'from' and ending at the date defined by 'to'. Messages are sorted by 'timestamp' ascending.",
                 "parameters": [
                     {
                         "in": "path",
@@ -450,14 +450,14 @@
                     {
                         "in": "path",
                         "name": "fromDate",
-                        "description": "ISO 8601 formatted date",
+                        "description": "ISO 8601 formatted date-time",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "in": "path",
                         "name": "toDate",
-                        "description": "ISO 8601 formatted date",
+                        "description": "ISO 8601 formatted date-time",
                         "required": true,
                         "type": "string"
                     }
@@ -488,7 +488,7 @@
                     "device history"
                 ],
                 "summary": "list of transformated (human readable) device messages before a specified date",
-                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) from before a specified date. Messages are sorted in by theit 'timestamp' in ascending order.",
+                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) from before a specified date. Messages are sorted by 'timestamp' ascending.",
                 "parameters": [
                     {
                         "in": "path",
@@ -500,7 +500,7 @@
                     {
                         "in": "path",
                         "name": "beforeDate",
-                        "description": "ISO 8601 formatted date",
+                        "description": "ISO 8601 formatted date-time",
                         "required": true,
                         "type": "string"
                     }
@@ -531,7 +531,7 @@
                     "device history"
                 ],
                 "summary": "list of transformated (human readable) device messages after a specified date",
-                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) after a specified date. Messages are sorted in by theit 'timestamp' in ascending order.",
+                "description": "returns a list of device messages in a processed format (transformed from raw data sent by the device) after a specified date. Messages are sorted by 'timestamp' ascending.",
                 "parameters": [
                     {
                         "in": "path",
@@ -543,7 +543,7 @@
                     {
                         "in": "path",
                         "name": "afterDate",
-                        "description": "ISO 8601 formatted date",
+                        "description": "ISO 8601 formatted date-time",
                         "required": true,
                         "type": "string"
                     }
@@ -574,7 +574,7 @@
                     "device history"
                 ],
                 "summary": "list of all transformated (human readable) device messages from a specified day",
-                "description": "returns a list of all device messages in a processed format (transformed from raw data sent by the device) from a specified day. Messages are sorted in by theit 'timestamp' in ascending order.",
+                "description": "returns a list of all device messages in a processed format (transformed from raw data sent by the device) from a specified day. Messages are sorted by 'timestamp' ascending.",
                 "parameters": [
                     {
                         "in": "path",
@@ -586,7 +586,7 @@
                     {
                         "in": "path",
                         "name": "dayDate",
-                        "description": "ISO 8601 formatted date",
+                        "description": "ISO 8601 formatted date-time (except that hour:minute.millis are ignored)",
                         "required": true,
                         "type": "string"
                     }
