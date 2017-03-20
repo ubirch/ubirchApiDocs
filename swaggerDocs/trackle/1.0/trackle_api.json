@@ -290,10 +290,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful response; returns the data of the previous cycle",
-                        "schema": {
-                            "$ref": "#/definitions/CycleObject"
-                        }
+                      "description": "Successful response - no news are good news"
                     },
                     "400": {
                         "description": "Not successful response",
@@ -587,7 +584,7 @@
                 },
                 "cycleEnd": {
                     "type": "object",
-                    "description": "date of the cycle end; a cycle ends if the user inserts the next menstruation begin date; a 'prognosis' flag can be set if the cycle has not yet been finished by the insertion of the next menstruation begin",
+                  "description": "date of the cycle end; a cycle ends if the user inserts the next menstruation begin date; in the current cycle a 'prognosis' flag is set to true because the cycle has not yet been finished by the insertion of the next menstruation begin; in this case the cycle end is calculated to the greater (newer) date of the following\n* the timestamp of the newest basal temperature value + 1 day (if the cycle contains basal temperature values)\n* periodBegin + defaultCycleLength",
                     "properties": {
                         "date": {
                             "type": "string",

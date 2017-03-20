@@ -397,11 +397,13 @@ paths:
           description: ISO 8601 formatted date-time
           required: true
           type: string
+          format: date-time
         - in: path
           name: toDate
           description: ISO 8601 formatted date-time
           required: true
           type: string
+          format: date-time
       responses:
         '200':
           description: Successful response; returns an array of device states
@@ -436,6 +438,7 @@ paths:
           description: ISO 8601 formatted date-time
           required: true
           type: string
+          format: date-time
       responses:
         '200':
           description: Successful response; returns an array of device states
@@ -470,6 +473,7 @@ paths:
           description: ISO 8601 formatted date-time
           required: true
           type: string
+          format: date-time
       responses:
         '200':
           description: Successful response; returns an array of device states
@@ -506,6 +510,7 @@ paths:
             ignored)
           required: true
           type: string
+          format: date
       responses:
         '200':
           description: Successful response; returns an array of device states
