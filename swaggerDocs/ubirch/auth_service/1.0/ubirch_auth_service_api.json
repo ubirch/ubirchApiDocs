@@ -1,0 +1,112 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ubirch auth service REST API",
+    "description": "This is the definition of the ubirch auth service REST API containing the following parts:|\n- list of OpenID Connect provider (OP) configurations for specified context\n- verification and login\n- tokens management\n- signup\n- logout\n- userData access"
+  },
+  "basePath": "/api/authService/v1",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "auth service"
+        ],
+        "summary": "Welcome / Health",
+        "description": "Check if service is up and running",
+        "responses": {
+          "200": {
+            "description": "Successful response; returnes status object with welcome message",
+            "schema": {
+              "$ref": "#/definitions/StatusResponse"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "StatusResponse": {
+      "type": "object",
+      "description": "status object with status message",
+      "required": [
+        "apiVersion",
+        "status",
+        "message"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NOK"
+          ],
+          "description": "OK or NOK = not OK"
+        },
+        "message": {
+          "type": "string",
+          "description": "status description"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "error object with error code and message",
+      "required": [
+        "apiVersion",
+        "status",
+        "error"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "description": "NOK because it's an error"
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "errorId",
+            "errorMessage"
+          ],
+          "properties": {
+            "errorId": {
+              "type": "string",
+              "enum": [
+                "ErrorTimeOut",
+                "ErrorNotHandled",
+                "ErrorFatalIntern",
+                "ErrorMissingParams",
+                "ErrorParseJson"
+              ]
+            },
+            "errorMessage": {
+              "type": "string",
+              "enum": [
+                "request could not be processed in time",
+                "request could not be handled",
+                "fatal internal error",
+                "missing parameters",
+                "cannot parse incoming json doc"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
