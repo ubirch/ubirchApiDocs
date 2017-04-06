@@ -31,10 +31,74 @@
             }
           }
         }
-      }
-    }
-  },
+            }
+    },
+    "/providerInfo/list/{context}": {
+      "get": {
+        "tags": [
+          "auth service",
+          "providerlist"
+        ],
+        "summary": "provider list",
+        "description": "Gives us a list of providers configured for a specific context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "context",
+            "description": "the context (e.g. `trackle`, `trackle-dev`, `ubirch`, `ubirch-dev`,...)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns array of OpenID Connect provider configurations for the given context",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OpenIDConnectProviderInfo"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+            }
+        }
+    },
   "definitions": {
+    "OpenIDConnectProviderInfo": {
+      "type": "object",
+      "description": "OpenID Connect provider configuration for a given context",
+      "properties": {
+        "context": {
+          "type": "string",
+          "description": "context for which this OP configuration is specified for"
+        },
+        "providerId": {
+          "type": "string",
+          "description": "ubirch internal OpenID Connect provider ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "display name for the ubirch internal OpenID Connect provider ID"
+        },
+        "redirectUrl": {
+          "type": "string",
+          "description": "redirect url to open the login page of the OP; contains all required parameters for the redirection back to our context"
+        }
+      },
+      "example": {
+        "context": "trackle-dev",
+        "providerId": "google",
+        "name": "Google",
+        "redirectUrl": "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II"
+      }
+        },
     "StatusResponse": {
       "type": "object",
       "description": "status object with status message",
@@ -60,7 +124,7 @@
           "description": "status description"
         }
       }
-    },
+        },
     "ErrorResponse": {
       "type": "object",
       "description": "error object with error code and message",
@@ -106,7 +170,7 @@
             }
           }
         }
-      }
+            }
+        }
     }
-  }
 }
