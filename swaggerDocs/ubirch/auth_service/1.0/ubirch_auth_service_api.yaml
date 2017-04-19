@@ -91,6 +91,76 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /register:
+    get:
+      tags:
+        - auth service
+        - user service
+        - 2Bimplmeneted
+      summary: logout
+      description: Register new user
+        Register a new user for an OP token; precondition - user is already authenticated by OP
+      parameters:
+        - in: body
+          name: userData
+          description: userData which has to be stored for this user in user server and the suth token to identify user
+          required: true
+          schema:
+            $ref: '#/definitions/UserData'
+      responses:
+        '200':
+          description: Successful response; registration successful; returns stored user data
+          schema:
+            $ref: '#/definitions/UserData'
+        '400':
+          description: Not successful response; user already exists or an unexpected error occurred
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/userinfo/{token}':
+    get:
+      tags:
+        - auth service
+        - user service
+        - 2Bimplmeneted
+      summary: GET user data
+      description: returns stored user data
+      parameters:
+        - in: path
+          name: token
+          description: OP auth token to identify user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns stored user data
+          schema:
+            $ref: '#/definitions/UserData'
+        '400':
+          description: Not successful response; no user exists for that token or an unexpected error occurred
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    put:
+      tags:
+        - auth service
+        - user service
+        - 2Bimplmeneted
+      summary: UPDATE user data
+      description: updates user data
+      parameters:
+        - in: path
+          name: token
+          description: OP auth token to identify user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns updated user data
+          schema:
+            $ref: '#/definitions/UserData'
+        '400':
+          description: Not successful response; no user exists for that token or an unexpected error occurred
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   '/logout/{token}':
     get:
       tags:
@@ -173,12 +243,31 @@ definitions:
   Token:
     type: object
     description: token to request protected resources in several of ours backend services
+    required:
+      - token
     properties:
       token:
         type: string
         description: token to request protected resources
     example:
       {"token": "a_token_1234"}
+  UserData:
+    type: object
+    description: user data and OP token to identify user
+    required:
+      - token
+    properties:
+      token:
+        type: string
+        description: OP token to identify user
+      nickname:
+        type: string
+        description: nickname used to call user in the UI
+    example:
+      {
+        "token":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
+        "userNickname":"my Nick"
+      }
   StatusResponse:
     type: object
     description: status object with status message
@@ -231,6 +320,8 @@ definitions:
               - ErrorFatalIntern
               - ErrorMissingParams
               - ErrorParseJson
+              - ErrorUserAlreadyExists
+              - ErrorNoUserForToken
           errorMessage:
             type: string
             enum:
@@ -239,3 +330,5 @@ definitions:
               - fatal internal error
               - missing parameters
               - cannot parse incoming json doc
+              - user already exists
+              - no user exists for given token
