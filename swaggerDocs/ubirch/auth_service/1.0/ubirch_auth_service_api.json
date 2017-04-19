@@ -105,7 +105,7 @@
             }
     },
     "/register": {
-      "get": {
+      "post": {
         "tags": [
           "auth service",
           "user service",

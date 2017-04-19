@@ -9,13 +9,13 @@ info:
     - list of OpenID Connect provider (OP) configurations for specified context
 
     - verification and login
-    
+
     - tokens management
-    
+
     - signup
-    
+
     - logout
-    
+
     - userData access
 basePath: /api/authService/v1
 produces:
@@ -45,7 +45,7 @@ paths:
         - auth service
         - providerlist
       summary: provider list
-      description: 
+      description:
         Gives us a list of providers configured for a specific context
       parameters:
         - in: path
@@ -84,7 +84,7 @@ paths:
       responses:
         '200':
           description: >-
-            Successful response; the code and state have been verified successfully and a resulting token is returned 
+            Successful response; the code and state have been verified successfully and a resulting token is returned
           schema:
               $ref: '#/definitions/Token'
         '400':
@@ -92,7 +92,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
   /register:
-    get:
+    post:
       tags:
         - auth service
         - user service
