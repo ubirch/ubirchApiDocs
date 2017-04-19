@@ -68,6 +68,77 @@
           }
         }
             }
+    },
+    "/verify/code": {
+      "post": {
+        "tags": [
+          "auth service",
+          "token administration"
+        ],
+        "summary": "Verify Code",
+        "description": "After a successful login at the OP users are being redirect to our frontend. That call includes a _context_, _providerId_, _code_ and _state_. Calling this method has the effect that our system verifies the code and responds with the resulting token. This token can then be used to request protected resources in other backend services.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "OPCredentials",
+            "description": "Credentials from OP login including a _context_, _providerId_, _code_ and _state_",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OPCredentials"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; the code and state have been verified successfully and a resulting token is returned ",
+            "schema": {
+              "$ref": "#/definitions/Token"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+            }
+    },
+    "/logout/{token}": {
+      "get": {
+        "tags": [
+          "auth service",
+          "token administration"
+        ],
+        "summary": "logout",
+        "description": "logout; invalidates the token; user keeps logged in at the OP",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "description": "token to be invalidated",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; logout is successful (or the token already expired)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "OK"
+              ]
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+            }
         }
     },
   "definitions": {
@@ -77,7 +148,7 @@
       "properties": {
         "context": {
           "type": "string",
-          "description": "context for which this OP configuration is specified for"
+          "description": "context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui, for which this OP configuration is specified for"
         },
         "providerId": {
           "type": "string",
@@ -97,6 +168,53 @@
         "providerId": "google",
         "name": "Google",
         "redirectUrl": "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II"
+      }
+        },
+    "OPCredentials": {
+      "type": "object",
+      "description": "Credentials from OP login",
+      "required": [
+        "context",
+        "providerId",
+        "code",
+        "state"
+      ],
+      "properties": {
+        "context": {
+          "type": "string",
+          "description": "context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui"
+        },
+        "providerId": {
+          "type": "string",
+          "description": "ubirch internal OpenID Connect provider ID"
+        },
+        "code": {
+          "type": "string",
+          "description": "the code we obtained from OP, which has to be verified in our backend"
+        },
+        "state": {
+          "type": "string",
+          "description": "the state is used to maintain relation between request and callback; state was sent to the OP as part of the redirectUrl; each state can only be used once and is verified in backend"
+        }
+      },
+      "example": {
+        "context": "ubirch-admin-ui-dev",
+        "providerId": "google",
+        "code": "4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw",
+        "state": "mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k"
+      }
+        },
+    "Token": {
+      "type": "object",
+      "description": "token to request protected resources in several of ours backend services",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "token to request protected resources"
+        }
+      },
+      "example": {
+        "token": "a_token_1234"
       }
         },
     "StatusResponse": {
@@ -123,8 +241,13 @@
           "type": "string",
           "description": "status description"
         }
-      }
-        },
+            },
+      "example": {
+        "version": "1.0",
+        "status": "OK",
+        "message": "Welcome to the ubirchAuthService"
+            }
+    },
     "ErrorResponse": {
       "type": "object",
       "description": "error object with error code and message",
