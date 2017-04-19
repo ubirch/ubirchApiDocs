@@ -109,15 +109,15 @@
         "tags": [
           "auth service",
           "user service",
-          "2Bimplmeneted"
+          "2BImplemented"
         ],
-        "summary": "logout",
-        "description": "Register new user Register a new user for an OP token; precondition - user is already authenticated by OP",
+        "summary": "Register new user",
+        "description": "Register a new user for an OP token; precondition - user is already authenticated by OP",
         "parameters": [
           {
             "in": "body",
             "name": "userData",
-            "description": "userData which has to be stored for this user in user server and the suth token to identify user",
+            "description": "userData which has to be stored for this user in user server and the OP auth token to identify user",
             "required": true,
             "schema": {
               "$ref": "#/definitions/UserData"
@@ -145,7 +145,7 @@
         "tags": [
           "auth service",
           "user service",
-          "2Bimplmeneted"
+          "2BImplemented"
         ],
         "summary": "GET user data",
         "description": "returns stored user data",
@@ -177,7 +177,7 @@
         "tags": [
           "auth service",
           "user service",
-          "2Bimplmeneted"
+          "2BImplemented"
         ],
         "summary": "UPDATE user data",
         "description": "updates user data",
@@ -188,6 +188,15 @@
             "description": "OP auth token to identify user",
             "required": true,
             "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "userData",
+            "description": "userData the stored userData shall be updated with containing the OP auth token to identify user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserData"
+            }
           }
         ],
         "responses": {
@@ -271,7 +280,7 @@
         "name": "Google",
         "redirectUrl": "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II"
             }
-    },
+        },
     "OPCredentials": {
       "type": "object",
       "description": "Credentials from OP login",
@@ -305,7 +314,7 @@
         "code": "4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw",
         "state": "mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k"
             }
-    },
+        },
     "Token": {
       "type": "object",
       "description": "token to request protected resources in several of ours backend services",
@@ -373,7 +382,7 @@
         "status": "OK",
         "message": "Welcome to the ubirchAuthService"
             }
-    },
+        },
     "ErrorResponse": {
       "type": "object",
       "description": "error object with error code and message",
@@ -384,11 +393,15 @@
       ],
       "properties": {
         "apiVersion": {
-          "type": "string"
+          "type": "string",
+          "example": "1.0.0"
         },
         "status": {
           "type": "string",
-          "description": "NOK because it's an error"
+          "description": "NOK because it's an error",
+          "enum": [
+            "NOK"
+          ]
         },
         "error": {
           "type": "object",

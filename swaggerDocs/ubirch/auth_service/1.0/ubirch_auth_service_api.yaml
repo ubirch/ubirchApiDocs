@@ -96,14 +96,13 @@ paths:
       tags:
         - auth service
         - user service
-        - 2Bimplmeneted
-      summary: logout
-      description: Register new user
-        Register a new user for an OP token; precondition - user is already authenticated by OP
+        - 2BImplemented
+      summary: Register new user
+      description: Register a new user for an OP token; precondition - user is already authenticated by OP
       parameters:
         - in: body
           name: userData
-          description: userData which has to be stored for this user in user server and the suth token to identify user
+          description: userData which has to be stored for this user in user server and the OP auth token to identify user
           required: true
           schema:
             $ref: '#/definitions/UserData'
@@ -121,7 +120,7 @@ paths:
       tags:
         - auth service
         - user service
-        - 2Bimplmeneted
+        - 2BImplemented
       summary: GET user data
       description: returns stored user data
       parameters:
@@ -143,7 +142,7 @@ paths:
       tags:
         - auth service
         - user service
-        - 2Bimplmeneted
+        - 2BImplemented
       summary: UPDATE user data
       description: updates user data
       parameters:
@@ -152,6 +151,12 @@ paths:
           description: OP auth token to identify user
           required: true
           type: string
+        - in: body
+          name: userData
+          description: userData the stored userData shall be updated with containing the OP auth token to identify user
+          required: true
+          schema:
+            $ref: '#/definitions/UserData'
       responses:
         '200':
           description: Successful response; returns updated user data
@@ -303,9 +308,13 @@ definitions:
     properties:
       apiVersion:
         type: string
+        example:
+          "1.0.0"
       status:
         type: string
         description: NOK because it's an error
+        enum:
+          - NOK
       error:
         type: object
         required:
