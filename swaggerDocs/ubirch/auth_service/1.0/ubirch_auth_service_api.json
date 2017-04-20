@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "title": "ubirch auth service REST API",
     "description": "This is the definition of the ubirch auth service REST API containing the following parts:|\n- list of OpenID Connect provider (OP) configurations for specified context\n- verification and login\n- tokens management\n- signup\n- logout\n- userData access"
-    },
+  },
   "basePath": "/api/authService/v1",
   "produces": [
     "application/json"
@@ -31,7 +31,7 @@
             }
           }
         }
-            }
+      }
     },
     "/providerInfo/list/{context}": {
       "get": {
@@ -67,7 +67,7 @@
             }
           }
         }
-            }
+      }
     },
     "/verify/code": {
       "post": {
@@ -102,7 +102,7 @@
             }
           }
         }
-            }
+      }
     },
     "/register": {
       "post": {
@@ -115,12 +115,19 @@
         "description": "Register a new user for an OP token; precondition - user is already authenticated by OP",
         "parameters": [
           {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying which user's info is being requested",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "body",
-            "name": "userData",
+            "name": "registerInfos",
             "description": "userData which has to be stored for this user in user server and the OP auth token to identify user",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UserData"
+              "$ref": "#/definitions/RegisterRequest"
             }
           }
         ],
@@ -128,19 +135,19 @@
           "200": {
             "description": "Successful response; registration successful; returns stored user data",
             "schema": {
-              "$ref": "#/definitions/UserData"
+              "$ref": "#/definitions/RegisterResponse"
             }
           },
           "400": {
-            "description": "Not successful response; user already exists or an unexpected error occurred",
+            "description": "registration failed (more detailed information is provided by the error response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
         }
-            }
+      }
     },
-    "/userinfo/{token}": {
+    "/userInfo": {
       "get": {
         "tags": [
           "auth service",
@@ -151,9 +158,9 @@
         "description": "returns stored user data",
         "parameters": [
           {
-            "in": "path",
-            "name": "token",
-            "description": "OP auth token to identify user",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying which user's info is being requested",
             "required": true,
             "type": "string"
           }
@@ -162,11 +169,11 @@
           "200": {
             "description": "Successful response; returns stored user data",
             "schema": {
-              "$ref": "#/definitions/UserData"
+              "$ref": "#/definitions/UserInfoGetResponse"
             }
           },
           "400": {
-            "description": "Not successful response; no user exists for that token or an unexpected error occurred",
+            "description": "get failed (more detailed information is provided by the error response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -183,9 +190,9 @@
         "description": "updates user data",
         "parameters": [
           {
-            "in": "path",
-            "name": "token",
-            "description": "OP auth token to identify user",
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying which user's info is being updated",
             "required": true,
             "type": "string"
           },
@@ -195,7 +202,7 @@
             "description": "userData the stored userData shall be updated with containing the OP auth token to identify user",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UserData"
+              "$ref": "#/definitions/UserInfoUpdateRequest"
             }
           }
         ],
@@ -203,17 +210,17 @@
           "200": {
             "description": "Successful response; returns updated user data",
             "schema": {
-              "$ref": "#/definitions/UserData"
+              "$ref": "#/definitions/UserInfoUpdateResponse"
             }
           },
           "400": {
-            "description": "Not successful response; no user exists for that token or an unexpected error occurred",
+            "description": "update failed (more detailed information is provided by the error response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
           }
         }
-            }
+      }
     },
     "/logout/{token}": {
       "get": {
@@ -249,9 +256,9 @@
             }
           }
         }
-            }
-        }
-    },
+      }
+    }
+  },
   "definitions": {
     "OpenIDConnectProviderInfo": {
       "type": "object",
@@ -279,8 +286,8 @@
         "providerId": "google",
         "name": "Google",
         "redirectUrl": "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II"
-            }
-        },
+      }
+    },
     "OPCredentials": {
       "type": "object",
       "description": "Credentials from OP login",
@@ -313,8 +320,8 @@
         "providerId": "google",
         "code": "4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw",
         "state": "mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k"
-            }
-        },
+      }
+    },
     "Token": {
       "type": "object",
       "description": "token to request protected resources in several of ours backend services",
@@ -329,29 +336,157 @@
       },
       "example": {
         "token": "a_token_1234"
-            }
-        },
-    "UserData": {
+      }
+    },
+    "RegisterRequest": {
       "type": "object",
-      "description": "user data and OP token to identify user",
+      "description": "a user's registration information",
       "required": [
-        "token"
+        "displayName",
+        "myGroup"
       ],
       "properties": {
-        "token": {
+        "displayName": {
           "type": "string",
-          "description": "OP token to identify user"
+          "description": "human readable user name for display in the UI"
         },
-        "nickname": {
+        "myGroup": {
           "type": "string",
-          "description": "nickname used to call user in the UI"
+          "description": "human readable name of the group that we'll automatically create as part of the registration"
         }
-            },
+      },
       "example": {
-        "token": "5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
-        "userNickname": "my Nick"
-            }
+        "displayName": "my display name",
+        "myGroup": "my private group"
+      }
+    },
+    "Group": {
+      "type": "object",
+      "description": "a group",
+      "required": [
+        "id",
+        "displayName"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "internal id (UUID)"
         },
+        "displayName": {
+          "type": "string",
+          "description": "human readable group name"
+        }
+      },
+      "example": {
+        "id": "a4c08d88-7c43-4984-a568-0672b4431016",
+        "displayName": "my-ubirch-group"
+      }
+    },
+    "RegisterResponse": {
+      "type": "object",
+      "description": "a user's registration information",
+      "required": [
+        "displayName",
+        "myGroups",
+        "allowedGroups"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "human readable user name for display in the UI"
+        },
+        "myGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          },
+          "description": "groups a user owns in the context defined by the provided token"
+        },
+        "allowedGroups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Group"
+          },
+          "description": "groups belonging to other people that a user can access, too"
+        }
+      },
+      "example": {
+        "displayName": "my display name",
+        "myGroups": [
+          {
+            "id": "a4c08d88-7c43-4984-a568-0672b4431016",
+            "displayName": "my private group"
+          }
+        ],
+        "allowedGroups": []
+      }
+    },
+    "UserInfoGetResponse": {
+      "type": "object",
+      "items": {
+        "$ref": "#/definitions/RegisterResponse"
+      },
+      "example": {
+        "displayName": "my display name",
+        "myGroups": [
+          {
+            "id": "a4c08d88-7c43-4984-a568-0672b4431016",
+            "displayName": "my private group"
+          }
+        ],
+        "allowedGroups": [
+          {
+            "id": "f2d4280d-336f-438d-9b2a-70337723a3e7",
+            "displayName": "my-best-friends-ubirch-group"
+          },
+          {
+            "id": "32c5c928-97a0-49b7-9d71-0b0517b7d13e",
+            "displayName": "another-friends-ubirch-group"
+          }
+        ]
+      }
+    },
+    "UserInfoUpdateRequest": {
+      "type": "object",
+      "description": "update a user's info",
+      "required": [
+        "displayName"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "human readable user name for display in the UI"
+        }
+      },
+      "example": {
+        "displayName": "my updated display name"
+      }
+    },
+    "UserInfoUpdateResponse": {
+      "type": "object",
+      "items": {
+        "$ref": "#/definitions/RegisterResponse"
+      },
+      "example": {
+        "displayName": "my updated display name",
+        "myGroups": [
+          {
+            "id": "a4c08d88-7c43-4984-a568-0672b4431016",
+            "displayName": "my private group"
+          }
+        ],
+        "allowedGroups": [
+          {
+            "id": "f2d4280d-336f-438d-9b2a-70337723a3e7",
+            "displayName": "my-best-friends-ubirch-group"
+          },
+          {
+            "id": "32c5c928-97a0-49b7-9d71-0b0517b7d13e",
+            "displayName": "another-friends-ubirch-group"
+          }
+        ]
+      }
+    },
     "StatusResponse": {
       "type": "object",
       "description": "status object with status message",
@@ -376,13 +511,13 @@
           "type": "string",
           "description": "status description"
         }
-            },
+      },
       "example": {
         "version": "1.0",
         "status": "OK",
         "message": "Welcome to the ubirchAuthService"
-            }
-        },
+      }
+    },
     "ErrorResponse": {
       "type": "object",
       "description": "error object with error code and message",
@@ -436,7 +571,7 @@
             }
           }
         }
-            }
-        }
+      }
     }
+  }
 }
