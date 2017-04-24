@@ -124,7 +124,7 @@
           {
             "in": "body",
             "name": "registerInfos",
-            "description": "userData which has to be stored for this user in user server and the OP auth token to identify user",
+            "description": "userData which has to be stored for this user in user server and the OP auth token to identify user. If a user already exists _displayName_ is ignored.",
             "required": true,
             "schema": {
               "$ref": "#/definitions/RegisterRequest"
@@ -348,7 +348,7 @@
       "properties": {
         "displayName": {
           "type": "string",
-          "description": "human readable user name for display in the UI"
+          "description": "human readable user name for display in the UI (ignored if user already exists)"
         },
         "myGroup": {
           "type": "string",
@@ -356,7 +356,7 @@
         }
       },
       "example": {
-        "displayName": "my display name",
+        "displayName": "my display name (ignored if user already exists)",
         "myGroup": "my private group"
       }
     },
