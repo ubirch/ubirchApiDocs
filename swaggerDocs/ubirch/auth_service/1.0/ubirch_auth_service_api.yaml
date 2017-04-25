@@ -101,7 +101,6 @@ paths:
       tags:
         - auth service
         - user service
-        - 2BImplemented
       summary: Register new user
       description: >-
         Register a new user for an OP token; precondition - user is already
