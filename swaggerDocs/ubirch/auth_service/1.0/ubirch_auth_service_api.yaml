@@ -138,7 +138,6 @@ paths:
       tags:
         - auth service
         - user service
-        - 2BImplemented
       summary: GET user data
       description: returns stored user data
       parameters:
@@ -162,7 +161,6 @@ paths:
       tags:
         - auth service
         - user service
-        - 2BImplemented
       summary: UPDATE user data
       description: updates user data
       parameters:

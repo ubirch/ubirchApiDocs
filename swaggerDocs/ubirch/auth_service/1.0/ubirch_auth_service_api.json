@@ -150,8 +150,7 @@
       "get": {
         "tags": [
           "auth service",
-          "user service",
-          "2BImplemented"
+          "user service"
         ],
         "summary": "GET user data",
         "description": "returns stored user data",
@@ -182,8 +181,7 @@
       "put": {
         "tags": [
           "auth service",
-          "user service",
-          "2BImplemented"
+          "user service"
         ],
         "summary": "UPDATE user data",
         "description": "updates user data",
