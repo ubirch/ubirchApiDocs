@@ -1,0 +1,27 @@
+[
+  {
+    "name": "trackle",
+    "version": "1.0",
+    "uri": "/trackle/1.0/trackle_api.yaml"
+  },
+  {
+    "name": "ubirch Avatar Service",
+    "version": "1.0",
+    "uri": "/ubirch/avatar_service/1.0/ubirch_avatar_service_api.yaml"
+  },
+  {
+    "name": "ubirch Auth Service",
+    "version": "1.0",
+    "uri": "/ubirch/auth_service/1.0/ubirch_auth_service_api.yaml"
+  },
+  {
+    "name": "ubirch Chain Service",
+    "version": "1.0",
+    "uri": "/ubirch/chain_service/1.0/ubirch_chain_service_api.yaml"
+  },
+  {
+    "name": "ubirch Key Service",
+    "version": "0.5",
+    "uri": "/ubirch/key_service/0.5/ubirch_key_service_api.yaml"
+  }
+]
