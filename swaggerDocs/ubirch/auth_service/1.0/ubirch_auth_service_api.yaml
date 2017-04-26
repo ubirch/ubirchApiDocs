@@ -26,37 +26,36 @@ paths:
       tags:
         - auth service
       summary: Welcome / Health
-      description: >-
-        Check if service is up and running
+      description: Check if service is up and running
       responses:
         '200':
-          description: >-
-            Successful response; returnes status object with welcome message
+          description: Successful response; returnes status object with welcome message
           schema:
             $ref: '#/definitions/StatusResponse'
         '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
   '/providerInfo/list/{context}':
     get:
       tags:
         - auth service
         - providerlist
       summary: provider list
-      description:
-        Gives us a list of providers configured for a specific context
+      description: Gives us a list of providers configured for a specific context
       parameters:
         - in: path
           name: context
-          description: the context (e.g. `trackle`, `trackle-dev`, `ubirch`, `ubirch-dev`,...)
+          description: >-
+            the context (e.g. `trackle`, `trackle-dev`, `ubirch`,
+            `ubirch-dev`,...)
           required: true
           type: string
       responses:
         '200':
           description: >-
-            Successful response; returns array of OpenID Connect provider configurations for the given context
+            Successful response; returns array of OpenID Connect provider
+            configurations for the given context
           schema:
             type: array
             items:
@@ -71,22 +70,28 @@ paths:
         - auth service
         - token administration
       summary: Verify Code
-      description:
-        After a successful login at the OP users are being redirect to our frontend. That call includes a _context_, _providerId_, _code_ and _state_. Calling this method has the effect that our system verifies the code and responds with the resulting token.
-        This token can then be used to request protected resources in other backend services.
+      description: >-
+        After a successful login at the OP users are being redirect to our
+        frontend. That call includes a _context_, _providerId_, _code_ and
+        _state_. Calling this method has the effect that our system verifies the
+        code and responds with the resulting token. This token can then be used
+        to request protected resources in other backend services.
       parameters:
         - in: body
           name: OPCredentials
-          description: Credentials from OP login including a _context_, _providerId_, _code_ and _state_
+          description: >-
+            Credentials from OP login including a _context_, _providerId_,
+            _code_ and _state_
           required: true
           schema:
             $ref: '#/definitions/OPCredentials'
       responses:
         '200':
           description: >-
-            Successful response; the code and state have been verified successfully and a resulting token is returned
+            Successful response; the code and state have been verified
+            successfully and a resulting token is returned 
           schema:
-              $ref: '#/definitions/Token'
+            $ref: '#/definitions/Token'
         '400':
           description: Not successful response
           schema:
@@ -96,74 +101,91 @@ paths:
       tags:
         - auth service
         - user service
-        - 2BImplemented
       summary: Register new user
-      description: Register a new user for an OP token; precondition - user is already authenticated by OP
+      description: >-
+        Register a new user for an OP token; precondition - user is already
+        authenticated by OP
       parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying which user's info is being requested
+          required: true
+          type: string
         - in: body
-          name: userData
-          description: userData which has to be stored for this user in user server and the OP auth token to identify user
+          name: registerInfos
+          description: >-
+            userData which has to be stored for this user in user server and the
+            OP auth token to identify user. If a user already exists
+            _displayName_ is ignored.
           required: true
           schema:
-            $ref: '#/definitions/UserData'
+            $ref: '#/definitions/RegisterRequest'
       responses:
         '200':
-          description: Successful response; registration successful; returns stored user data
+          description: >-
+            Successful response; registration successful; returns stored user
+            data
           schema:
-            $ref: '#/definitions/UserData'
+            $ref: '#/definitions/RegisterResponse'
         '400':
-          description: Not successful response; user already exists or an unexpected error occurred
+          description: >-
+            registration failed (more detailed information is provided by the
+            error response
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/userinfo/{token}':
+  /userInfo:
     get:
       tags:
         - auth service
         - user service
-        - 2BImplemented
       summary: GET user data
       description: returns stored user data
       parameters:
-        - in: path
-          name: token
-          description: OP auth token to identify user
+        - in: header
+          name: Authorization
+          description: Bearer token identifying which user's info is being requested
           required: true
           type: string
       responses:
         '200':
           description: Successful response; returns stored user data
           schema:
-            $ref: '#/definitions/UserData'
+            $ref: '#/definitions/UserInfoGetResponse'
         '400':
-          description: Not successful response; no user exists for that token or an unexpected error occurred
+          description: >-
+            get failed (more detailed information is provided by the error
+            response
           schema:
             $ref: '#/definitions/ErrorResponse'
     put:
       tags:
         - auth service
         - user service
-        - 2BImplemented
       summary: UPDATE user data
       description: updates user data
       parameters:
-        - in: path
-          name: token
-          description: OP auth token to identify user
+        - in: header
+          name: Authorization
+          description: Bearer token identifying which user's info is being updated
           required: true
           type: string
         - in: body
           name: userData
-          description: userData the stored userData shall be updated with containing the OP auth token to identify user
+          description: >-
+            userData the stored userData shall be updated with containing the OP
+            auth token to identify user
           required: true
           schema:
-            $ref: '#/definitions/UserData'
+            $ref: '#/definitions/UserInfoUpdateRequest'
       responses:
         '200':
           description: Successful response; returns updated user data
           schema:
-            $ref: '#/definitions/UserData'
+            $ref: '#/definitions/UserInfoUpdateResponse'
         '400':
-          description: Not successful response; no user exists for that token or an unexpected error occurred
+          description: >-
+            update failed (more detailed information is provided by the error
+            response
           schema:
             $ref: '#/definitions/ErrorResponse'
   '/logout/{token}':
@@ -172,8 +194,7 @@ paths:
         - auth service
         - token administration
       summary: logout
-      description:
-        logout; invalidates the token; user keeps logged in at the OP
+      description: logout; invalidates the token; user keeps logged in at the OP
       parameters:
         - in: path
           name: token
@@ -182,7 +203,9 @@ paths:
           type: string
       responses:
         '200':
-          description: Successful response; logout is successful (or the token already expired)
+          description: >-
+            Successful response; logout is successful (or the token already
+            expired)
           schema:
             type: string
             enum:
@@ -191,7 +214,6 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
 definitions:
   OpenIDConnectProviderInfo:
     type: object
@@ -199,7 +221,9 @@ definitions:
     properties:
       context:
         type: string
-        description: context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui, for which this OP configuration is specified for
+        description: >-
+          context of our application, e.g. trackle, trackle-dev,
+          ubirch-admin-ui, for which this OP configuration is specified for
       providerId:
         type: string
         description: ubirch internal OpenID Connect provider ID
@@ -208,15 +232,15 @@ definitions:
         description: display name for the ubirch internal OpenID Connect provider ID
       redirectUrl:
         type: string
-        description:
-          redirect url to open the login page of the OP; contains all required parameters for the redirection back to our context
+        description: >-
+          redirect url to open the login page of the OP; contains all required
+          parameters for the redirection back to our context
     example:
-      {
-        "context": "trackle-dev",
-        "providerId": "google",
-        "name": "Google",
-        "redirectUrl": "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II"
-      }
+      context: trackle-dev
+      providerId: google
+      name: Google
+      redirectUrl: >-
+        https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II
   OPCredentials:
     type: object
     description: Credentials from OP login
@@ -228,23 +252,24 @@ definitions:
     properties:
       context:
         type: string
-        description: context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui
+        description: 'context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui'
       providerId:
         type: string
         description: ubirch internal OpenID Connect provider ID
       code:
         type: string
-        description: the code we obtained from OP, which has to be verified in our backend
+        description: 'the code we obtained from OP, which has to be verified in our backend'
       state:
         type: string
-        description: the state is used to maintain relation between request and callback; state was sent to the OP as part of the redirectUrl; each state can only be used once and is verified in backend
+        description: >-
+          the state is used to maintain relation between request and callback;
+          state was sent to the OP as part of the redirectUrl; each state can
+          only be used once and is verified in backend
     example:
-      {
-        "context": "ubirch-admin-ui-dev",
-        "providerId":"google",
-        "code":"4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw",
-        "state":"mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k"
-      }
+      context: ubirch-admin-ui-dev
+      providerId: google
+      code: 4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw
+      state: mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k
   Token:
     type: object
     description: token to request protected resources in several of ours backend services
@@ -255,24 +280,109 @@ definitions:
         type: string
         description: token to request protected resources
     example:
-      {"token": "a_token_1234"}
-  UserData:
+      token: a_token_1234
+  RegisterRequest:
     type: object
-    description: user data and OP token to identify user
+    description: a user's registration information
     required:
-      - token
+      - displayName
+      - myGroup
     properties:
-      token:
+      displayName:
         type: string
-        description: OP token to identify user
-      nickname:
+        description: >-
+          human readable user name for display in the UI (ignored if user
+          already exists)
+      myGroup:
         type: string
-        description: nickname used to call user in the UI
+        description: >-
+          human readable name of the group that we'll automatically create as
+          part of the registration
     example:
-      {
-        "token":"5df0c9b7-564a-4b90-8f1b-998fbe1a1cbf",
-        "userNickname":"my Nick"
-      }
+      displayName: my display name (ignored if user already exists)
+      myGroup: my private group
+  Group:
+    type: object
+    description: a group
+    required:
+      - id
+      - displayName
+    properties:
+      id:
+        type: string
+        description: internal id (UUID)
+      displayName:
+        type: string
+        description: human readable group name
+    example:
+      id: a4c08d88-7c43-4984-a568-0672b4431016
+      displayName: my-ubirch-group
+  RegisterResponse:
+    type: object
+    description: a user's registration information
+    required:
+      - displayName
+      - myGroups
+      - allowedGroups
+    properties:
+      displayName:
+        type: string
+        description: human readable user name for display in the UI
+      myGroups:
+        type: array
+        items:
+          $ref: '#/definitions/Group'
+        description: groups a user owns in the context defined by the provided token
+      allowedGroups:
+        type: array
+        items:
+          $ref: '#/definitions/Group'
+        description: 'groups belonging to other people that a user can access, too'
+    example:
+      displayName: my display name
+      myGroups:
+        - id: a4c08d88-7c43-4984-a568-0672b4431016
+          displayName: my private group
+      allowedGroups: []
+  UserInfoGetResponse:
+    type: object
+    items:
+      $ref: '#/definitions/RegisterResponse'
+    example:
+      displayName: my display name
+      myGroups:
+        - id: a4c08d88-7c43-4984-a568-0672b4431016
+          displayName: my private group
+      allowedGroups:
+        - id: f2d4280d-336f-438d-9b2a-70337723a3e7
+          displayName: my-best-friends-ubirch-group
+        - id: 32c5c928-97a0-49b7-9d71-0b0517b7d13e
+          displayName: another-friends-ubirch-group
+  UserInfoUpdateRequest:
+    type: object
+    description: update a user's info
+    required:
+      - displayName
+    properties:
+      displayName:
+        type: string
+        description: human readable user name for display in the UI
+    example:
+      displayName: my updated display name
+  UserInfoUpdateResponse:
+    type: object
+    items:
+      $ref: '#/definitions/RegisterResponse'
+    example:
+      displayName: my updated display name
+      myGroups:
+        - id: a4c08d88-7c43-4984-a568-0672b4431016
+          displayName: my private group
+      allowedGroups:
+        - id: f2d4280d-336f-438d-9b2a-70337723a3e7
+          displayName: my-best-friends-ubirch-group
+        - id: 32c5c928-97a0-49b7-9d71-0b0517b7d13e
+          displayName: another-friends-ubirch-group
   StatusResponse:
     type: object
     description: status object with status message
@@ -293,11 +403,9 @@ definitions:
         type: string
         description: status description
     example:
-      {
-        "version":"1.0",
-        "status":"OK",
-        "message":"Welcome to the ubirchAuthService"
-      }
+      version: '1.0'
+      status: OK
+      message: Welcome to the ubirchAuthService
   ErrorResponse:
     type: object
     description: error object with error code and message
@@ -308,8 +416,7 @@ definitions:
     properties:
       apiVersion:
         type: string
-        example:
-          "1.0.0"
+        example: 1.0.0
       status:
         type: string
         description: NOK because it's an error
