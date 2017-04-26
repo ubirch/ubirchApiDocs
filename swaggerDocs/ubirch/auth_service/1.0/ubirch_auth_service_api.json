@@ -119,15 +119,6 @@
             "description": "Bearer token identifying which user's info is being requested",
             "required": true,
             "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "registerInfos",
-            "description": "userData which has to be stored for this user in user server and the OP auth token to identify user. If a user already exists _displayName_ is ignored.",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/RegisterRequest"
-            }
           }
         ],
         "responses": {
@@ -333,28 +324,6 @@
       },
       "example": {
         "token": "a_token_1234"
-      }
-    },
-    "RegisterRequest": {
-      "type": "object",
-      "description": "a user's registration information",
-      "required": [
-        "displayName",
-        "myGroup"
-      ],
-      "properties": {
-        "displayName": {
-          "type": "string",
-          "description": "human readable user name for display in the UI (ignored if user already exists)"
-        },
-        "myGroup": {
-          "type": "string",
-          "description": "human readable name of the group that we'll automatically create as part of the registration"
-        }
-      },
-      "example": {
-        "displayName": "my display name (ignored if user already exists)",
-        "myGroup": "my private group"
       }
     },
     "Group": {
