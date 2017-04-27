@@ -25,7 +25,7 @@
             "description": "the new public key object with the pubKey that should be stored for the unique pubKeyId - also part of the pub key object - in the key registry to be able to find the public key; pubKeyId may not exist already",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/PubKeyObject"
+              "$ref": "#/definitions/PublicKey"
             }
           }
         ],
@@ -33,11 +33,11 @@
           "200": {
             "description": "Successful response; returns the new created pubKeyObject",
             "schema": {
-              "$ref": "#/definitions/PubKeyObject"
+              "$ref": "#/definitions/PublicKey"
             }
           },
           "400": {
-            "description": "Not successful response",
+            "description": "No successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -68,7 +68,7 @@
             "description": "the public key object with the new pubKey data that the existing pubKey should be updated with",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/PubKeyObject"
+              "$ref": "#/definitions/PublicKey"
             }
           }
         ],
@@ -76,11 +76,11 @@
           "200": {
             "description": "Successful response; returns the updated pubKeyObject",
             "schema": {
-              "$ref": "#/definitions/PubKeyObject"
+              "$ref": "#/definitions/PublicKey"
             }
           },
           "400": {
-            "description": "Not successful response",
+            "description": "No successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -108,11 +108,11 @@
           "200": {
             "description": "Successful response; returns the requested pubKeyObject",
             "schema": {
-              "$ref": "#/definitions/PubKeyObject"
+              "$ref": "#/definitions/PublicKey"
             }
           },
           "400": {
-            "description": "Not successful response",
+            "description": "No successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -140,7 +140,7 @@
           "200": {
             "description": "Successful response; returns the pubKeyObject that has been deleted from the keyRegistry",
             "schema": {
-              "$ref": "#/definitions/PubKeyObject"
+              "$ref": "#/definitions/PublicKey"
             }
           },
           "400": {
@@ -438,6 +438,74 @@
     }
   },
   "definitions": {
+    "PublicKeyInfo": {
+      "description": "the public key itself with all it's information",
+      "type": "object",
+      "discriminator": "pubkeyInfo",
+      "required": [
+        "hwDeviceId",
+        "pubKey",
+        "algorithm",
+        "previousPubKey",
+        "created",
+        "validNotBefore"
+      ],
+      "properties": {
+        "hwDeviceId": {
+          "type": "string",
+          "description": "some unique hardware id which can be a UUId but doesn't have to"
+        },
+        "pubKey": {
+          "type": "string",
+          "description": "Base64 encoded public key"
+        },
+        "algorithm": {
+          "type": "string",
+          "description": "algorithm of the public key"
+        },
+        "previousPubKey": {
+          "type": "string",
+          "description": "(optional) Base64 encoded predecessor key"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp - when the key was created"
+        },
+        "validNotBefore": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp - key is not valid before this timestamp"
+        },
+        "validNotAfter": {
+          "type": "string",
+          "format": "date-time",
+          "description": "(optional) ISO 8601 timestamp - key is not valid after this timestamp"
+        }
+      }
+    },
+    "PublicKey": {
+      "description": "a public key as we accept it in the key-service",
+      "type": "object",
+      "discriminator": "publicKey",
+      "required": [
+        "pubkeyInfo",
+        "signature"
+      ],
+      "properties": {
+        "pubkeyInfo": {
+          "$ref": "#/definitions/PublicKeyInfo"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Base 64 encoded signature of the _pubkeyInfo_ (created with key described in _pubkeyInfo_)"
+        },
+        "previousPubKeySignature": {
+          "type": "string",
+          "description": "(optional) Base 64 encoded signature of the _pubkeyInfo_ (created with previous key)"
+        }
+      }
+    },
     "SignedPackage": {
       "description": "signature wrapper for any payload",
       "type": "object",
