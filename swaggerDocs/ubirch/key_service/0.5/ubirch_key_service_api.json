@@ -51,14 +51,14 @@
           "key registry",
           "2BImplemented"
         ],
-        "summary": "query only the currenty valid public keys",
+        "summary": "query only the currently valid public keys",
         "description": "query the currently valid public keys based on a hardwareId",
         "parameters": [
           {
             "in": "path",
             "name": "hardwareId",
             "type": "string",
-            "description": "hardwareId for which the ",
+            "description": "hardwareId for which to search for currently valid public keys",
             "required": true
           }
         ],
