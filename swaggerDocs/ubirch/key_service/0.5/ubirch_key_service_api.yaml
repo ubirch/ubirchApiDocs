@@ -46,6 +46,30 @@ paths:
           description: No successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
+  '/pubkey/current/hardwareId/{hardwareId}':
+    get:
+      tags:
+        - key registry
+        - 2BImplemented
+      summary: query only the currenty valid public keys
+      description: query the currently valid public keys based on a hardwareId
+      parameters:
+        - in: path
+          name: hardwareId
+          type: string
+          description: 'hardwareId for which the '
+          required: true
+      responses:
+        '200':
+          description: Successful response; returns an array of currently valid public keys
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/PublicKey'
+        '400':
+          description: No successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   '/pubkey/{pubkeyid}':
     put:
       tags:
