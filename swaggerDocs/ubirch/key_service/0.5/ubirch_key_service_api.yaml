@@ -23,7 +23,6 @@ paths:
     post:
       tags:
         - key registry
-        - 2BImplemented
       summary: stores new public key
       description: stores the given public key with its unique pubKeyID
       parameters:
@@ -39,7 +38,7 @@ paths:
             $ref: '#/definitions/PublicKey'
       responses:
         '200':
-          description: Successful response; returns the new created pubKeyObject
+          description: Successful response; returns created public key
           schema:
             $ref: '#/definitions/PublicKey'
         '400':
@@ -50,14 +49,13 @@ paths:
     get:
       tags:
         - key registry
-        - 2BImplemented
       summary: query only the currently valid public keys
       description: query the currently valid public keys based on a hardwareId
       parameters:
         - in: path
           name: hardwareId
           type: string
-          description: 'hardwareId for which to search for currently valid public keys'
+          description: hardwareId for which to search for currently valid public keys
           required: true
       responses:
         '200':
@@ -98,7 +96,7 @@ paths:
             $ref: '#/definitions/PublicKey'
       responses:
         '200':
-          description: Successful response; returns the updated pubKeyObject
+          description: Successful response; returns the updated public key
           schema:
             $ref: '#/definitions/PublicKey'
         '400':
@@ -120,7 +118,7 @@ paths:
           format: integer
       responses:
         '200':
-          description: Successful response; returns the requested pubKeyObject
+          description: Successful response; returns the requested public key
           schema:
             $ref: '#/definitions/PublicKey'
         '400':
@@ -143,7 +141,7 @@ paths:
       responses:
         '200':
           description: >-
-            Successful response; returns the pubKeyObject that has been deleted
+            Successful response; returns the public key that has been deleted
             from the keyRegistry
           schema:
             $ref: '#/definitions/PublicKey'
@@ -424,8 +422,8 @@ definitions:
     required:
       - hwDeviceId
       - pubKey
+      - pubKeyId
       - algorithm
-      - previousPubKey
       - created
       - validNotBefore
     properties:
@@ -435,10 +433,13 @@ definitions:
       pubKey:
         type: string
         description: Base64 encoded public key
+      pubKeyId:
+        type: string
+        description: hash of _pubKey_ (algorithm tends to depend on _algorithm_)
       algorithm:
         type: string
         description: algorithm of the public key
-      previousPubKey:
+      previousPubKeyId:
         type: string
         description: (optional) Base64 encoded predecessor key
       created:
@@ -458,10 +459,10 @@ definitions:
     type: object
     discriminator: publicKey
     required:
-      - pubkeyInfo
+      - pubKeyInfo
       - signature
     properties:
-      pubkeyInfo:
+      pubKeyInfo:
         $ref: '#/definitions/PublicKeyInfo'
       signature:
         type: string
@@ -480,7 +481,7 @@ definitions:
     properties:
       signature:
         type: string
-        description: signature of this package signes the payload
+        description: signature of this package signs the payload
       pubKey:
         type: string
         description: the pub key to check the signature
@@ -564,21 +565,6 @@ definitions:
         description: >-
           if true then the value of this nonce is encrypted, if false then it's
           decrypted and in plain text
-  PubKeyObject:
-    description: public key object with the pubKey and it's unique pubKeyId
-    allOf:
-      - $ref: '#/definitions/SignedPackage'
-      - type: object
-        required:
-          - payload
-        properties:
-          payload:
-            type: object
-            required:
-              - pubKeyRef
-            properties:
-              pubKeyRef:
-                $ref: '#/definitions/PubKey'
   HandshakeObject:
     type: object
     description: >-
