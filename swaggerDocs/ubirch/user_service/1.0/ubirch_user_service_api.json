@@ -58,7 +58,7 @@
           "200": {
             "description": "context creation was successful",
             "schema": {
-              "$ref": "#/definitions/ContextResponse"
+              "$ref": "#/definitions/Context"
             }
           },
           "400": {
@@ -84,7 +84,7 @@
             "name": "updated context",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ContextUpdateRequest"
+              "$ref": "#/definitions/Context"
             }
           }
         ],
@@ -92,13 +92,260 @@
           "200": {
             "description": "context update was successful",
             "schema": {
-              "$ref": "#/definitions/ContextResponse"
+              "$ref": "#/definitions/Context"
             }
           },
           "400": {
             "description": "context update failed",
             "schema": {
               "$ref": "#/definitions/ContextUpdateError"
+            }
+          }
+        }
+      }
+    },
+    "/context/{id}": {
+      "get": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "get context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "context's UUID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully loaded context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to load context",
+            "schema": {
+              "$ref": "#/definitions/ContextQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "delete context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "context's UUID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to delete context",
+            "schema": {
+              "$ref": "#/definitions/ContextDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/context/byName/{name}": {
+      "get": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "get context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "context's name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully loaded context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to load context",
+            "schema": {
+              "$ref": "#/definitions/ContextQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "delete context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "context's name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to delete context",
+            "schema": {
+              "$ref": "#/definitions/ContextDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "create user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user object",
+            "description": "user to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully created user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "failed to load context",
+            "schema": {
+              "$ref": "#/definitions/UserCreateError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "update user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user object",
+            "description": "user to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully created user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "failed to update context",
+            "schema": {
+              "$ref": "#/definitions/UserUpdateError"
+            }
+          }
+        }
+      }
+    },
+    "/user/{provider_id}/{external_user_id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "provider_id",
+          "description": "providerId a user is with",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "name": "external_user_id",
+          "description": "userId with the OpenID Connect providerId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "find user based on providerId and externalUserId",
+        "responses": {
+          "200": {
+            "description": "successfully found user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "failed to load user",
+            "schema": {
+              "$ref": "#/definitions/UserQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "delete user based on providerId and externalUserId",
+        "responses": {
+          "200": {
+            "description": "successfully deleted user"
+          },
+          "400": {
+            "description": "failed to delete user",
+            "schema": {
+              "$ref": "#/definitions/UserDeleteError"
             }
           }
         }
@@ -211,14 +458,7 @@
         "displayName": {
           "type": "string"
         }
-      }
-    },
-    "ContextResponse": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/Context"
-        }
-      ],
+      },
       "example": {
         "id": "9203d4b9-5361-4414-be08-7e56796712aa",
         "displayName": "ubirch-local"
@@ -237,17 +477,6 @@
         "errorMessage": "context already exists"
       }
     },
-    "ContextUpdateRequest": {
-      "allOf": [
-        {
-          "$ref": "#/definitions/Context"
-        }
-      ],
-      "example": {
-        "id": "9203d4b9-5361-4414-be08-7e56796712aa",
-        "displayName": "ubirch-local"
-      }
-    },
     "ContextUpdateError": {
       "allOf": [
         {
@@ -258,7 +487,146 @@
         "version": "1.0",
         "status": "NOK",
         "errorType": "UpdateError",
-        "errorMessage": "failed to update contex"
+        "errorMessage": "failed to update context"
+      }
+    },
+    "ContextQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "not found"
+      }
+    },
+    "ContextDeleteError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "DeleteError",
+        "errorMessage": "failed to delete context"
+      }
+    },
+    "UserCreateRequest": {
+      "description": "a user as we create it",
+      "type": "object",
+      "required": [
+        "externalId",
+        "providerId",
+        "displayName",
+        "locale"
+      ],
+      "properties": {
+        "externalId": {
+          "type": "string",
+          "description": "user id with the OpenID Connect provider"
+        },
+        "providerId": {
+          "type": "string",
+          "description": "our id for the OpenID Connect provider"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "externalId": "asdf-1234",
+        "providerId": "google",
+        "displayName": "Jane Someone",
+        "locale": "en"
+      }
+    },
+    "User": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/UserCreateRequest"
+        }
+      ],
+      "description": "a user object",
+      "type": "object",
+      "required": [
+        "id",
+        "externalId",
+        "providerId",
+        "displayName",
+        "locale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "user id (UUID)"
+        }
+      },
+      "example": {
+        "id": "f74bb67b-ae2d-4101-8490-5f3f52137527",
+        "externalId": "asdf-1234",
+        "providerId": "google",
+        "displayName": "Jane Someone",
+        "locale": "en"
+      }
+    },
+    "UserCreateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "CreateError",
+        "errorMessage": "user already exists"
+      }
+    },
+    "UserUpdateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to update user"
+      }
+    },
+    "UserQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "failed to find user"
+      }
+    },
+    "UserDeleteError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "DeleteError",
+        "errorMessage": "failed to delete user"
       }
     }
   }
