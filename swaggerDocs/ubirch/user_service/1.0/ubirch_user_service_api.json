@@ -1,0 +1,265 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ubirch user service REST API",
+    "description": "This is the definition of the ubirch user service REST API containing the following parts:|\n- RAW data interface for syncronizing devices with their avatars\n- devices CRUD endpoints"
+  },
+  "basePath": "/api/userService/v1",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "user service",
+          "health"
+        ],
+        "summary": "health monitor",
+        "description": "allows a quick check if the service is still up.",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse200"
+            }
+          },
+          "400": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse400"
+            }
+          }
+        }
+      }
+    },
+    "/context": {
+      "post": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "create a context",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "new context",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContextCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "context creation was successful",
+            "schema": {
+              "$ref": "#/definitions/ContextResponse"
+            }
+          },
+          "400": {
+            "description": "context creation failed",
+            "schema": {
+              "$ref": "#/definitions/ContextCreateError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "update a context",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "updated context",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContextUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "context update was successful",
+            "schema": {
+              "$ref": "#/definitions/ContextResponse"
+            }
+          },
+          "400": {
+            "description": "context update failed",
+            "schema": {
+              "$ref": "#/definitions/ContextUpdateError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "HealthResponse200": {
+      "description": "response if server is healthy",
+      "type": "object",
+      "required": [
+        "version",
+        "status",
+        "message"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NOK"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "version": "1.0",
+        "status": "OK",
+        "message": "Welcome to the ubirchUserService"
+      }
+    },
+    "HealthResponse400": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/HealthResponse200"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "message": "this is some error message"
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "object with API version, status and error type and error message",
+      "required": [
+        "apiVersion",
+        "status",
+        "errorType",
+        "errorMessage"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "NOK"
+          ]
+        },
+        "errorType": {
+          "type": "string",
+          "enum": [
+            "CreateError",
+            "DeleteError",
+            "InitDataFailed",
+            "QueryError",
+            "ServerError",
+            "UpdateError"
+          ]
+        },
+        "errorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextCreateRequest": {
+      "description": "a context was successfully created",
+      "type": "object",
+      "required": [
+        "displayName"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "displayName": "ubirch-local"
+      }
+    },
+    "Context": {
+      "type": "object",
+      "required": [
+        "id",
+        "displayName"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "context id (UUID)"
+        },
+        "displayName": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Context"
+        }
+      ],
+      "example": {
+        "id": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "displayName": "ubirch-local"
+      }
+    },
+    "ContextCreateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "CreateError",
+        "errorMessage": "context already exists"
+      }
+    },
+    "ContextUpdateRequest": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Context"
+        }
+      ],
+      "example": {
+        "id": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "displayName": "ubirch-local"
+      }
+    },
+    "ContextUpdateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to update contex"
+      }
+    }
+  }
+}
