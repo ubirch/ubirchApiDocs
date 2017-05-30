@@ -254,7 +254,7 @@
             }
           },
           "400": {
-            "description": "failed to load context",
+            "description": "failed to create user",
             "schema": {
               "$ref": "#/definitions/UserCreateError"
             }
@@ -286,7 +286,7 @@
             }
           },
           "400": {
-            "description": "failed to update context",
+            "description": "failed to update user",
             "schema": {
               "$ref": "#/definitions/UserUpdateError"
             }
@@ -346,6 +346,266 @@
             "description": "failed to delete user",
             "schema": {
               "$ref": "#/definitions/UserDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/group": {
+      "post": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "create group",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "group object",
+            "description": "group to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully created group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to create group",
+            "schema": {
+              "$ref": "#/definitions/GroupCreateError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "update group",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "group object",
+            "description": "group to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully updated group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupUpdateError"
+            }
+          }
+        }
+      }
+    },
+    "/group/{group_id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "group_id",
+          "description": "a group's UUID",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "load group",
+        "responses": {
+          "200": {
+            "description": "successfully loaded group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to load group",
+            "schema": {
+              "$ref": "#/definitions/GroupQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "delete group",
+        "responses": {
+          "200": {
+            "description": "successfully deleted group"
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/group/byName/{name}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "name",
+          "description": "a group's name",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "load group",
+        "responses": {
+          "200": {
+            "description": "successfully loaded group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to load group",
+            "schema": {
+              "$ref": "#/definitions/GroupQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "delete group",
+        "responses": {
+          "200": {
+            "description": "successfully deleted group"
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/group/allowedUsers": {
+      "parameters": [
+        {
+          "in": "body",
+          "name": "allowed user object",
+          "description": "allowed users to add",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/AllowedUsers"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "2BImplemented",
+          "user service",
+          "group"
+        ],
+        "summary": "add users to a group as allowed (allows them to access data of devices assigned to this group)",
+        "responses": {
+          "200": {
+            "description": "successfully added users as allowed"
+          },
+          "400": {
+            "description": "failed to add users as allowed",
+            "schema": {
+              "$ref": "#/definitions/GroupAddAllowedError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "2BImplemented",
+          "user service",
+          "group"
+        ],
+        "summary": "delete group",
+        "responses": {
+          "200": {
+            "description": "successfully deleted group"
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupDeleteAllowedError"
+            }
+          }
+        }
+      }
+    },
+    "/group/memberOf/{context_name}/{provider_id}/{external_user_id}": {
+      "get": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "load all groups a user owns or is a member of",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "context_name",
+            "description": "context name as defined in database",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "provider_id",
+            "description": "internal providerId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "external_user_id",
+            "description": "userId as with the OpenID Connect provider",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "empty if no groups are found",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Group"
+              }
             }
           }
         }
@@ -627,6 +887,179 @@
         "status": "NOK",
         "errorType": "DeleteError",
         "errorMessage": "failed to delete user"
+      }
+    },
+    "GroupCreateRequest": {
+      "description": "a group as we create it",
+      "type": "object",
+      "required": [
+        "displayName",
+        "ownerId",
+        "contextId"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "id of the user owning the group (UUID)"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "id of the context this group exists in (UUID)"
+        },
+        "allowedUsers": {
+          "description": "a list of userIds allowed to access devices assigned to this group",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "userId (UUID)"
+          }
+        },
+        "adminGroup": {
+          "type": "boolean",
+          "description": "only if set and \"true\" all users in this group are admins; usually this field is left out"
+        }
+      },
+      "example": {
+        "displayName": "My Personal Group",
+        "ownerId": "d86df828-d4a1-455a-ad38-0d7fb5cec4db",
+        "contextId": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "allowedUsers": ["3beebf40-a82c-4b29-b5ab-3cdc246dc820"],
+        "adminGroup": true
+      }
+    },
+    "Group": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/GroupCreateRequest"
+        }
+      ],
+      "description": "a group object",
+      "type": "object",
+      "required": [
+        "id",
+        "displayName",
+        "ownerId",
+        "contextId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "group id (UUID)"
+        }
+      },
+      "example": {
+        "id": "f74bb67b-ae2d-4101-8490-5f3f52137527",
+        "displayName": "My Personal Group",
+        "ownerId": "d86df828-d4a1-455a-ad38-0d7fb5cec4db",
+        "contextId": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "allowedUsers": ["3beebf40-a82c-4b29-b5ab-3cdc246dc820"],
+        "adminGroup": true
+      }
+    },
+    "GroupCreateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "CreateError",
+        "errorMessage": "failed to create group"
+      }
+    },
+    "GroupUpdateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to update group"
+      }
+    },
+    "GroupQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "failed to find group"
+      }
+    },
+    "GroupDeleteError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "DeleteError",
+        "errorMessage": "failed to delete group"
+      }
+    },
+    "AllowedUsers": {
+      "description": "add/remove users to/from a group's _allowedUsers_ list",
+      "type": "object",
+      "required": [
+        "groupId",
+        "allowedUsers"
+      ],
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "description": "UUID of the group to update"
+        },
+        "allowedUsers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "userId (UUID)"
+          }
+        }
+      },
+      "example": {
+        "groupId": "d9f9668c-1e93-4664-b567-ac575ffe84a3",
+        "allowedUsers": ["6b4b0457-9830-485b-971d-e23b1d22048c"]
+      }
+    },
+    "GroupAddAllowedError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to add allowed users"
+      }
+    },
+    "GroupDeleteAllowedError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to delete allowed users"
       }
     }
   }
