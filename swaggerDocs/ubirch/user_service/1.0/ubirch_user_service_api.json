@@ -467,56 +467,6 @@
         }
       }
     },
-    "/group/byName/{name}": {
-      "parameters": [
-        {
-          "in": "path",
-          "name": "name",
-          "description": "a group's name",
-          "required": true,
-          "type": "string"
-        }
-      ],
-      "get": {
-        "tags": [
-          "user service",
-          "group"
-        ],
-        "summary": "load group",
-        "responses": {
-          "200": {
-            "description": "successfully loaded group",
-            "schema": {
-              "$ref": "#/definitions/Group"
-            }
-          },
-          "400": {
-            "description": "failed to load group",
-            "schema": {
-              "$ref": "#/definitions/GroupQueryError"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "user service",
-          "group"
-        ],
-        "summary": "delete group",
-        "responses": {
-          "200": {
-            "description": "successfully deleted group"
-          },
-          "400": {
-            "description": "failed to update group",
-            "schema": {
-              "$ref": "#/definitions/GroupDeleteError"
-            }
-          }
-        }
-      }
-    },
     "/group/allowedUsers": {
       "parameters": [
         {
