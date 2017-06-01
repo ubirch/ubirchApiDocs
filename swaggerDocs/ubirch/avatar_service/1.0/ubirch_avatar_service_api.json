@@ -60,7 +60,7 @@
                         "description": "the device object with the new device data that should be created; MUST contain the new unique device id, that MUST NOT exist already",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/DeviceObject"
+                            "$ref": "#/definitions/DeviceCreate"
                         }
                     }
                 ],
@@ -776,7 +776,7 @@
                 "inSync": false
             }
         },
-        "DeviceObject": {
+        "DeviceCreate": {
             "description": "object for devices CRUD",
             "type": "object",
             "required": [
@@ -837,6 +837,93 @@
             },
             "example": {
                 "deviceId": "756c348e-c17a-4bde-9c26-b8265877650c",
+                "deviceTypeKey": "envSensor",
+                "deviceName": "testHans001",
+                "hwDeviceId": "7ef3da31-4223-4ddc-ad51-0f11750b1613",
+                "hashedHwDeviceId": "OO0qCisAGHrly4t5Hpa8HYznnF4VFwtmvOMl1beelYw2yd57NyX8gTXKwSDo9i7xXYmqV4n3Xkk56row9rOoKw==",
+                "tags": [
+                    "ubirch#1",
+                    "sensor",
+                    "btcDemo"
+                ],
+                "deviceConfig": {
+                    "i": 900,
+                    "th": 3600
+                },
+                "deviceProperties": {
+                    "storesdata": "true",
+                    "blockChain": "true"
+                },
+                "created": "2016-12-08T11:59:00.942Z"
+            }
+        },
+        "DeviceObject": {
+            "description": "object for devices CRUD",
+            "type": "object",
+            "required": [
+                "deviceId",
+                "groups",
+                "hwDeviceId"
+            ],
+            "properties": {
+                "deviceId": {
+                    "description": "UUID, unique id of the device",
+                    "type": "string"
+                },
+                "groups": {
+                    "description": "Set[UUID]: groups the user owns or is allowed access to",
+                    "type": "string"
+                },
+                "deviceName": {
+                    "description": "name of the device, used in the UI; specified by user or generated on server; not necessarily unique",
+                    "type": "string"
+                },
+                "deviceTypeKey": {
+                    "description": "key of the device type; all specified device types can be accessed from the avatar service deviceType endpoint /device/deviceType",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "timestamp when record of this device is created in database",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "updated": {
+                    "description": "timestamp of the last update of this database record",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "hwDeviceId": {
+                    "description": "hardware device id",
+                    "type": "string"
+                },
+                "hashedHwDeviceId": {
+                    "description": "hashed hardware device id",
+                    "type": "string"
+                },
+                "deviceProperties": {
+                    "$ref": "#/definitions/DeviceProperties"
+                },
+                "deviceConfig": {
+                    "$ref": "#/definitions/DeviceConfig"
+                },
+                "tags": {
+                    "type": "array",
+                    "description": "tags for filtering groups of devices",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subscriptions": {
+                    "type": "array",
+                    "description": "list of devices this device has subscribed to - this device will receive values from them",
+                    "items": {
+                        "$ref": "#/definitions/Subscription"
+                    }
+                }
+            },
+            "example": {
+                "deviceId": "756c348e-c17a-4bde-9c26-b8265877650c",
+                "groups": ["ca39372b-38cc-4129-9ca6-1dc8608e7ee8", "c7a64ad9-cd64-4c65-bb5a-ac1ddc7efb3f"],
                 "deviceTypeKey": "envSensor",
                 "deviceName": "testHans001",
                 "hwDeviceId": "7ef3da31-4223-4ddc-ad51-0f11750b1613",

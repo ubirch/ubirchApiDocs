@@ -1,0 +1,1016 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ubirch user service REST API",
+    "description": "This is the definition of the ubirch user service REST API containing the following parts:|\n- RAW data interface for syncronizing devices with their avatars\n- devices CRUD endpoints"
+  },
+  "basePath": "/api/userService/v1",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "user service",
+          "health"
+        ],
+        "summary": "health monitor",
+        "description": "allows a quick check if the service is still up.",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse200"
+            }
+          },
+          "400": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse400"
+            }
+          }
+        }
+      }
+    },
+    "/context": {
+      "post": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "create a context",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "new context",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContextCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "context creation was successful",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "context creation failed",
+            "schema": {
+              "$ref": "#/definitions/ContextCreateError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "update a context",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "updated context",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "context update was successful",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "context update failed",
+            "schema": {
+              "$ref": "#/definitions/ContextUpdateError"
+            }
+          }
+        }
+      }
+    },
+    "/context/{id}": {
+      "get": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "get context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "context's UUID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully loaded context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to load context",
+            "schema": {
+              "$ref": "#/definitions/ContextQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "delete context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "context's UUID",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to delete context",
+            "schema": {
+              "$ref": "#/definitions/ContextDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/context/byName/{name}": {
+      "get": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "get context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "context's name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully loaded context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to load context",
+            "schema": {
+              "$ref": "#/definitions/ContextQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "context"
+        ],
+        "summary": "delete context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "description": "context's name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted context",
+            "schema": {
+              "$ref": "#/definitions/Context"
+            }
+          },
+          "400": {
+            "description": "failed to delete context",
+            "schema": {
+              "$ref": "#/definitions/ContextDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "create user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user object",
+            "description": "user to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully created user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "failed to create user",
+            "schema": {
+              "$ref": "#/definitions/UserCreateError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "update user",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user object",
+            "description": "user to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully created user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "failed to update user",
+            "schema": {
+              "$ref": "#/definitions/UserUpdateError"
+            }
+          }
+        }
+      }
+    },
+    "/user/{provider_id}/{external_user_id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "provider_id",
+          "description": "providerId a user is with",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "in": "path",
+          "name": "external_user_id",
+          "description": "userId with the OpenID Connect providerId",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "find user based on providerId and externalUserId",
+        "responses": {
+          "200": {
+            "description": "successfully found user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "failed to load user",
+            "schema": {
+              "$ref": "#/definitions/UserQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "delete user based on providerId and externalUserId",
+        "responses": {
+          "200": {
+            "description": "successfully deleted user"
+          },
+          "400": {
+            "description": "failed to delete user",
+            "schema": {
+              "$ref": "#/definitions/UserDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/group": {
+      "post": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "create group",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "group object",
+            "description": "group to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GroupCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully created group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to create group",
+            "schema": {
+              "$ref": "#/definitions/GroupCreateError"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "update group",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "group object",
+            "description": "group to update",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully updated group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupUpdateError"
+            }
+          }
+        }
+      }
+    },
+    "/group/{group_id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "group_id",
+          "description": "a group's UUID",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "load group",
+        "responses": {
+          "200": {
+            "description": "successfully loaded group",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "failed to load group",
+            "schema": {
+              "$ref": "#/definitions/GroupQueryError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "delete group",
+        "responses": {
+          "200": {
+            "description": "successfully deleted group"
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupDeleteError"
+            }
+          }
+        }
+      }
+    },
+    "/group/allowedUsers": {
+      "parameters": [
+        {
+          "in": "body",
+          "name": "allowed user object",
+          "description": "allowed users to add",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/AllowedUsers"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "2BImplemented",
+          "user service",
+          "group"
+        ],
+        "summary": "add users to a group as allowed (allows them to access data of devices assigned to this group)",
+        "responses": {
+          "200": {
+            "description": "successfully added users as allowed"
+          },
+          "400": {
+            "description": "failed to add users as allowed",
+            "schema": {
+              "$ref": "#/definitions/GroupAddAllowedError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "2BImplemented",
+          "user service",
+          "group"
+        ],
+        "summary": "delete group",
+        "responses": {
+          "200": {
+            "description": "successfully deleted group"
+          },
+          "400": {
+            "description": "failed to update group",
+            "schema": {
+              "$ref": "#/definitions/GroupDeleteAllowedError"
+            }
+          }
+        }
+      }
+    },
+    "/group/memberOf/{context_name}/{provider_id}/{external_user_id}": {
+      "get": {
+        "tags": [
+          "user service",
+          "group"
+        ],
+        "summary": "load all groups a user owns or is a member of",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "context_name",
+            "description": "context name as defined in database",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "provider_id",
+            "description": "internal providerId",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "external_user_id",
+            "description": "userId as with the OpenID Connect provider",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "empty if no groups are found",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Group"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "HealthResponse200": {
+      "description": "response if server is healthy",
+      "type": "object",
+      "required": [
+        "version",
+        "status",
+        "message"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NOK"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "version": "1.0",
+        "status": "OK",
+        "message": "Welcome to the ubirchUserService"
+      }
+    },
+    "HealthResponse400": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/HealthResponse200"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "message": "this is some error message"
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "object with API version, status and error type and error message",
+      "required": [
+        "apiVersion",
+        "status",
+        "errorType",
+        "errorMessage"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "NOK"
+          ]
+        },
+        "errorType": {
+          "type": "string",
+          "enum": [
+            "CreateError",
+            "DeleteError",
+            "InitDataFailed",
+            "QueryError",
+            "ServerError",
+            "UpdateError"
+          ]
+        },
+        "errorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "ContextCreateRequest": {
+      "description": "a context was successfully created",
+      "type": "object",
+      "required": [
+        "displayName"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "displayName": "ubirch-local"
+      }
+    },
+    "Context": {
+      "type": "object",
+      "required": [
+        "id",
+        "displayName"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "context id (UUID)"
+        },
+        "displayName": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "id": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "displayName": "ubirch-local"
+      }
+    },
+    "ContextCreateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "CreateError",
+        "errorMessage": "context already exists"
+      }
+    },
+    "ContextUpdateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to update context"
+      }
+    },
+    "ContextQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "not found"
+      }
+    },
+    "ContextDeleteError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "DeleteError",
+        "errorMessage": "failed to delete context"
+      }
+    },
+    "UserCreateRequest": {
+      "description": "a user as we create it",
+      "type": "object",
+      "required": [
+        "externalId",
+        "providerId",
+        "displayName",
+        "locale"
+      ],
+      "properties": {
+        "externalId": {
+          "type": "string",
+          "description": "user id with the OpenID Connect provider"
+        },
+        "providerId": {
+          "type": "string",
+          "description": "our id for the OpenID Connect provider"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "externalId": "asdf-1234",
+        "providerId": "google",
+        "displayName": "Jane Someone",
+        "locale": "en"
+      }
+    },
+    "User": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/UserCreateRequest"
+        }
+      ],
+      "description": "a user object",
+      "type": "object",
+      "required": [
+        "id",
+        "externalId",
+        "providerId",
+        "displayName",
+        "locale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "user id (UUID)"
+        }
+      },
+      "example": {
+        "id": "f74bb67b-ae2d-4101-8490-5f3f52137527",
+        "externalId": "asdf-1234",
+        "providerId": "google",
+        "displayName": "Jane Someone",
+        "locale": "en"
+      }
+    },
+    "UserCreateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "CreateError",
+        "errorMessage": "user already exists"
+      }
+    },
+    "UserUpdateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to update user"
+      }
+    },
+    "UserQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "failed to find user"
+      }
+    },
+    "UserDeleteError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "DeleteError",
+        "errorMessage": "failed to delete user"
+      }
+    },
+    "GroupCreateRequest": {
+      "description": "a group as we create it",
+      "type": "object",
+      "required": [
+        "displayName",
+        "ownerId",
+        "contextId"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "id of the user owning the group (UUID)"
+        },
+        "contextId": {
+          "type": "string",
+          "description": "id of the context this group exists in (UUID)"
+        },
+        "allowedUsers": {
+          "description": "a list of userIds allowed to access devices assigned to this group",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "userId (UUID)"
+          }
+        },
+        "adminGroup": {
+          "type": "boolean",
+          "description": "only if set and \"true\" all users in this group are admins; usually this field is left out"
+        }
+      },
+      "example": {
+        "displayName": "My Personal Group",
+        "ownerId": "d86df828-d4a1-455a-ad38-0d7fb5cec4db",
+        "contextId": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "allowedUsers": ["3beebf40-a82c-4b29-b5ab-3cdc246dc820"],
+        "adminGroup": true
+      }
+    },
+    "Group": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/GroupCreateRequest"
+        }
+      ],
+      "description": "a group object",
+      "type": "object",
+      "required": [
+        "id",
+        "displayName",
+        "ownerId",
+        "contextId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "group id (UUID)"
+        }
+      },
+      "example": {
+        "id": "f74bb67b-ae2d-4101-8490-5f3f52137527",
+        "displayName": "My Personal Group",
+        "ownerId": "d86df828-d4a1-455a-ad38-0d7fb5cec4db",
+        "contextId": "9203d4b9-5361-4414-be08-7e56796712aa",
+        "allowedUsers": ["3beebf40-a82c-4b29-b5ab-3cdc246dc820"],
+        "adminGroup": true
+      }
+    },
+    "GroupCreateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "CreateError",
+        "errorMessage": "failed to create group"
+      }
+    },
+    "GroupUpdateError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to update group"
+      }
+    },
+    "GroupQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "failed to find group"
+      }
+    },
+    "GroupDeleteError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "DeleteError",
+        "errorMessage": "failed to delete group"
+      }
+    },
+    "AllowedUsers": {
+      "description": "add/remove users to/from a group's _allowedUsers_ list",
+      "type": "object",
+      "required": [
+        "groupId",
+        "allowedUsers"
+      ],
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "description": "UUID of the group to update"
+        },
+        "allowedUsers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "userId (UUID)"
+          }
+        }
+      },
+      "example": {
+        "groupId": "d9f9668c-1e93-4664-b567-ac575ffe84a3",
+        "allowedUsers": ["6b4b0457-9830-485b-971d-e23b1d22048c"]
+      }
+    },
+    "GroupAddAllowedError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to add allowed users"
+      }
+    },
+    "GroupDeleteAllowedError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "UpdateError",
+        "errorMessage": "failed to delete allowed users"
+      }
+    }
+  }
+}
