@@ -21,6 +21,11 @@
         "name": "ubirch Key Service",
         "version": "0.5",
         "uri": "/ubirch/key_service/0.5/ubirch_key_service_api.yaml"
+      },
+      {
+        "name": "ubirch User Service",
+        "version": "1.0",
+        "uri": "/ubirch/user_service/1.0/ubirch_user_service_api.json"
       }
     ]
   },
