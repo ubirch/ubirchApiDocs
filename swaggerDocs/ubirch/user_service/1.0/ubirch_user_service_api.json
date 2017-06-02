@@ -560,6 +560,35 @@
           }
         }
       }
+    },
+    "/initData/{env_name}": {
+      "get": {
+        "tags": [
+          "user service",
+          "init"
+        ],
+        "summary": "initialize contexts and create an admin user with a group in each context",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "env_name",
+            "description": "the postfix for every context being created (e.g.: \"local\", \"dev\", \"demo\", ...)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "contexts, admin user and admin group have been created or already exist",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "OK"
+              ]
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
