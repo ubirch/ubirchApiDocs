@@ -378,7 +378,11 @@ paths:
       tags:
         - user service
         - init
-      summary: initialize contexts and create an admin user with a group in each context
+      summary: |-
+        initialize contexts and create an admin user with a group in each context
+         depends on two environment variables:
+        * ADMIN_PROVIDER_ID (e.g.: "google"
+        * ADMIN_EXTERNAL_ID (user id with the OpenID Connect provider)
       parameters:
         - in: path
           name: env_name

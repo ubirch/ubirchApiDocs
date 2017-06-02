@@ -567,7 +567,7 @@
           "user service",
           "init"
         ],
-        "summary": "initialize contexts and create an admin user with a group in each context",
+        "summary": "initialize contexts and create an admin user with a group in each context\n depends on two environment variables:\n* ADMIN_PROVIDER_ID (e.g.: \"google\"\n* ADMIN_EXTERNAL_ID (user id with the OpenID Connect provider)",
         "parameters": [
           {
             "in": "path",
