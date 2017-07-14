@@ -5,249 +5,293 @@
     "title": "ubirch REST API",
     "description": "This is the definition of the ubirch chain service REST API containing the following parts:|\n- chain service endpoints, to get information about certificates, blockchain entries and bitcoin/etherium anchors to notarize that a message was sent"
   },
-  "basePath": "/api",
+  "basePath": "/api/v1/chainService",
   "produces": [
     "application/json"
   ],
   "paths": {
-    "/chainService/explorer/eventHash/{eventHash}": {
+    "/": {
       "get": {
         "tags": [
-          "chainservice",
-          "revisionNeeded"
+          "chain service",
+          "health"
         ],
-        "summary": "short block Info for an event hash",
-        "description": "returns blockInfo of the block in which this event hash has been inserted",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "eventHash",
-            "description": "event hash of the message for which the notorization state should be checked",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "summary": "health monitor",
+        "description": "allows a quick check if the service is still up.",
         "responses": {
           "200": {
-            "description": "Successful response; returns the short info of the block in which this message is part of",
+            "description": "everything is fine",
             "schema": {
-              "$ref": "#/definitions/BlockInfo"
+              "$ref": "#/definitions/HealthResponse200"
             }
           },
           "400": {
-            "description": "Not successful response",
+            "description": "something is not fine",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/HealthResponse400"
             }
           }
         }
       }
     },
-    "/chainService/explorer/blockInfo/{blockHash}": {
+    "/deepCheck": {
       "get": {
         "tags": [
-          "chainservice",
-          "revisionNeeded"
+          "chain service",
+          "health"
         ],
-        "summary": "short block Info of the referenced block",
-        "description": "returns blockInfo of the block with the given block hash",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "blockHash",
-            "description": "block hash of the requested block",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "summary": "deep check health monitor",
+        "description": "allows a deep check if the service is still up.",
         "responses": {
           "200": {
-            "description": "Successful response; returns the short info of the requested block",
+            "description": "everything is fine",
             "schema": {
-              "$ref": "#/definitions/BlockInfo"
+              "$ref": "#/definitions/DeepCheckResponse200"
             }
           },
           "400": {
-            "description": "Not successful response",
+            "description": "something is not fine",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/DeepCheckResponse400"
+            }
+          },
+          "500": {
+            "description": "server has a problem",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckError500"
             }
           }
         }
       }
     },
-    "/chainService/explorer/nextBlockInfo/{blockHash}": {
-      "get": {
+    "/tx/deviceMsg": {
+      "post": {
         "tags": [
-          "chainservice",
-          "revisionNeeded"
+          "chain service",
+          "transaction"
         ],
-        "summary": "short block Info of the next block",
-        "description": "returns blockInfo of the next block",
+        "summary": "",
+        "consumes": [
+          "application/json"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "blockHash",
-            "description": "block hash of the block previous of the requested block",
+            "in": "body",
+            "name": "device message",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/DeviceMessageWriteRequest"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response; returns the short info of the requested block",
-            "schema": {
-              "$ref": "#/definitions/BlockInfo"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "description": "Message was accepted and will be written to BigchainDB. There is no guarantee of this operation's success. Please use the explorer endpoints for this."
           }
         }
       }
     },
-    "/chainService/explorer/fullBlock/{blockHash}": {
-      "get": {
+    "/tx/deviceMsgHash": {
+      "post": {
         "tags": [
-          "chainservice",
-          "revisionNeeded"
+          "chain service",
+          "transaction"
         ],
-        "summary": "full block data of the referenced block",
-        "description": "returns all data stored in the block with the given block hash",
+        "summary": "",
+        "consumes": [
+          "application/json"
+        ],
         "parameters": [
           {
-            "in": "path",
-            "name": "blockHash",
-            "description": "block hash of the requested block",
+            "in": "body",
+            "name": "device message hash",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/DeviceMessageHashWriteRequest"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response; returns full block data of the requested block",
-            "schema": {
-              "$ref": "#/definitions/FullBlock"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
+            "description": "Message was accepted and will be written to BigchainDB. There is no guarantee of this operation's success. Please use the explorer endpoints for this."
           }
         }
       }
     }
   },
   "definitions": {
-    "BlockInfo": {
+    "HealthResponse200": {
+      "description": "response if server is healthy",
       "type": "object",
-      "description": "short information abaut this chaining block",
+      "required": [
+        "version",
+        "status",
+        "message"
+      ],
       "properties": {
-        "hash": {
-          "type": "string",
-          "description": "the hash value of the block, in which the event hash of the message has been mined"
-        },
-        "previousBlockHash": {
-          "type": "string",
-          "description": "the hash value of the previous block of the block, in which the event hash of the message has been mined"
-        },
-        "number": {
-          "type": "integer",
-          "description": "block number"
-        },
-        "created": {
-          "type": "string",
-          "format": "time-date",
-          "description": "timestamp of the creation of this block"
-        },
         "version": {
-          "type": "string",
-          "description": "version of format"
+          "type": "string"
         },
-        "anchors": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NOK"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "version": "1.0",
+        "status": "OK",
+        "message": "Welcome to the ubirchChainService"
+      }
+    },
+    "HealthResponse400": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/HealthResponse200"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "message": "this is some error message"
+      }
+    },
+    "DeepCheckResponse200": {
+      "description": "response if server is healthy",
+      "type": "object",
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "boolean"
+        },
+        "message": {
           "type": "array",
-          "description": "anchors which which this block and the previous blocks are anchored in bitcoin or etherium chain for notarization",
           "items": {
-            "$ref": "#/definitions/NotaryAnchor"
+            "type": "string"
           }
+        }
+      },
+      "example": {
+        "status": true,
+        "messages": ["Welcome to the ubirchChainService"]
+      }
+    },
+    "DeepCheckResponse400": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/DeepCheckResponse200"
+        }
+      ],
+      "example": {
+        "status": false,
+        "messages": ["this is some error message", "and there's a second error"]
+      }
+    },
+    "DeviceMessageWriteRequest": {
+      "description": "transaction request to write a device message to BigchainDB",
+      "type": "object",
+      "required": [
+        "id",
+        "payload"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "a unique id that we remember ourselves. this is also used in the explorer methods to find out details about a transaction later."
+        },
+        "payload": {
+          "$ref": "#/definitions/ValidJson"
+        }
+      },
+      "example": {
+        "id": "29e2841b-6cf7-4cba-b0fb-39237521c334",
+        "payload": {
+          "t": 29.067
         }
       }
     },
-    "FullBlock": {
+    "DeviceMessageHashWriteRequest": {
+      "description": "transaction request to write a device message hash to BigchainDB",
       "type": "object",
-      "description": "full information abaut this chaining block containing the merkle tree",
-      "allOf": [
-        {
-          "$ref": "#/definitions/BlockInfo"
+      "required": [
+        "id",
+        "hash"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "a unique id that we remember ourselves. this is also used in the explorer methods to find out details about a transaction later."
         },
-        {
-          "type": "object",
-          "properties": {
-            "hashes": {
-              "type": "array",
-              "description": "array of all hashes this block contains",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
+        "hash": {
+          "type": "string",
+          "description": "hash to remember"
         }
-      ]
+      },
+      "example": {
+        "id": "29e2841b-6cf7-4cba-b0fb-39237521c334",
+        "hash": "e9758380e3f9d2d0b9e0b13e424fcbf94a576c59dcf136b201832d1a687efc86"
+      }
     },
-    "NotaryAnchor": {
+    "ValidJson": {
+      "description": "any valid JSON",
       "type": "object",
-      "description": "bitcoin or etherium anchor to notarize this block and the predecessing blocks"
+      "example": {
+        "t": 29.067
+      }
     },
     "ErrorResponse": {
       "type": "object",
       "description": "error object with error code and message",
       "required": [
-        "apiVersion",
+        "version",
         "status",
-        "error"
+        "errorType",
+        "errorMessage"
       ],
       "properties": {
-        "apiVersion": {
+        "version": {
           "type": "string"
         },
         "status": {
           "type": "string",
-          "description": "KO because it's an error"
+          "enum": [
+            "NOK"
+          ]
         },
-        "error": {
-          "type": "object",
-          "required": [
-            "errorId",
-            "errorMessage"
-          ],
-          "properties": {
-            "errorId": {
-              "type": "string",
-              "enum": [
-                "ErrorTimeOut",
-                "ErrorNotHandled",
-                "ErrorFatalIntern",
-                "ErrorMissingParams",
-                "ErrorParseJson"
-              ]
-            },
-            "errorMessage": {
-              "type": "string",
-              "enum": [
-                "request could not be processed in time",
-                "request could not be handled",
-                "fatal internal error",
-                "missing parameters",
-                "cannot parse incoming json doc"
-              ]
-            }
-          }
+        "errorType": {
+          "type": "string",
+          "enum": [
+            "ServerError"
+          ]
+        },
+        "errorMessage": {
+          "type": "string",
+          "enum": [
+            "sorry, something went wrong on our end",
+            "failed to run deep check"
+          ]
         }
+      }
+    },
+    "DeepCheckError500": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "ServerError",
+        "errorMessage": "sorry, something went wrong on our end"
       }
     }
   }
