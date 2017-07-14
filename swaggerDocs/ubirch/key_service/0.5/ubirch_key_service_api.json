@@ -720,68 +720,61 @@
       "type": "object",
       "description": "error object with error code and message",
       "required": [
-        "apiVersion",
+        "version",
         "status",
-        "error"
+        "errorType",
+        "errorMessage"
       ],
       "properties": {
-        "apiVersion": {
+        "version": {
           "type": "string"
         },
         "status": {
           "type": "string",
           "description": "KO because it's an error"
         },
-        "error": {
-          "type": "object",
-          "required": [
-            "errorId",
-            "errorMessage"
-          ],
-          "properties": {
-            "errorId": {
-              "type": "string",
-              "enum": [
-                "ErrorTimeOut",
-                "ErrorNotHandled",
-                "ErrorFatalIntern",
-                "ErrorMissingParams",
-                "ErrorPubKeyIdExists",
-                "ErrorInvalidPubKeyId",
-                "ErrorUpdatePubKey",
-                "ErrorParseJson",
-                "ErrorCannotDeletePubKey",
-                "ErrorHandshakeCannotFindDestination",
-                "ErrorHandshakeFailedTimeout",
-                "ErrorHandshakeFailedWrongResult",
-                "ErrorInvalidSignature",
-                "ErrorInvalidHandshakeId",
-                "ErrorHandshakeInterrupted",
-                "ErrorNoHandshakeState"
-              ]
-            },
-            "errorMessage": {
-              "type": "string",
-              "enum": [
-                "request could not be processed in time",
-                "request could not be handled",
-                "fatal internal error",
-                "missing parameters",
-                "given pubKeyId for new public key already exists",
-                "cannot find public key for given pubKeyId",
-                "public key for given pubKeyId cannot be updated",
-                "cannot parse incoming json doc",
-                "cannot delete PubKey from datatbase",
-                "cannot find destination given by pubKeyId",
-                "handshake failed because the destination didn't responde in time",
-                "Decrypted result value of handshake process isn't equal with encrypted random value",
-                "Verification of signature failed",
-                "Cannot find handshake data of given handshakeId",
-                "Handshake process has been interrupted by the other part",
-                "Cannot read handshake state of given handshakeId"
-              ]
-            }
-          }
+        "errorType": {
+          "type": "string",
+          "enum": [
+            "ServerError",
+            "ErrorTimeOut",
+            "ErrorNotHandled",
+            "ErrorFatalIntern",
+            "ErrorMissingParams",
+            "ErrorPubKeyIdExists",
+            "ErrorInvalidPubKeyId",
+            "ErrorUpdatePubKey",
+            "ErrorParseJson",
+            "ErrorCannotDeletePubKey",
+            "ErrorHandshakeCannotFindDestination",
+            "ErrorHandshakeFailedTimeout",
+            "ErrorHandshakeFailedWrongResult",
+            "ErrorInvalidSignature",
+            "ErrorInvalidHandshakeId",
+            "ErrorHandshakeInterrupted",
+            "ErrorNoHandshakeState"
+          ]
+        },
+        "errorMessage": {
+          "type": "string",
+          "enum": [
+            "request could not be processed in time",
+            "request could not be handled",
+            "fatal internal error",
+            "missing parameters",
+            "given pubKeyId for new public key already exists",
+            "cannot find public key for given pubKeyId",
+            "public key for given pubKeyId cannot be updated",
+            "cannot parse incoming json doc",
+            "cannot delete PubKey from datatbase",
+            "cannot find destination given by pubKeyId",
+            "handshake failed because the destination didn't responde in time",
+            "Decrypted result value of handshake process isn't equal with encrypted random value",
+            "Verification of signature failed",
+            "Cannot find handshake data of given handshakeId",
+            "Handshake process has been interrupted by the other part",
+            "Cannot read handshake state of given handshakeId"
+          ]
         }
       }
     }
