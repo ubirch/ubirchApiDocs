@@ -2,20 +2,13 @@ swagger: '2.0'
 info:
   version: 1.0.0
   title: ubirch auth service REST API
-  description: >-
-    This is the definition of the ubirch auth service REST API containing the
-    following parts:|
-
+  description: |-
+    This is the definition of the ubirch auth service REST API containing the following parts:|
     - list of OpenID Connect provider (OP) configurations for specified context
-
     - verification and login
-
     - tokens management
-
     - signup
-
     - logout
-
     - userData access
 basePath: /api/authService/v1
 produces:
@@ -41,21 +34,47 @@ paths:
       tags:
         - auth service
         - providerlist
+        - deprecated
+      summary: provider list
+      description: 'Gives us a list of providers configured for a specific context (use _/providerInfo/list/{context}/{appId}_ instead)'
+      parameters:
+        - in: path
+          name: context
+          description: 'the context (e.g. `trackle`, `trackle-dev`, `ubirch`, `ubirch-dev`,...)'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns array of OpenID Connect provider configurations for the given context
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/OpenIDConnectProviderInfo'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/providerInfo/list/{context}/{appId}':
+    get:
+      tags:
+        - auth service
+        - providerlist
       summary: provider list
       description: Gives us a list of providers configured for a specific context
       parameters:
         - in: path
           name: context
-          description: >-
-            the context (e.g. `trackle`, `trackle-dev`, `ubirch`,
-            `ubirch-dev`,...)
+          description: 'the context (e.g. `trackle-local`, `ubirch-dev`, `ubirch-local`,...)'
+          required: true
+          type: string
+        - in: path
+          name: appId
+          description: 'the application id (e.g. `admin-ui`, `ui`, ...)'
           required: true
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns array of OpenID Connect provider
-            configurations for the given context
+          description: Successful response; returns array of OpenID Connect provider configurations for the given context
           schema:
             type: array
             items:
@@ -70,26 +89,17 @@ paths:
         - auth service
         - token administration
       summary: Verify Code
-      description: >-
-        After a successful login at the OP users are being redirect to our
-        frontend. That call includes a _context_, _providerId_, _code_ and
-        _state_. Calling this method has the effect that our system verifies the
-        code and responds with the resulting token. This token can then be used
-        to request protected resources in other backend services.
+      description: 'After a successful login at the OP users are being redirect to our frontend. That call includes a _context_, _providerId_, _code_ and _state_. Calling this method has the effect that our system verifies the code and responds with the resulting token. This token can then be used to request protected resources in other backend services.'
       parameters:
         - in: body
           name: OPCredentials
-          description: >-
-            Credentials from OP login including a _context_, _providerId_,
-            _code_ and _state_
+          description: 'Credentials from OP login including a _context_, _appId_, _providerId_, _code_ and _state_'
           required: true
           schema:
             $ref: '#/definitions/OPCredentials'
       responses:
         '200':
-          description: >-
-            Successful response; the code and state have been verified
-            successfully and a resulting token is returned 
+          description: 'Successful response; the code and state have been verified successfully and a resulting token is returned '
           schema:
             $ref: '#/definitions/Token'
         '400':
@@ -102,9 +112,7 @@ paths:
         - auth service
         - user service
       summary: Register new user
-      description: >-
-        Register a new user for an OP token; precondition - user is already
-        authenticated by OP
+      description: Register a new user for an OP token; precondition - user is already authenticated by OP
       parameters:
         - in: header
           name: Authorization
@@ -113,15 +121,11 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; registration successful; returns stored user
-            data
+          description: Successful response; registration successful; returns stored user data
           schema:
             $ref: '#/definitions/RegisterResponse'
         '400':
-          description: >-
-            registration failed (more detailed information is provided by the
-            error response
+          description: registration failed (more detailed information is provided by the error response
           schema:
             $ref: '#/definitions/ErrorResponse'
   /userInfo:
@@ -143,9 +147,7 @@ paths:
           schema:
             $ref: '#/definitions/UserInfoGetResponse'
         '400':
-          description: >-
-            get failed (more detailed information is provided by the error
-            response
+          description: get failed (more detailed information is provided by the error response
           schema:
             $ref: '#/definitions/ErrorResponse'
     put:
@@ -162,9 +164,7 @@ paths:
           type: string
         - in: body
           name: userData
-          description: >-
-            userData the stored userData shall be updated with containing the OP
-            auth token to identify user
+          description: userData the stored userData shall be updated with containing the OP auth token to identify user
           required: true
           schema:
             $ref: '#/definitions/UserInfoUpdateRequest'
@@ -174,9 +174,7 @@ paths:
           schema:
             $ref: '#/definitions/UserInfoUpdateResponse'
         '400':
-          description: >-
-            update failed (more detailed information is provided by the error
-            response
+          description: update failed (more detailed information is provided by the error response
           schema:
             $ref: '#/definitions/ErrorResponse'
   '/logout/{token}':
@@ -194,9 +192,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; logout is successful (or the token already
-            expired)
+          description: Successful response; logout is successful (or the token already expired)
           schema:
             type: string
             enum:
@@ -212,9 +208,7 @@ definitions:
     properties:
       context:
         type: string
-        description: >-
-          context of our application, e.g. trackle, trackle-dev,
-          ubirch-admin-ui, for which this OP configuration is specified for
+        description: 'context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui, for which this OP configuration is specified for'
       providerId:
         type: string
         description: ubirch internal OpenID Connect provider ID
@@ -223,27 +217,28 @@ definitions:
         description: display name for the ubirch internal OpenID Connect provider ID
       redirectUrl:
         type: string
-        description: >-
-          redirect url to open the login page of the OP; contains all required
-          parameters for the redirection back to our context
+        description: redirect url to open the login page of the OP; contains all required parameters for the redirection back to our context
     example:
       context: trackle-dev
       providerId: google
       name: Google
-      redirectUrl: >-
-        https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II
+      redirectUrl: 'https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=370115332091-kqf5hu698s4sodrvv03ka3bule530rp5.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A10000%2Foidc-callback-google&scope=openid&state=62dxXDHVXO4Do1oivEjdbVwXIIjegysg7KoRVBy7_II'
   OPCredentials:
     type: object
     description: Credentials from OP login
     required:
       - context
+      - appId
       - providerId
       - code
       - state
     properties:
       context:
         type: string
-        description: 'context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui'
+        description: 'context of our application, e.g. trackle-local, trackle-dev, ubirch-demo'
+      appId:
+        type: string
+        description: 'application id, e.g. admin-ui, ui'
       providerId:
         type: string
         description: ubirch internal OpenID Connect provider ID
@@ -252,12 +247,10 @@ definitions:
         description: 'the code we obtained from OP, which has to be verified in our backend'
       state:
         type: string
-        description: >-
-          the state is used to maintain relation between request and callback;
-          state was sent to the OP as part of the redirectUrl; each state can
-          only be used once and is verified in backend
+        description: the state is used to maintain relation between request and callback; state was sent to the OP as part of the redirectUrl; each state can only be used once and is verified in backend
     example:
-      context: ubirch-admin-ui-dev
+      context: ubirch-dev
+      appId: admin-ui
       providerId: google
       code: 4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw
       state: mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k

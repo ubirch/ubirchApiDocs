@@ -37,6 +37,43 @@
       "get": {
         "tags": [
           "auth service",
+          "providerlist",
+          "deprecated"
+        ],
+        "summary": "provider list",
+        "description": "Gives us a list of providers configured for a specific context (use _/providerInfo/list/{context}/{appId}_ instead)",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "context",
+            "description": "the context (e.g. `trackle`, `trackle-dev`, `ubirch`, `ubirch-dev`,...)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns array of OpenID Connect provider configurations for the given context",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/OpenIDConnectProviderInfo"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/providerInfo/list/{context}/{appId}": {
+      "get": {
+        "tags": [
+          "auth service",
           "providerlist"
         ],
         "summary": "provider list",
@@ -45,7 +82,14 @@
           {
             "in": "path",
             "name": "context",
-            "description": "the context (e.g. `trackle`, `trackle-dev`, `ubirch`, `ubirch-dev`,...)",
+            "description": "the context (e.g. `trackle-local`, `ubirch-dev`, `ubirch-local`,...)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "appId",
+            "description": "the application id (e.g. `admin-ui`, `ui`, ...)",
             "required": true,
             "type": "string"
           }
@@ -81,7 +125,7 @@
           {
             "in": "body",
             "name": "OPCredentials",
-            "description": "Credentials from OP login including a _context_, _providerId_, _code_ and _state_",
+            "description": "Credentials from OP login including a _context_, _appId_, _providerId_, _code_ and _state_",
             "required": true,
             "schema": {
               "$ref": "#/definitions/OPCredentials"
@@ -281,6 +325,7 @@
       "description": "Credentials from OP login",
       "required": [
         "context",
+        "appId",
         "providerId",
         "code",
         "state"
@@ -288,7 +333,11 @@
       "properties": {
         "context": {
           "type": "string",
-          "description": "context of our application, e.g. trackle, trackle-dev, ubirch-admin-ui"
+          "description": "context of our application, e.g. trackle-local, trackle-dev, ubirch-demo"
+        },
+        "appId": {
+          "type": "string",
+          "description": "application id, e.g. admin-ui, ui"
         },
         "providerId": {
           "type": "string",
@@ -304,7 +353,8 @@
         }
       },
       "example": {
-        "context": "ubirch-admin-ui-dev",
+        "context": "ubirch-dev",
+        "appId": "admin-ui",
         "providerId": "google",
         "code": "4/Qem2JN-di08_u5KUcVCR7NQFR3qHmRcqwhkC2JSv3Sw",
         "state": "mTyOeZO6JRZLnrEPV9BYqbEh8Upf_f8JVdjvQpdU11k"
