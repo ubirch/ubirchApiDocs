@@ -498,7 +498,11 @@
         },
         "algorithm": {
           "type": "string",
-          "description": "algorithm of the public key"
+          "description": "algorithm of the public key",
+          "enum": [
+            "RSA4096",
+            "ECC_ED25519"
+          ]
         },
         "previousPubKeyId": {
           "type": "string",
