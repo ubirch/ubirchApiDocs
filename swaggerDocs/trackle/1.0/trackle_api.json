@@ -16,6 +16,15 @@
                     "trackle",
                     "device"
                 ],
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "summary": "list of devices",
                 "description": "Query all available devices of authenticated user",
                 "responses": {
@@ -53,6 +62,13 @@
                         "schema": {
                             "$ref": "#/definitions/PeriodObject"
                         }
+                    },
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -71,19 +87,19 @@
                 }
             }
         },
-        "/cycle/info/list/{deviceId}": {
+        "/cycle/info/list": {
             "get": {
                 "tags": [
                     "trackle",
                     "cycle"
                 ],
                 "summary": "list of newest cycles of a user",
-                "description": "returns a list of the 10 (at most) newest cycles of a user as info object (the same as /cycle/info/list/0/10 )\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list\n- maximal 10 cycles - if exist - are returned in a list",
+                "description": "returns a list of the 10 (at most) newest cycles of a user as info object (the same as /cycle/info/list/0/10 )\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list\n- maximal 10 cycles - if exist - are returned in a list\n- only returns cycles if requesting user owns them",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "deviceId",
-                        "description": "id of the device used to measure the temperatures",
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
                         "required": true,
                         "type": "string"
                     }
@@ -107,19 +123,19 @@
                 }
             }
         },
-        "/cycle/info/list/{deviceId}/{from}": {
+        "/cycle/info/list/{from}": {
             "get": {
                 "tags": [
                     "trackle",
                     "cycle"
                 ],
                 "summary": "list of cycle infos for pagination with start index",
-                "description": "returns a list of 10 (at most) info cycle objects of a user starting from defined index\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 10 cycles - if exist - that are older than the the 'from' cycle are returned in a list",
+                "description": "returns a list of 10 (at most) info cycle objects of a user starting from defined index\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 10 cycles - if exist - that are older than the the 'from' cycle are returned in a list\n- only returns cycles if requesting user owns them",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "deviceId",
-                        "description": "id of the device used to measure the temperatures",
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
                         "required": true,
                         "type": "string"
                     },
@@ -150,19 +166,19 @@
                 }
             }
         },
-        "/cycle/info/list/{deviceId}/{from}/{size}": {
+        "/cycle/info/list/{from}/{size}": {
             "get": {
                 "tags": [
                     "trackle",
                     "cycle"
                 ],
                 "summary": "list of cycle infos for pagination with start index and number of maximum list items",
-                "description": "returns a list of info cycle objects of a user starting from defined in 'from' index with at most 'size' number of items\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 'size' number of cycles - if exist - that are older than the the 'from' cycle are returned in a list",
+                "description": "returns a list of info cycle objects of a user starting from defined in 'from' index with at most 'size' number of items\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 'size' number of cycles - if exist - that are older than the the 'from' cycle are returned in a list\n- only returns cycles if requesting user owns them",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "deviceId",
-                        "description": "id of the device used to measure the temperatures",
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
                         "required": true,
                         "type": "string"
                     },
@@ -207,12 +223,19 @@
                     "cycle"
                 ],
                 "summary": "GET cycle data",
-                "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties",
+                "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties\n- only returns cycles if requesting user owns it",
                 "parameters": [
                     {
                         "in": "path",
                         "name": "cycleId",
                         "description": "id of the cycle",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
                         "required": true,
                         "type": "string"
                     }
@@ -238,7 +261,7 @@
                     "cycle"
                 ],
                 "summary": "EDIT cycle data",
-                "description": "edits the data supplied in the request body of the specified cycle",
+                "description": "edits the data supplied in the request body of the specified cycle\n\n- only updates cycle if requesting user owns it",
                 "parameters": [
                     {
                         "in": "path",
@@ -246,6 +269,13 @@
                         "description": "id of the cycle that shall be edited",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                      "in": "header",
+                      "name": "Authorization",
+                      "description": "Bearer token identifying the related user",
+                      "required": true,
+                      "type": "string"
                     },
                     {
                         "in": "body",
@@ -278,7 +308,7 @@
                   "cycle"
                 ],
                 "summary": "DELETE cycle data",
-                "description": "deletes the specified cycle\n\n- a normal trackle user can only delete the current cycle\n- with admin rights all cycles can be removed\n- only the cycle structure is removed\n- the underlying stored temperature data are not deleted by this endpoint\n- because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle\n- if a user deletes the current cycle, the previous cycles becomes the current cycle",
+                "description": "deletes the specified cycle\n\n- a normal trackle user can only delete the current cycle\n- with admin rights all cycles can be removed\n- only the cycle structure is removed\n- the underlying stored temperature data are not deleted by this endpoint\n- because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle\n- if a user deletes the current cycle, the previous cycles becomes the current cycle\n- only deletes cycle if requesting user owns it",
                 "parameters": [
                     {
                         "in": "path",
@@ -286,6 +316,13 @@
                         "description": "id of the cycle curve that shall be deleted",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                      "in": "header",
+                      "name": "Authorization",
+                      "description": "Bearer token identifying the related user",
+                      "required": true,
+                      "type": "string"
                     }
                 ],
                 "responses": {
@@ -301,19 +338,19 @@
                 }
             }
         },
-      "/cycle/current/{deviceId}": {
+      "/cycle/current": {
             "get": {
                 "tags": [
                     "trackle",
                     "cycle"
                 ],
                 "summary": "GET current cycle data",
-                "description": "returns the current, not finished cycle",
+                "description": "returns the current, not finished cycle\n\n- only return cycle if requesting user owns it",
                 "parameters": [
                     {
-                        "in": "path",
-                        "name": "deviceId",
-                        "description": "id of the device used to measure the temperatures",
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
                         "required": true,
                         "type": "string"
                     }
@@ -347,6 +384,13 @@
                         "in": "path",
                         "name": "nightId",
                         "description": "id of the nightCurve; UUID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "header",
+                        "name": "Authorization",
+                        "description": "Bearer token identifying the related user",
                         "required": true,
                         "type": "string"
                     }
@@ -549,7 +593,6 @@
             "description": "info object for cycles; short info of a cycle; contains every info except the basalTemperatures array; especcially for listing cycles and to organize all cycles of a user",
             "required": [
                 "id",
-                "deviceId",
                 "periodBegin",
                 "periodEnd",
                 "cycleEnd"
@@ -558,10 +601,6 @@
                 "id": {
                     "type": "string",
                     "description": "unique id of this cycle"
-                },
-                "deviceId": {
-                    "type": "string",
-                    "description": "UUID of the used device"
                 },
                 "periodBegin": {
                     "type": "string",
@@ -641,7 +680,6 @@
             },
             "example": {
                 "id": "8f77620e-cfb3-4d4b-b12e-631d7485496c",
-                "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
                 "periodBegin": "2016-05-27T00:00:00.000Z",
                 "periodEnd": {
                     "timestamp": "2016-06-01T00:00:00.000Z"
@@ -706,7 +744,6 @@
             ],
             "example": {
                 "id": "3652c261-7d0c-4436-920c-2164fc074529",
-                "deviceId": "d6b178dd-1d2f-44f9-9589-8390d3b0f33a",
                 "periodBegin": "2016-06-28T12:14:45.370Z",
                 "periodEnd": {
                     "timestamp": "2016-07-03T12:14:45.370Z"
@@ -751,14 +788,9 @@
             "type": "object",
             "description": "period object containing the date of the beginning of the period and the device id of the used device",
             "required": [
-                "deviceId",
                 "periodBegin"
             ],
             "properties": {
-                "deviceId": {
-                    "type": "string",
-                    "description": "UUID of the used device"
-                },
                 "periodBegin": {
                     "type": "string",
                     "format": "date-time",
@@ -770,7 +802,6 @@
                 }
             },
             "example": {
-                "deviceId": "881984e7-4808-46aa-93df-45ede4e7d7a4",
                 "periodBegin": "2016-11-16T00:00:00.000Z",
                 "additionalInfos": {}
             }
