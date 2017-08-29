@@ -1,41 +1,32 @@
-# Documentation of the trackle REST API
-# created 23.11.2016, 10:50 from Beate Fiss
-# last update: 19.12.2016, 12:25
 swagger: '2.0'
 info:
-  version: "1.0.0"
+  version: 1.0.0
   title: trackle REST API
-  description:
-  
+  description: |-
     This is the definition of the trackle REST API containing the following parts:|
-    
     - managing cycle data - CRUD
-
-    - getting trackle RAW data of nights
-    
+    - getting trackle RAW data of sleeping periods
     - endpoint to insert menstruation dates
-    
     - get trackle devices of authenticated user
-    
-basePath: '/api/trackleService/v1'
-produces: 
+basePath: /api/trackleService/v1
+produces:
   - application/json
-  
 paths:
-
-###############################################
-#####           trackle Service           #####
-###############################################
-
   /device/info/list:
     get:
       tags:
         - trackle
         - device
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
       summary: list of devices
       description: Query all available devices of authenticated user
       responses:
-        200:
+        '200':
           description: Successful response; returns an array of trackle device info objects
           schema:
             type: array
@@ -45,66 +36,62 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-      
   /period/begin:
     post:
       tags:
         - trackle
         - cycle
       summary: sets a period begin date
-      description: the user inserts the date, when her menstruation has begun; used to finish the current cycle or to start to initial cycle, when the user opens the app the first time
-      
-      
+      description: |-
+        the user inserts the date, when her menstruation has begun; used to finish the current cycle or to start to initial cycle, when the user opens the app the first time
+
         - only possible for the current or initial menstrual cycle
-        
-        
+
         - creates a new 'current' cycle, starting with the inserted period start date
-        
-        
+
         - finishes the currents cycle if exists
-        
       parameters:
         - in: body
           name: period
           description: period object containing the date of the beginning of the period and the device id of the used device
           schema:
             $ref: '#/definitions/PeriodObject'
-
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
       responses:
-        200:
+        '200':
           description: Successful response; returns the new created current cycle beginning with the inserted period start date
           schema:
-              $ref: '#/definitions/CycleObject'
+            $ref: '#/definitions/CycleObject'
         '400':
           description: Not successful response
           schema:
-            $ref: '#/definitions/ErrorResponse'      
-
-  '/cycle/info/list/{deviceId}':
+            $ref: '#/definitions/ErrorResponse'
+  /cycle/info/list:
     get:
       tags:
         - trackle
         - cycle
       summary: list of newest cycles of a user
-      description: returns a list of the 10 (at most) newest cycles of a user as info object (the same as /cycle/info/list/0/10 )
-      
-      
+      description: |-
+        returns a list of the 10 (at most) newest cycles of a user as info object (the same as /cycle/info/list/0/10 )
+
         - sorted by timestamp of periodBegin ( = cycle begin)
-        
         - in descending order, newest cycle first, the oldest at the end of list
-        
         - the current cycle is the element 0 of the list
-
         - maximal 10 cycles - if exist - are returned in a list
-
+        - only returns cycles if requesting user owns them
       parameters:
-        - in: path
-          name: deviceId
-          description: id of the device used to measure the temperatures
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
           required: true
           type: string
       responses:
-        200:
+        '200':
           description: Successful response; returns list of cycle info objects
           schema:
             type: array
@@ -114,27 +101,24 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-  '/cycle/info/list/{deviceId}/{from}':
+  '/cycle/info/list/{from}':
     get:
       tags:
         - trackle
         - cycle
       summary: list of cycle infos for pagination with start index
-      description: returns a list of 10 (at most) info cycle objects of a user starting from defined index
-      
-      
+      description: |-
+        returns a list of 10 (at most) info cycle objects of a user starting from defined index
+
         - sorted by timestamp of periodBegin ( = cycle begin)
-        
         - in descending order, newest cycle first, the oldest at the end of list
-        
         - the cycle number 'from' is the newest cycle, so it's element 0 of the list
-        
         - at most 10 cycles - if exist - that are older than the the 'from' cycle are returned in a list
+        - only returns cycles if requesting user owns them
       parameters:
-        - in: path
-          name: deviceId
-          description: id of the device used to measure the temperatures
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
           required: true
           type: string
         - in: path
@@ -143,8 +127,8 @@ paths:
           required: true
           type: string
       responses:
-        200:
-          description: Successful response; returns list of cycle info objects; for pagination, deliveres the defined part of the whole list
+        '200':
+          description: 'Successful response; returns list of cycle info objects; for pagination, deliveres the defined part of the whole list'
           schema:
             type: array
             items:
@@ -153,27 +137,24 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-  '/cycle/info/list/{deviceId}/{from}/{size}':
+  '/cycle/info/list/{from}/{size}':
     get:
       tags:
         - trackle
         - cycle
       summary: list of cycle infos for pagination with start index and number of maximum list items
-      description: returns a list of info cycle objects of a user starting from defined in 'from' index with at most 'size' number of items
-      
-      
+      description: |-
+        returns a list of info cycle objects of a user starting from defined in 'from' index with at most 'size' number of items
+
         - sorted by timestamp of periodBegin ( = cycle begin)
-        
         - in descending order, newest cycle first, the oldest at the end of list
-        
         - the cycle number 'from' is the newest cycle, so it's element 0 of the list
-        
         - at most 'size' number of cycles - if exist - that are older than the the 'from' cycle are returned in a list
+        - only returns cycles if requesting user owns them
       parameters:
-        - in: path
-          name: deviceId
-          description: id of the device used to measure the temperatures
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
           required: true
           type: string
         - in: path
@@ -187,8 +168,8 @@ paths:
           required: true
           type: string
       responses:
-        200:
-          description: Successful response; returns list of cycle info objects; for pagination, deliveres the defined part of the whole list
+        '200':
+          description: 'Successful response; returns list of cycle info objects; for pagination, deliveres the defined part of the whole list'
           schema:
             type: array
             items:
@@ -197,38 +178,38 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
   '/cycle/id/{cycleId}':
     get:
       tags:
         - trackle
         - cycle
       summary: GET cycle data
-      description: returns
-      
-      
-        - the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle
-        
+      description: |-
+        returns
+
+        - the basal temperature values (= the lowest measured temperature value of each sleeping period) calculated from the sleeping period temperature values of every sleeping period of that cycle
         - information about
-        
-            - menstruation
-            
-            - ovulation
-            
-            - fertile phase
-            
+        - menstruation
+        - ovulation
+        - fertile phase
         - possibly additional properties
+        - only returns cycles if requesting user owns it
       parameters:
         - in: path
           name: cycleId
           description: id of the cycle
           required: true
           type: string
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
       responses:
-        200:
+        '200':
           description: Successful response; returns the requested cycle data
           schema:
-              $ref: '#/definitions/CycleObject'
+            $ref: '#/definitions/CycleObject'
         '400':
           description: Not successful response
           schema:
@@ -238,11 +219,19 @@ paths:
         - trackle
         - cycle
       summary: EDIT cycle data
-      description: edits the data supplied in the request body of the specified cycle
+      description: |-
+        edits the data supplied in the request body of the specified cycle
+
+        - only updates cycle if requesting user owns it
       parameters:
         - in: path
           name: cycleId
           description: id of the cycle that shall be edited
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
           required: true
           type: string
         - in: body
@@ -250,99 +239,102 @@ paths:
           description: cycle object specifying the data of the curve that shall be edited; missing parameters will be deleted
           required: true
           schema:
-              $ref: '#/definitions/CycleInfoObject'
+            $ref: '#/definitions/CycleInfoObject'
       responses:
-        200:
+        '200':
           description: Successful response; returns the updated cycle data
           schema:
-              $ref: '#/definitions/CycleObject'
+            $ref: '#/definitions/CycleObject'
         '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
     delete:
       tags:
         - trackle
         - cycle
       summary: DELETE cycle data
-      description: deletes the specified cycle
-      
-      
+      description: |-
+        deletes the specified cycle
+
         - a normal trackle user can only delete the current cycle
-        
         - with admin rights all cycles can be removed
-        
         - only the cycle structure is removed
-        
         - the underlying stored temperature data are not deleted by this endpoint
-        
         - because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle
-        
         - if a user deletes the current cycle, the previous cycles becomes the current cycle
+        - only deletes cycle if requesting user owns it
       parameters:
         - in: path
           name: cycleId
           description: id of the cycle curve that shall be deleted
           required: true
           type: string
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
       responses:
-        200:
+        '200':
           description: Successful response - no news are good news
         '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-  '/cycle/current/{deviceId}':
+  /cycle/current:
     get:
       tags:
         - trackle
         - cycle
       summary: GET current cycle data
-      description: returns the current, not finished cycle
+      description: |-
+        returns the current, not finished cycle
+
+        - only return cycle if requesting user owns it
       parameters:
-        - in: path
-          name: deviceId
-          description: id of the device used to measure the temperatures
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
           required: true
           type: string
       responses:
-        200:
+        '200':
           description: Successful response; returns the data of the current cycle
           schema:
-              $ref: '#/definitions/CycleObject'
+            $ref: '#/definitions/CycleObject'
         '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-  '/cycle/night/{nightId}':
+  '/cycle/sleepingPeriod/{sleepingPeriodId}':
     get:
       tags:
         - trackle
-        - night
-      summary: night temperature curve
-      description: return the data that has been measured during the night
+        - sleepingPeriod
+      summary: sleeping period temperature curve
+      description: return the data that has been measured during the sleeping period
       parameters:
         - in: path
-          name: nightId
-          description: id of the nightCurve; UUID
+          name: sleepingPeriodId
+          description: id of the sleeping period curve; UUID
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
           required: true
           type: string
       responses:
-        200:
-          description: Successful response; returns the requested night temperature curve
+        '200':
+          description: Successful response; returns the requested sleeping period temperature curve
           schema:
-              $ref: '#/definitions/NightObject'
+            $ref: '#/definitions/SleepingPeriodObject'
         '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-
-###########  trackle service objects  ###########
 definitions:
-
   DeviceInfoObject:
     type: object
     description: short device info; should be a trackle device
@@ -359,17 +351,14 @@ definitions:
         description: name or description of this device so that the user will know which device it is; can be set by a user or the administrator via ubirch admin ui
       deviceTypeKey:
         type: string
-        description: one of the keys, delivered by the device type list REST endpoint of the ubirch REST API; should be 'trackleSensor' here
+        description: 'one of the keys, delivered by the device type list REST endpoint of the ubirch REST API; should be ''trackleSensor'' here'
     example:
-      {
-        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-        "deviceName": "trackle d971aca0-7769-401b-a402-6c42c22be847",
-        "deviceTypeKey": "trackleSensor"
-      }
-
+      deviceId: d971aca0-7769-401b-a402-6c42c22be847
+      deviceName: trackle d971aca0-7769-401b-a402-6c42c22be847
+      deviceTypeKey: trackleSensor
   TemperatureObject:
     type: object
-    description: temperature value with timestamp of the measurement; can contain additional properties especially that this item is one of the lowest, a basal value, or a flag that and why this value should be ignored
+    description: 'temperature value with timestamp of the measurement; can contain additional properties especially that this item is one of the lowest, a basal value, or a flag that and why this value should be ignored'
     required:
       - id
       - timestamp
@@ -401,31 +390,26 @@ definitions:
         type: string
         description: if ignore = true this contains the reason why this value should be ignored
     example:
-      {
-        "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
-        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-        "timestamp": "2016-06-04T23:41:58.887Z",
-        "temp": 36.019999999999996,
-        "basal": true,
-        "ignore": true,
-        "ignoreComment": "out of body"
-      }
-
+      id: 18ceb213-7549-4e5c-914a-8c7b6f4bcdd7
+      deviceId: d971aca0-7769-401b-a402-6c42c22be847
+      timestamp: '2016-06-04T23:41:58.887Z'
+      temp: 36.019999999999996
+      basal: true
+      ignore: true
+      ignoreComment: out of body
   BasalTemperatureObject:
     type: object
-    description: basal temperature value
-      
-      - the lowest measured temperature value in the corresponding night
-      - with timestamp of the first measurement of this value
-      - can contain additional properties, the user has inserted in the UI for this day/night
+    description: |-
+      basal temperature value
+      - the lowest measured temperature value in the corresponding sleeping period - with timestamp of the first measurement of this value - can contain additional properties, the user has inserted in the UI for this sleeping period
     required:
-      - nightId
+      - sleepingPeriodId
       - timestamp
       - temperature
     properties:
-      nightId:
+      sleepingPeriodId:
         type: string
-        description: id of the nightTemperatureCurve; for drilldown to night temperature in cycle chart
+        description: id of the sleepingPeriodTemperatureCurve; for drilldown to sleeping period temperature in cycle chart
       timestamp:
         type: string
         format: date-time
@@ -435,93 +419,68 @@ definitions:
         format: float
         description: basal temperature value
     example:
-      {
-        "timestamp": '2016-09-01T23:50:38.001Z',
-        "temperature": 36.040000000000006,
-        "nightId": 'fb8bce6a-d7cb-4288-9aee-04ca627ab364'
-      }
-    
-        
-  NightObject:
+      timestamp: '2016-09-01T23:50:38.001Z'
+      temperature: 36.040000000000006
+      sleepingPeriodId: fb8bce6a-d7cb-4288-9aee-04ca627ab364
+  SleepingPeriodObject:
     type: object
     required:
       - id
       - deviceId
       - temperatures
-    description: contains the measured temperature values of one night
-      
+    description: |-
+      contains the measured temperature values of one sleeping period
       the data has been cleaned already
-      
-      - no duplicated values
-      - no senseless values
-      - cut off start and end values, during which the sensor isn't already in body or has not yet settled
-      
+      - no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled
       the data whith the basal values (minimum) are marked
-    
     properties:
       id:
         type: string
-        description: unique id of this night temperature curve; is used to drill down from cycle curve to night curve
+        description: unique id of this sleeping period temperature curve; is used to drill down from cycle curve to sleeping period curve
       deviceId:
         type: string
         description: UUID of the trackle sensor this temperature values were measured with
       from:
         type: string
         format: date-time
-        description: the timestamp of the first temperature value measured in this night
+        description: the timestamp of the first temperature value measured in this sleeping period
       to:
         type: string
         format: date-time
-        description: the timestamp of the last temperature value measured in this night
+        description: the timestamp of the last temperature value measured in this sleeping period
       temperatures:
-        description:
-          all measured temperature values of the night
-        
-          - sorted by timestamp
-          - in ascending order
-          - with unique timestamps
-          - intervals between timestamps do not need to be equal
-          - basal values (minimum) are marked
+        description: |-
+          all measured temperature values of the sleeping period
+          - sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked
         type: array
         items:
           $ref: '#/definitions/TemperatureObject'
     example:
-      {
-        "id": 'fb8bce6a-d7cb-4288-9aee-04ca627ab364',
-        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-        "from": "2016-06-04T23:41:58.887Z",
-        "to": "2016-06-05T08:27:24.413Z",
-        "temperatures": [
-          {
-            "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
-            "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-            "timestamp": "2016-06-04T23:42:56.323Z",
-            "temperature": 35.20,
-            "ignore": true,
-            "ignoreComment": "out of body"
-          },
-          {
-            "id": "1291b73e-bb7c-440c-a93b-9d75f3bcdb1c",
-            "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-            "timestamp": "2016-06-04T23:41:58.887Z",
-            "temp": 36.019999999999996,
-            "basal": true
-          },
-          {
-            "id": "d90ee0a6-e7b6-45c6-bf59-028d960bdeec",
-            "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-            "timestamp": "2016-06-04T23:43:53.776Z",
-            "temperature": 36.25
-          }
-        ]
-      }
-
+      id: fb8bce6a-d7cb-4288-9aee-04ca627ab364
+      deviceId: d971aca0-7769-401b-a402-6c42c22be847
+      from: '2016-06-04T23:41:58.887Z'
+      to: '2016-06-05T08:27:24.413Z'
+      temperatures:
+        - id: 18ceb213-7549-4e5c-914a-8c7b6f4bcdd7
+          deviceId: d971aca0-7769-401b-a402-6c42c22be847
+          timestamp: '2016-06-04T23:42:56.323Z'
+          temperature: 35.2
+          ignore: true
+          ignoreComment: out of body
+        - id: 1291b73e-bb7c-440c-a93b-9d75f3bcdb1c
+          deviceId: d971aca0-7769-401b-a402-6c42c22be847
+          timestamp: '2016-06-04T23:41:58.887Z'
+          temp: 36.019999999999996
+          basal: true
+        - id: d90ee0a6-e7b6-45c6-bf59-028d960bdeec
+          deviceId: d971aca0-7769-401b-a402-6c42c22be847
+          timestamp: '2016-06-04T23:43:53.776Z'
+          temperature: 36.25
   CycleInfoObject:
     type: object
     description: info object for cycles; short info of a cycle; contains every info except the basalTemperatures array; especcially for listing cycles and to organize all cycles of a user
     required:
       - id
-      - deviceId
       - periodBegin
       - periodEnd
       - cycleEnd
@@ -529,9 +488,6 @@ definitions:
       id:
         type: string
         description: unique id of this cycle
-      deviceId:
-        type: string
-        description: UUID of the used device
       periodBegin:
         type: string
         format: time-date
@@ -548,11 +504,9 @@ definitions:
             default: false
       cycleEnd:
         type: object
-        description: 
+        description: |-
           date of the cycle end; a cycle ends if the user inserts the next menstruation begin date; in the current cycle a 'prognosis' flag is set to true because the cycle has not yet been finished by the insertion of the next menstruation begin; in this case the cycle end is calculated to the greater (newer) date of the following
-          
           * the timestamp of the newest basal temperature value + 1 day (if the cycle contains basal temperature values)
-          
           * periodBegin + defaultCycleLength
         properties:
           date:
@@ -592,45 +546,31 @@ definitions:
             type: boolean
             default: false
     example:
-      {
-        "id": "8f77620e-cfb3-4d4b-b12e-631d7485496c",
-        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-        "periodBegin": "2016-05-27T00:00:00.000Z",
-        "periodEnd": {
-          "timestamp": "2016-06-01T00:00:00.000Z"
-        },
-        "cycleEnd": {
-          "timestamp": "2016-06-24T00:00:00.000Z",
-          "prognosis": true
-        },
-        "ovulation": {
-          "timestamp": "2016-06-10T00:00:00.000Z",
-          "prognosis": true
-        },
-        "fertileBegin": {
-          "timestamp": "2016-06-05T00:00:00.000Z",
-          "prognosis": true
-        },
-        "fertileEnd": {
-          "timestamp": "2016-06-12T00:00:00.000Z",
-          "prognosis": true
-        }
-      }
-
+      id: 8f77620e-cfb3-4d4b-b12e-631d7485496c
+      periodBegin: '2016-05-27T00:00:00.000Z'
+      periodEnd:
+        timestamp: '2016-06-01T00:00:00.000Z'
+      cycleEnd:
+        timestamp: '2016-06-24T00:00:00.000Z'
+        prognosis: true
+      ovulation:
+        timestamp: '2016-06-10T00:00:00.000Z'
+        prognosis: true
+      fertileBegin:
+        timestamp: '2016-06-05T00:00:00.000Z'
+        prognosis: true
+      fertileEnd:
+        timestamp: '2016-06-12T00:00:00.000Z'
+        prognosis: true
   CycleObject:
-    description: contains the cycle relevant data like
-    
-    
-       - all calculated basal temperature values of this cycle
-       
-       - start and end of the cycle, possibly prognosticated
-       
-       - start and end of the menstruation
-       
-       - start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated
-       
-       - optionally addition properties
-       
+    description: |-
+      contains the cycle relevant data like
+
+      - all calculated basal temperature values of this cycle
+      - start and end of the cycle, possibly prognosticated
+      - start and end of the menstruation
+      - start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated
+      - optionally addition properties
     allOf:
       - $ref: '#/definitions/CycleInfoObject'
       - type: object
@@ -639,21 +579,16 @@ definitions:
         properties:
           basalTemperatures:
             type: array
-            description:
+            description: |-
               all calculated basal temperature values of this cycle
-            
               - sorted by timestamp
-              
               - in ascending order
-              
               - at most one item per day
-              
               - intervals between timestamps do not need to be equal
             items:
               $ref: '#/definitions/BasalTemperatureObject'
           additionalInfos:
-            description:
-              every item of data can have additional properties; referenced by timestamp
+            description: every item of data can have additional properties; referenced by timestamp
             type: array
             items:
               type: object
@@ -661,87 +596,55 @@ definitions:
                 timestamp:
                   type: string
                   format: date
-                  description: reference to the item of data array, this properties are assigned to
+                  description: 'reference to the item of data array, this properties are assigned to'
                 attributes:
                   type: object
                   description: key value pairs of properties
     example:
-      {
-        "id": "3652c261-7d0c-4436-920c-2164fc074529",
-        "deviceId": "d6b178dd-1d2f-44f9-9589-8390d3b0f33a",
-        "periodBegin": "2016-06-28T12:14:45.370Z",
-        "periodEnd": {
-          "timestamp": "2016-07-03T12:14:45.370Z"
-        },
-        "cycleEnd": {
-          "timestamp": "2016-07-26T12:14:45.369Z"
-        },
-        "ovulation": {
-          "timestamp": "2016-07-12T12:14:45.370Z"
-        },
-        "fertileBegin": {
-          "timestamp": "2016-07-07T12:14:45.370Z"
-        },
-        "fertileEnd": {
-          "timestamp": "2016-07-14T12:14:45.370Z"
-        },
-        "basalTemperatures": [
-          {
-            "nightId": "31fc661c-2b99-4884-a605-ff0f99760906",
-            "timestamp": "2016-07-04T12:14:45.370Z",
-            "temperature": 36.31
-          },
-          {
-            "nightId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
-            "timestamp": "2016-07-05T12:14:45.370Z",
-            "temperature": 36.29
-          },
-          {
-            "nightId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
-            "timestamp": "2016-07-06T12:14:45.370Z",
-            "temperature": 36.28
-          },
-          {
-            "nightId": "1643412c-fff4-4022-b2b8-2b369b227776",
-            "timestamp": "2016-07-07T12:14:45.370Z",
-            "temperature": 36.34
-          }
-        ]
-      }
-    
+      id: 3652c261-7d0c-4436-920c-2164fc074529
+      periodBegin: '2016-06-28T12:14:45.370Z'
+      periodEnd:
+        timestamp: '2016-07-03T12:14:45.370Z'
+      cycleEnd:
+        timestamp: '2016-07-26T12:14:45.369Z'
+      ovulation:
+        timestamp: '2016-07-12T12:14:45.370Z'
+      fertileBegin:
+        timestamp: '2016-07-07T12:14:45.370Z'
+      fertileEnd:
+        timestamp: '2016-07-14T12:14:45.370Z'
+      basalTemperatures:
+        - sleepingPeriodId: 31fc661c-2b99-4884-a605-ff0f99760906
+          timestamp: '2016-07-04T12:14:45.370Z'
+          temperature: 36.31
+        - sleepingPeriodId: 5e39dd02-7b16-4ff7-a70e-8385dd6de6d2
+          timestamp: '2016-07-05T12:14:45.370Z'
+          temperature: 36.29
+        - sleepingPeriodId: 42facad5-5047-43d3-9227-3fc7dc282ec4
+          timestamp: '2016-07-06T12:14:45.370Z'
+          temperature: 36.28
+        - sleepingPeriodId: 1643412c-fff4-4022-b2b8-2b369b227776
+          timestamp: '2016-07-07T12:14:45.370Z'
+          temperature: 36.34
   PeriodObject:
     type: object
     description: period object containing the date of the beginning of the period and the device id of the used device
     required:
-      - deviceId
       - periodBegin
     properties:
-      deviceId:
-        type: string
-        description: UUID of the used device
       periodBegin:
         type: string
         format: date-time
-        description: timestamp of the day, when the period began
+        description: 'timestamp of the day, when the period began'
       additionalInfos:
         type: object
-        description:
-          optionally additional properties can be added; any valid json will be accepted
+        description: optionally additional properties can be added; any valid json will be accepted
     example:
-      {
-        "deviceId": "881984e7-4808-46aa-93df-45ede4e7d7a4",
-        "periodBegin": "2016-11-16T00:00:00.000Z",
-        "additionalInfos": {}
-      }
-      
-    
-###########  errors  ###########
+      periodBegin: '2016-11-16T00:00:00.000Z'
+      additionalInfos: {}
   ErrorResponse:
     type: object
-    description:
-    
-      error object with error code and message
-      
+    description: error object with error code and message
     required:
       - apiVersion
       - status
@@ -761,19 +664,18 @@ definitions:
           errorId:
             type: string
             enum:
-              - "ErrorTimeOut"
-              - "ErrorNotHandled"
-              - "ErrorFatalIntern"
-              - "ErrorMissingParams"
-              - "ErrorParseJson"
-              - "ErrorInvalidSignature"
-
+              - ErrorTimeOut
+              - ErrorNotHandled
+              - ErrorFatalIntern
+              - ErrorMissingParams
+              - ErrorParseJson
+              - ErrorInvalidSignature
           errorMessage:
             type: string
             enum:
-              - "request could not be processed in time"
-              - "request could not be handled"
-              - "fatal internal error"
-              - "missing parameters"
-              - "cannot parse incoming json doc"
-              - "Verification of signature failed"
+              - request could not be processed in time
+              - request could not be handled
+              - fatal internal error
+              - missing parameters
+              - cannot parse incoming json doc
+              - Verification of signature failed

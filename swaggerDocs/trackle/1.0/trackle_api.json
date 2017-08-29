@@ -3,7 +3,7 @@
     "info": {
         "version": "1.0.0",
         "title": "trackle REST API",
-        "description": "This is the definition of the trackle REST API containing the following parts:|\n- managing cycle data - CRUD\n- getting trackle RAW data of nights\n- endpoint to insert menstruation dates\n- get trackle devices of authenticated user"
+        "description": "This is the definition of the trackle REST API containing the following parts:|\n- managing cycle data - CRUD\n- getting trackle RAW data of sleeping periods\n- endpoint to insert menstruation dates\n- get trackle devices of authenticated user"
     },
     "basePath": "/api/trackleService/v1",
     "produces": [
@@ -223,7 +223,7 @@
                     "cycle"
                 ],
                 "summary": "GET cycle data",
-                "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each night) calculated from the night temperature values of every night of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties\n- only returns cycles if requesting user owns it",
+                "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each sleeping period) calculated from the sleeping period temperature values of every sleeping period of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties\n- only returns cycles if requesting user owns it",
                 "parameters": [
                     {
                         "in": "path",
@@ -371,19 +371,19 @@
                 }
             }
         },
-        "/cycle/night/{nightId}": {
+        "/cycle/sleepingPeriod/{sleepingPeriodId}": {
             "get": {
                 "tags": [
                     "trackle",
-                    "night"
+                    "sleepingPeriod"
                 ],
-                "summary": "night temperature curve",
-                "description": "return the data that has been measured during the night",
+                "summary": "sleeping period temperature curve",
+                "description": "return the data that has been measured during the sleeping period",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "nightId",
-                        "description": "id of the nightCurve; UUID",
+                        "name": "sleepingPeriodId",
+                        "description": "id of the sleeping period curve; UUID",
                         "required": true,
                         "type": "string"
                     },
@@ -397,9 +397,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful response; returns the requested night temperature curve",
+                        "description": "Successful response; returns the requested sleeping period temperature curve",
                         "schema": {
-                            "$ref": "#/definitions/NightObject"
+                            "$ref": "#/definitions/SleepingPeriodObject"
                         }
                     },
                     "400": {
@@ -495,16 +495,16 @@
         },
         "BasalTemperatureObject": {
             "type": "object",
-            "description": "basal temperature value\n- the lowest measured temperature value in the corresponding night - with timestamp of the first measurement of this value - can contain additional properties, the user has inserted in the UI for this day/night",
+            "description": "basal temperature value\n- the lowest measured temperature value in the corresponding sleeping period - with timestamp of the first measurement of this value - can contain additional properties, the user has inserted in the UI for this sleeping period",
             "required": [
-                "nightId",
+                "sleepingPeriodId",
                 "timestamp",
                 "temperature"
             ],
             "properties": {
-                "nightId": {
+                "sleepingPeriodId": {
                     "type": "string",
-                    "description": "id of the nightTemperatureCurve; for drilldown to night temperature in cycle chart"
+                    "description": "id of the sleepingPeriodTemperatureCurve; for drilldown to sleeping period temperature in cycle chart"
                 },
                 "timestamp": {
                     "type": "string",
@@ -520,21 +520,21 @@
             "example": {
                 "timestamp": "2016-09-01T23:50:38.001Z",
                 "temperature": 36.040000000000006,
-                "nightId": "fb8bce6a-d7cb-4288-9aee-04ca627ab364"
+                "sleepingPeriodId": "fb8bce6a-d7cb-4288-9aee-04ca627ab364"
             }
         },
-        "NightObject": {
+        "SleepingPeriodObject": {
             "type": "object",
             "required": [
                 "id",
                 "deviceId",
                 "temperatures"
             ],
-            "description": "contains the measured temperature values of one night\nthe data has been cleaned already\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled\nthe data whith the basal values (minimum) are marked",
+            "description": "contains the measured temperature values of one sleeping period\nthe data has been cleaned already\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled\nthe data whith the basal values (minimum) are marked",
             "properties": {
                 "id": {
                     "type": "string",
-                    "description": "unique id of this night temperature curve; is used to drill down from cycle curve to night curve"
+                    "description": "unique id of this sleeping period temperature curve; is used to drill down from cycle curve to sleeping period curve"
                 },
                 "deviceId": {
                     "type": "string",
@@ -543,15 +543,15 @@
                 "from": {
                     "type": "string",
                     "format": "date-time",
-                    "description": "the timestamp of the first temperature value measured in this night"
+                    "description": "the timestamp of the first temperature value measured in this sleeping period"
                 },
                 "to": {
                     "type": "string",
                     "format": "date-time",
-                    "description": "the timestamp of the last temperature value measured in this night"
+                    "description": "the timestamp of the last temperature value measured in this sleeping period"
                 },
                 "temperatures": {
-                    "description": "all measured temperature values of the night\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked",
+                    "description": "all measured temperature values of the sleeping period\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/TemperatureObject"
@@ -762,22 +762,22 @@
                 },
                 "basalTemperatures": [
                     {
-                        "nightId": "31fc661c-2b99-4884-a605-ff0f99760906",
+                        "sleepingPeriodId": "31fc661c-2b99-4884-a605-ff0f99760906",
                         "timestamp": "2016-07-04T12:14:45.370Z",
                         "temperature": 36.31
                     },
                     {
-                        "nightId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
+                        "sleepingPeriodId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
                         "timestamp": "2016-07-05T12:14:45.370Z",
                         "temperature": 36.29
                     },
                     {
-                        "nightId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
+                        "sleepingPeriodId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
                         "timestamp": "2016-07-06T12:14:45.370Z",
                         "temperature": 36.28
                     },
                     {
-                        "nightId": "1643412c-fff4-4022-b2b8-2b369b227776",
+                        "sleepingPeriodId": "1643412c-fff4-4022-b2b8-2b369b227776",
                         "timestamp": "2016-07-07T12:14:45.370Z",
                         "temperature": 36.34
                     }
