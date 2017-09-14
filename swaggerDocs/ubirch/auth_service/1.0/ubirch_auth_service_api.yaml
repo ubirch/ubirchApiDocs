@@ -29,31 +29,6 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-  '/providerInfo/list/{context}':
-    get:
-      tags:
-        - auth service
-        - providerlist
-        - deprecated
-      summary: provider list
-      description: 'Gives us a list of providers configured for a specific context (use _/providerInfo/list/{context}/{appId}_ instead)'
-      parameters:
-        - in: path
-          name: context
-          description: 'the context (e.g. `trackle`, `trackle-dev`, `ubirch`, `ubirch-dev`,...)'
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Successful response; returns array of OpenID Connect provider configurations for the given context
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/OpenIDConnectProviderInfo'
-        '400':
-          description: Not successful response
-          schema:
-            $ref: '#/definitions/ErrorResponse'
   '/providerInfo/list/{context}/{appId}':
     get:
       tags:
