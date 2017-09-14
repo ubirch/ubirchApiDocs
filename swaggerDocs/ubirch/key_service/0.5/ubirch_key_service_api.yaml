@@ -427,6 +427,15 @@ definitions:
       previousPubKeySignature:
         type: string
         description: (optional) Base 64 encoded signature of the _pubkeyInfo_ (created with previous key)
+    example:
+      pubKeyInfo:
+        hwDeviceId: 4150473037-547268290-3238389072-173590267
+        pubKey: MC0wCAYDK2VkCgEBAyEAovEmQJuiWdrb5hV/mhG1SF9Vul7tRveYZ74Mk+Okjhg=
+        algorithm: ECC_ED25519
+        created: '2017-08-03T09:51:36.000Z'
+        validNotBefore: '2017-08-03T09:51:36.000Z'
+        validNotAfter: '2018-02-03T09:51:36.000Z'
+      signature: MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw==
   SignedPackage:
     description: signature wrapper for any payload
     type: object
