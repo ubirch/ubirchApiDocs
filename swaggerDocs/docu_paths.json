@@ -5,7 +5,7 @@
       {
         "name": "ubirch Avatar Service",
         "version": "1.0",
-        "uri": "/ubirch/avatar_service/1.0/ubirch_avatar_service_api.yaml"
+        "uri": "/ubirch/avatar_service/1.0/ubirch_avatar_service_api.json"
       },
       {
         "name": "ubirch Auth Service",
@@ -25,7 +25,7 @@
       {
         "name": "ubirch User Service",
         "version": "1.0",
-        "uri": "/ubirch/user_service/1.0/ubirch_user_service_api.json"
+        "uri": "/ubirch/user_service/1.0/ubirch_user_service_api.yaml"
       }
     ]
   },
@@ -36,6 +36,11 @@
         "name": "trackle Service",
         "version": "1.0",
         "uri": "/trackle/1.0/trackle_api.yaml"
+      },
+      {
+        "name": "trackle Service",
+        "version": "2.0 - work in progress",
+        "uri": "/trackle/2.0/trackle_api.yaml"
       }
     ]
   }
