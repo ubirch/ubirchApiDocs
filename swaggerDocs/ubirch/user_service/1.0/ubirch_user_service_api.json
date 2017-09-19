@@ -5,6 +5,10 @@
     "title": "ubirch user service REST API",
     "description": "This is the definition of the ubirch user service REST API containing the following parts:|\n- RAW data interface for syncronizing devices with their avatars\n- devices CRUD endpoints"
   },
+  "schemes": [
+    "https"
+  ],
+  "host": "auth.dev.ubirch.com",
   "basePath": "/api/userService/v1",
   "produces": [
     "application/json"
@@ -905,7 +909,9 @@
         "displayName": "My Personal Group",
         "ownerId": "d86df828-d4a1-455a-ad38-0d7fb5cec4db",
         "contextId": "9203d4b9-5361-4414-be08-7e56796712aa",
-        "allowedUsers": ["3beebf40-a82c-4b29-b5ab-3cdc246dc820"],
+        "allowedUsers": [
+          "3beebf40-a82c-4b29-b5ab-3cdc246dc820"
+        ],
         "adminGroup": true
       }
     },
@@ -934,7 +940,9 @@
         "displayName": "My Personal Group",
         "ownerId": "d86df828-d4a1-455a-ad38-0d7fb5cec4db",
         "contextId": "9203d4b9-5361-4414-be08-7e56796712aa",
-        "allowedUsers": ["3beebf40-a82c-4b29-b5ab-3cdc246dc820"],
+        "allowedUsers": [
+          "3beebf40-a82c-4b29-b5ab-3cdc246dc820"
+        ],
         "adminGroup": true
       }
     },
@@ -1012,7 +1020,9 @@
       },
       "example": {
         "groupId": "d9f9668c-1e93-4664-b567-ac575ffe84a3",
-        "allowedUsers": ["6b4b0457-9830-485b-971d-e23b1d22048c"]
+        "allowedUsers": [
+          "6b4b0457-9830-485b-971d-e23b1d22048c"
+        ]
       }
     },
     "GroupAddAllowedError": {

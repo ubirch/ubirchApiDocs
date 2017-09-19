@@ -9,6 +9,9 @@ info:
     - RAW data interface for syncronizing devices with their avatars
 
     - devices CRUD endpoints
+schemes:
+  - https
+host: api.ubirch.dev.ubirch.com
 basePath: /api/avatarService/v1
 produces:
   - application/json
