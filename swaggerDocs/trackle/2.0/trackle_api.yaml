@@ -810,6 +810,53 @@ definitions:
                                     type: string
                                     description: notes / Notizen
                                     maxLength: 500
+    example:
+      id: c1460993-e8cd-47cb-a059-0755e4855757
+      userId: 534a3ac1-aba5-4bf8-a595-7ea0ae4dba74
+      date: '2017-09-20T22:00:00.000Z'
+      aggregatedSigned:
+        aggregated:
+          date: '2017-09-20T00:00:00.000Z'
+          instantTime:
+            temperature: 36.8
+            timestamp: '2017-09-20T05:58:00.000Z'
+            desiredTime: '1970-01-01T06:00:00.000Z'
+          basal:
+            temperature: 36.6
+            sleepingPeriodId: 4a904a91-cabf-417e-981c-5be70654ae98
+            timestamp: '2017-08-20T04:34:17.000Z'
+          cycle:
+            id: eb74fad9-cec2-4c9b-b5e4-64b102bab987
+            counter: 3
+          sleepingPeriodIds:
+            - b3c5ecf8-3e13-4912-a4e8-ae42f1ad1315
+          cycleDayCounter: 3
+          fertile:
+            state: false
+            ovulation: false
+            prognosis: true
+          menstruation:
+            state: false
+            prognosis: true
+          created: '2017-09-20T08:20:00.000Z'
+          lastUpdated: '2017-09-20T12:29:22.717Z'
+        signature: 'a signature :)'
+        signatureCreated: '2017-09-20T08:22:00.000Z'
+      userInputAcceptedSigned:
+        userInputAccepted:
+          acceptedDate: '2017-09-20T12:29:22.717Z'
+          userInputSigned:
+            userInput:
+              date: '2017-09-20T22:00:00.000Z'
+              payload:
+                menstrualIntensity: '0'
+                cervicalMucus: s+
+            signature: 'a client side signature :)'
+            signatureCreated: '2017-09-20T08:22:00.000Z'
+          created: '2017-09-20T08:20:00.000Z'
+          lastUpdated: '2017-09-20T08:22:03.500Z'
+        signature: 'a server side signature :)'
+        signatureCreated: '2017-19-19T08:22:03.000Z'
   DeviceInfoObject:
     type: object
     description: short device info; should be a trackle device
