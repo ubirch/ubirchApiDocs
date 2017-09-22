@@ -478,10 +478,10 @@ definitions:
         format: date-time
         description: the day this data is about
       aggregatedSigned:
-        type: object
         description: aggregated data of this day signed by server
         allOf:
           - $ref: '#/definitions/SignedObject'
+          - type: object
             properties:
               aggregated:
                 type: object
@@ -605,12 +605,12 @@ definitions:
                           user has to insert at least beginning and end of
                           menstruation
       userInputAcceptedSigned:
-        type: object
         description: >-
           current state of the user input for that day, signed by the app,
           accepted and signed by the server
         allOf:
           - $ref: '#/definitions/SignedObject'
+          - type: object
             properties:
               userInputAccepted:
                 type: object
