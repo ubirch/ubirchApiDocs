@@ -444,6 +444,7 @@ paths:
 definitions:
   SignedObject:
     type: object
+    discriminator: SignedObject
     description: the additional contained property/object is signed by the signature
     required:
       - id
@@ -982,6 +983,7 @@ definitions:
           temperature: 36.25
   CycleInfoObject:
     type: object
+    discriminator: CycleInfoObject
     description: >-
       info object for cycles; short info of a cycle; contains every info except
       the basalTemperatures array; especcially for listing cycles and to
