@@ -622,8 +622,6 @@ definitions:
               userInputSigned:
                 type: object
                 description: current state of the user input for that day signed by the app
-                allOf:
-                  - $ref: '#/definitions/SignedObject'
                 properties:
                   userInput:
                     type: object
