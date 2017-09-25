@@ -1024,7 +1024,7 @@
             },
             "disturbingFactors": {
               "type": "array",
-              "description": "Störfaktoren; multiselectable; predefined values; additional values can be added when \"Sonstiges\" is selected, then addDisturbingFactor can be filled\n* ungewohnt spätes Zubettgehen [sleepLately] * ungewohnter Alkoholgenuss [alcohol] * Stress [stress] * seelische Belastung [emotionalPressure] * Zeitumstellung [clockChange] * Zeitverschiebung [timeShift] * kurze oder gestörte Nachtruhe[shortNight] * Essen spätabends [lateSupper] * Umgebungswechsel (Reisen, Urlaub, Klimawechsel) [changeOfEnvironment] * Erkrankung und Unpässlichkeiten/Fieber [fever] * andere Krankheit [illness] * Medikament [medicine] * Thermometerwechsel im Zyklus [changedSensor] * Aufregung [excitement] * Feiern spätabends [party] * Schichtarbeit [shiftWork] * Sonstiges [other]",
+              "description": "Störfaktoren; multiselectable; predefined values; additional values can be added when \"Sonstiges\" is selected, then addDisturbingFactor can be filled\n\n* ungewohnt spätes Zubettgehen [sleepLately]\n* ungewohnter Alkoholgenuss [alcohol]\n* Stress [stress]\n* seelische Belastung [emotionalPressure]\n* Zeitumstellung [clockChange]\n* Zeitverschiebung [timeShift]\n* kurze oder gestörte Nachtruhe[shortNight]\n* Essen spätabends [lateSupper]\n* Umgebungswechsel (Reisen, Urlaub, Klimawechsel) [changeOfEnvironment]\n* Erkrankung und Unpässlichkeiten/Fieber [fever]\n* andere Krankheit [illness]\n* Medikament [medicine]\n* Thermometerwechsel im Zyklus [changedSensor]\n* Aufregung [excitement]\n* Feiern spätabends [party]\n* Schichtarbeit [shiftWork]\n* Sonstiges [other]",
               "items": {
                 "type": "string",
                 "enum": [
