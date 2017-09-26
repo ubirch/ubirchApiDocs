@@ -992,18 +992,6 @@
               "type": "boolean",
               "description": "zusätzliche Verhütung; ONLY IF intercourse == true\n* keine Angabe (default) [null] * geschützt [true] * ungeschützt [false]"
             },
-            "initialMenstruationDuration": {
-              "type": "integer",
-              "format": "int32",
-              "description": "initial avarage duration of menstruation as user entered initially",
-              "minimum": 1,
-              "maximum": 7
-            },
-            "menstruationDuration": {
-              "type": "number",
-              "format": "float",
-              "description": "average menstruation duration as calculated by the trackle system from  confirmed mentruations, based on the intital menstruation duration"
-            },
             "menstruation": {
               "type": "string",
               "description": "Periode\n* keine Angabe - keine Menstruation (default) [null] * Menstruation [menstruation] * Zwischenblutung [intermenstrualBleeding]",

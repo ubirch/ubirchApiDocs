@@ -907,19 +907,6 @@ definitions:
 
               * keine Angabe (default) [null] * geschützt [true] * ungeschützt
               [false]
-          initialMenstruationDuration:
-            type: integer
-            format: int32
-            description: initial avarage duration of menstruation as user entered initially
-            minimum: 1
-            maximum: 7
-          menstruationDuration:
-            type: number
-            format: float
-            description: >-
-              average menstruation duration as calculated by the trackle system
-              from  confirmed mentruations, based on the intital menstruation
-              duration
           menstruation:
             type: string
             description: >-
@@ -951,17 +938,41 @@ definitions:
               values can be added when "Sonstiges" is selected, then
               addDisturbingFactor can be filled
 
-              * ungewohnt spätes Zubettgehen [sleepLately] * ungewohnter
-              Alkoholgenuss [alcohol] * Stress [stress] * seelische Belastung
-              [emotionalPressure] * Zeitumstellung [clockChange] *
-              Zeitverschiebung [timeShift] * kurze oder gestörte
-              Nachtruhe[shortNight] * Essen spätabends [lateSupper] *
-              Umgebungswechsel (Reisen, Urlaub, Klimawechsel)
-              [changeOfEnvironment] * Erkrankung und Unpässlichkeiten/Fieber
-              [fever] * andere Krankheit [illness] * Medikament [medicine] *
-              Thermometerwechsel im Zyklus [changedSensor] * Aufregung
-              [excitement] * Feiern spätabends [party] * Schichtarbeit
-              [shiftWork] * Sonstiges [other]
+
+              * ungewohnt spätes Zubettgehen [sleepLately]
+
+              * ungewohnter Alkoholgenuss [alcohol]
+
+              * Stress [stress]
+
+              * seelische Belastung [emotionalPressure]
+
+              * Zeitumstellung [clockChange]
+
+              * Zeitverschiebung [timeShift]
+
+              * kurze oder gestörte Nachtruhe[shortNight]
+
+              * Essen spätabends [lateSupper]
+
+              * Umgebungswechsel (Reisen, Urlaub, Klimawechsel)
+              [changeOfEnvironment]
+
+              * Erkrankung und Unpässlichkeiten/Fieber [fever]
+
+              * andere Krankheit [illness]
+
+              * Medikament [medicine]
+
+              * Thermometerwechsel im Zyklus [changedSensor]
+
+              * Aufregung [excitement]
+
+              * Feiern spätabends [party]
+
+              * Schichtarbeit [shiftWork]
+
+              * Sonstiges [other]
             items:
               type: string
               enum:
