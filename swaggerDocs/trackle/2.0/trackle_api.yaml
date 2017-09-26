@@ -936,17 +936,43 @@ definitions:
             description: >-
               Störfaktoren; multiselectable; predefined values; additional
               values can be added when "Sonstiges" is selected, then
-              addDisturbingFactor can be filled * ungewohnt spätes Zubettgehen
-              [sleepLately] * ungewohnter Alkoholgenuss [alcohol] * Stress
-              [stress] * seelische Belastung [emotionalPressure] *
-              Zeitumstellung [clockChange] * Zeitverschiebung [timeShift] *
-              kurze oder gestörte Nachtruhe[shortNight] * Essen spätabends
-              [lateSupper] * Umgebungswechsel (Reisen, Urlaub, Klimawechsel)
-              [changeOfEnvironment] * Erkrankung und Unpässlichkeiten/Fieber
-              [fever] * andere Krankheit [illness] * Medikament [medicine] *
-              Thermometerwechsel im Zyklus [changedSensor] * Aufregung
-              [excitement] * Feiern spätabends [party] * Schichtarbeit
-              [shiftWork] * Sonstiges [other]
+              addDisturbingFactor can be filled
+
+
+              * ungewohnt spätes Zubettgehen [sleepLately]
+
+              * ungewohnter Alkoholgenuss [alcohol]
+
+              * Stress [stress]
+
+              * seelische Belastung [emotionalPressure]
+
+              * Zeitumstellung [clockChange]
+
+              * Zeitverschiebung [timeShift]
+
+              * kurze oder gestörte Nachtruhe[shortNight]
+
+              * Essen spätabends [lateSupper]
+
+              * Umgebungswechsel (Reisen, Urlaub, Klimawechsel)
+              [changeOfEnvironment]
+
+              * Erkrankung und Unpässlichkeiten/Fieber [fever]
+
+              * andere Krankheit [illness]
+
+              * Medikament [medicine]
+
+              * Thermometerwechsel im Zyklus [changedSensor]
+
+              * Aufregung [excitement]
+
+              * Feiern spätabends [party]
+
+              * Schichtarbeit [shiftWork]
+
+              * Sonstiges [other]
             items:
               type: string
               enum:
