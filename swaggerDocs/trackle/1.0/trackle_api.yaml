@@ -12,30 +12,6 @@ basePath: /api/trackleService/v1
 produces:
   - application/json
 paths:
-  /device/info/list:
-    get:
-      tags:
-        - trackle
-        - device
-      parameters:
-        - in: header
-          name: Authorization
-          description: Bearer token identifying the related user
-          required: true
-          type: string
-      summary: list of devices
-      description: Query all available devices of authenticated user
-      responses:
-        '200':
-          description: Successful response; returns an array of trackle device info objects
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/DeviceInfoObject'
-        '400':
-          description: Not successful response
-          schema:
-            $ref: '#/definitions/ErrorResponse'
   /period/begin:
     post:
       tags:
@@ -335,27 +311,6 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 definitions:
-  DeviceInfoObject:
-    type: object
-    description: short device info; should be a trackle device
-    required:
-      - deviceId
-      - deviceName
-      - deviceTypeKey
-    properties:
-      deviceId:
-        type: string
-        description: UUID of this device
-      deviceName:
-        type: string
-        description: name or description of this device so that the user will know which device it is; can be set by a user or the administrator via ubirch admin ui
-      deviceTypeKey:
-        type: string
-        description: 'one of the keys, delivered by the device type list REST endpoint of the ubirch REST API; should be ''trackleSensor'' here'
-    example:
-      deviceId: d971aca0-7769-401b-a402-6c42c22be847
-      deviceName: trackle d971aca0-7769-401b-a402-6c42c22be847
-      deviceTypeKey: trackleSensor
   TemperatureObject:
     type: object
     description: 'temperature value with timestamp of the measurement; can contain additional properties especially that this item is one of the lowest, a basal value, or a flag that and why this value should be ignored'
