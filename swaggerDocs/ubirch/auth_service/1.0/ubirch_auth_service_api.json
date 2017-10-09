@@ -5,6 +5,10 @@
     "title": "ubirch auth service REST API",
     "description": "This is the definition of the ubirch auth service REST API containing the following parts:|\n- list of OpenID Connect provider (OP) configurations for specified context\n- verification and login\n- tokens management\n- signup\n- logout\n- userData access"
   },
+  "schemes": [
+    "https"
+  ],
+  "host": "auth.dev.ubirch.com",
   "basePath": "/api/authService/v1",
   "produces": [
     "application/json"

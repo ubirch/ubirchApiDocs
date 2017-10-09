@@ -2,10 +2,16 @@ swagger: '2.0'
 info:
   version: 1.0.0
   title: ubirch user service REST API
-  description: |-
-    This is the definition of the ubirch user service REST API containing the following parts:|
+  description: >-
+    This is the definition of the ubirch user service REST API containing the
+    following parts:|
+
     - RAW data interface for syncronizing devices with their avatars
+
     - devices CRUD endpoints
+schemes:
+  - https
+host: auth.dev.ubirch.com
 basePath: /api/userService/v1
 produces:
   - application/json
@@ -323,7 +329,9 @@ paths:
         - 2BImplemented
         - user service
         - group
-      summary: add users to a group as allowed (allows them to access data of devices assigned to this group)
+      summary: >-
+        add users to a group as allowed (allows them to access data of devices
+        assigned to this group)
       responses:
         '200':
           description: successfully added users as allowed
@@ -378,20 +386,26 @@ paths:
       tags:
         - user service
         - init
-      summary: |-
-        initialize contexts and create an admin user with a group in each context
+      summary: >-
+        initialize contexts and create an admin user with a group in each
+        context
          depends on two environment variables:
         * ADMIN_PROVIDER_ID (e.g.: "google"
+
         * ADMIN_EXTERNAL_ID (user id with the OpenID Connect provider)
       parameters:
         - in: path
           name: env_name
-          description: 'the postfix for every context being created (e.g.: "local", "dev", "demo", ...)'
+          description: >-
+            the postfix for every context being created (e.g.: "local", "dev",
+            "demo", ...)
           required: true
           type: string
       responses:
         '200':
-          description: 'contexts, admin user and admin group have been created or already exist'
+          description: >-
+            contexts, admin user and admin group have been created or already
+            exist
           schema:
             type: string
             enum:
@@ -608,7 +622,9 @@ definitions:
           description: userId (UUID)
       adminGroup:
         type: boolean
-        description: only if set and "true" all users in this group are admins; usually this field is left out
+        description: >-
+          only if set and "true" all users in this group are admins; usually
+          this field is left out
     example:
       displayName: My Personal Group
       ownerId: d86df828-d4a1-455a-ad38-0d7fb5cec4db

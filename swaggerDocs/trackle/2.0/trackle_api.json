@@ -1,0 +1,1580 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.0.0",
+    "title": "trackle REST API",
+    "description": "This is the definition of the trackle REST API containing the following parts:|\n- getting data (from device and user input) for one day or a range or days\n- endpoints to create and update userinput\n- managing cycle data - CRUD\n- getting trackle RAW data of sleeping periods\n- endpoint to insert menstruation dates (deprecated - part of new userinput endpoints)\n- get trackle devices of authenticated user"
+  },
+  "basePath": "/api/trackleService/v2",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/check": {
+      "get": {
+        "tags": [
+          "trackle",
+          "health"
+        ],
+        "summary": "health monitor",
+        "description": "allows a quick check if the service is still up.",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse200"
+            }
+          },
+          "400": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse400"
+            }
+          }
+        }
+      }
+    },
+    "/deepCheck": {
+      "get": {
+        "tags": [
+          "trackle",
+          "health"
+        ],
+        "summary": "health monitor deep check",
+        "description": "allows a deep check of the service",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckHealthResponse200"
+            }
+          },
+          "500": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckHealthResponse500"
+            }
+          }
+        }
+      }
+    },
+    "/userInput": {
+      "post": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "summary": "CREATE user input",
+        "description": "user set properties and inserted data for a day",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "userInputSigned",
+            "description": "the data the user inserted and uploaded for one day, signed by the app",
+            "schema": {
+              "$ref": "#/definitions/UserInputSigned"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the user input signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app",
+            "schema": {
+              "$ref": "#/definitions/UserInputAcceptedSigned"
+            }
+          },
+          "500": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "summary": "CREATE or UPDATE user input",
+        "description": "user set properties and inserted data or update existing data for a day; !!important!! properties that had already been set in an earlier operation will be deleted by an update call when they are missing in the userInput object!!",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "userInputSigned",
+            "description": "the updated data the user inserted and uploaded for one day, signed by the app",
+            "schema": {
+              "$ref": "#/definitions/UserInputSigned"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the user input signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app",
+            "schema": {
+              "$ref": "#/definitions/UserInputAcceptedSigned"
+            }
+          },
+          "500": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/day/{day}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "day",
+            "description": "date of the day the user requests data for",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "summary": "data for a day",
+        "description": "Query all available data for one day, that the authenticated user has inserted for that day or that have been measured by the user's device or that have been aggregated from known information in the backend",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an trackle day info object",
+            "schema": {
+              "$ref": "#/definitions/DayInfoObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/day/from/{fromDay}/until/{untilDay}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "fromDay",
+            "description": "first day from date range the user requests data for",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "path",
+            "name": "untilDay",
+            "description": "last day from date range the user requests data for",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "summary": "data for a day",
+        "description": "Query all available data for a range of days, that the authenticated user has inserted for that days or that have been measured by the user's device or that have been aggregated from known information in the backend",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an array of trackle day info objects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DayInfoObject"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/device/info/list": {
+      "get": {
+        "tags": [
+          "trackle",
+          "device"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "summary": "list of devices",
+        "description": "Query all available devices of authenticated user",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an array of trackle device info objects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DeviceInfoObject"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/period/begin": {
+      "post": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "sets a period begin date",
+        "description": "the user inserts the date, when her menstruation has begun; used to finish the current cycle or to start to initial cycle, when the user opens the app the first time\n\n- only possible for the current or initial menstrual cycle\n\n- creates a new 'current' cycle, starting with the inserted period start date\n\n- finishes the currents cycle if exists",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "period",
+            "description": "period object containing the date of the beginning of the period and the device id of the used device",
+            "schema": {
+              "$ref": "#/definitions/PeriodObject"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the new created current cycle beginning with the inserted period start date",
+            "schema": {
+              "$ref": "#/definitions/CycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/info/list": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "list of newest cycles of a user",
+        "description": "returns a list of the 10 (at most) newest cycles of a user as info object (the same as /cycle/info/list/0/10 )\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the current cycle is the element 0 of the list\n- maximal 10 cycles - if exist - are returned in a list\n- only returns cycles if requesting user owns them",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns list of cycle info objects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CycleInfoObject"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/info/list/{from}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "list of cycle infos for pagination with start index",
+        "description": "returns a list of 10 (at most) info cycle objects of a user starting from defined index\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 10 cycles - if exist - that are older than the the 'from' cycle are returned in a list\n- only returns cycles if requesting user owns them",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "from",
+            "description": "index of the newest cycle we request; cycles ordered by ascending start dates",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns list of cycle info objects; for pagination, deliveres the defined part of the whole list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CycleInfoObject"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/info/list/{from}/{size}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "list of cycle infos for pagination with start index and number of maximum list items",
+        "description": "returns a list of info cycle objects of a user starting from defined in 'from' index with at most 'size' number of items\n\n- sorted by timestamp of periodBegin ( = cycle begin)\n- in descending order, newest cycle first, the oldest at the end of list\n- the cycle number 'from' is the newest cycle, so it's element 0 of the list\n- at most 'size' number of cycles - if exist - that are older than the the 'from' cycle are returned in a list\n- only returns cycles if requesting user owns them",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "from",
+            "description": "index of the newest cycle we request; cycles ordered by ascending start dates",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "size",
+            "description": "number of cycles we request; starting from the cycle defined by 'from' to the past",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns list of cycle info objects; for pagination, deliveres the defined part of the whole list",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CycleInfoObject"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/id/{cycleId}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "GET cycle data",
+        "description": "returns\n\n- the basal temperature values (= the lowest measured temperature value of each sleeping period) calculated from the sleeping period temperature values of every sleeping period of that cycle\n- information about\n- menstruation\n- ovulation\n- fertile phase\n- possibly additional properties\n- only returns cycles if requesting user owns it",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "id of the cycle",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested cycle data",
+            "schema": {
+              "$ref": "#/definitions/CycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "EDIT cycle data",
+        "description": "edits the data supplied in the request body of the specified cycle\n\n- only updates cycle if requesting user owns it",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "id of the cycle that shall be edited",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "cycle",
+            "description": "cycle object specifying the data of the curve that shall be edited; missing parameters will be deleted",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CycleInfoObject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the updated cycle data",
+            "schema": {
+              "$ref": "#/definitions/CycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "DELETE cycle data",
+        "description": "deletes the specified cycle\n\n- a normal trackle user can only delete the current cycle\n- with admin rights all cycles can be removed\n- only the cycle structure is removed\n- the underlying stored temperature data are not deleted by this endpoint\n- because the menstruation start date of the cycle is removed, the data belongs to the previous cycle after deleting a cycle\n- if a user deletes the current cycle, the previous cycles becomes the current cycle\n- only deletes cycle if requesting user owns it",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "id of the cycle curve that shall be deleted",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response - no news are good news"
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/current": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "GET current cycle data",
+        "description": "returns the current, not finished cycle\n\n- only return cycle if requesting user owns it",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the data of the current cycle",
+            "schema": {
+              "$ref": "#/definitions/CycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/sleepingPeriod/{sleepingPeriodId}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "sleepingPeriod"
+        ],
+        "summary": "sleeping period temperature curve",
+        "description": "return the data that has been measured during the sleeping period",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sleepingPeriodId",
+            "description": "id of the sleeping period curve; UUID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested sleeping period temperature curve",
+            "schema": {
+              "$ref": "#/definitions/SleepingPeriodObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SignedObject": {
+      "type": "object",
+      "discriminator": "SignedObject",
+      "description": "the additional contained property/object is signed by the signature",
+      "required": [
+        "signature",
+        "signatureCreated"
+      ],
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "signature the payload has been signed with"
+        },
+        "signatureCreated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the timestamp when this signature was created"
+        }
+      }
+    },
+    "DayInfoObject": {
+      "type": "object",
+      "description": "all available data for one day. From user input the authenticated user inserted or that have been measured by the user's device or that have been aggregated from known information in the backend",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID to reference this DayInfoObject"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UUID as a reference to the user/owner of this data"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the day this data is about"
+        },
+        "aggregatedSigned": {
+          "description": "aggregated data of this day signed by server",
+          "allOf": [
+            {
+              "$ref": "#/definitions/SignedObject"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "aggregated": {
+                  "type": "object",
+                  "description": "the measured data and/or aggregated information for this day",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "the day this data is about"
+                    },
+                    "instantTime": {
+                      "type": "object",
+                      "description": "values at the given instant time (defined by NFP as the best instant time to measure the temperature every day, adjusted by the user)",
+                      "properties": {
+                        "temperature": {
+                          "type": "number",
+                          "format": "float",
+                          "description": "temperature measured at given instant time"
+                        },
+                        "timestamp": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "the real timestamp when the instant time temperature is measured; it is the nearest measured value round about the instantTime.desiredTime"
+                        },
+                        "desiredTime": {
+                          "type": "string",
+                          "description": "instant time (given by NFP and adjusted by the user) when the temperature is and will be measured every day; in full-time format (e.g. 06:00:00.000Z)"
+                        }
+                      }
+                    },
+                    "basal": {
+                      "type": "object",
+                      "description": "lowest measured values of the whole sleeping period of that day",
+                      "properties": {
+                        "temperature": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "lowest measured temperature of the whole sleeping period of that day"
+                        },
+                        "sleepingPeriodId": {
+                          "type": "string",
+                          "description": "UUID of the sleeping period during which this basal temperature is measured (for drilldown to sleeping period temperature)"
+                        },
+                        "timestamp": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "the timestamp when the basal temperature is measured the first time during the sleeping period"
+                        }
+                      }
+                    },
+                    "cycle": {
+                      "type": "object",
+                      "description": "user's cycle during the given date",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "UUID of the cycle"
+                        },
+                        "counter": {
+                          "type": "integer",
+                          "format": "int32",
+                          "description": "the number of the cycle; all cycles measured with trackle are numbered consecutively"
+                        }
+                      }
+                    },
+                    "sleepingPeriodIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "UUIDs of all sleeping periods measured during this day; if the user sleeps several time during one day and always uses the device or removes the device temporarily during the night, several sleeping periods are generated"
+                      }
+                    },
+                    "cycleDayCounter": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "number of the day inside the cycle (every cycle starts with day number 1)"
+                    },
+                    "fertile": {
+                      "type": "object",
+                      "description": "fertile state of the day, if the user is fertile or not",
+                      "properties": {
+                        "state": {
+                          "type": "boolean",
+                          "default": true,
+                          "description": "true if the user is fertile at that day"
+                        },
+                        "prognosis": {
+                          "type": "boolean",
+                          "default": true,
+                          "description": "true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured"
+                        },
+                        "ovulation": {
+                          "type": "boolean",
+                          "default": false,
+                          "description": "true if the ovulation probably happened at this day"
+                        }
+                      }
+                    },
+                    "menstruation": {
+                      "type": "object",
+                      "description": "menstruation state of the day",
+                      "properties": {
+                        "state": {
+                          "type": "boolean",
+                          "default": true,
+                          "description": "true if this day is during the menstruation of the user"
+                        },
+                        "prognosis": {
+                          "type": "boolean",
+                          "default": true,
+                          "description": "user has to insert at least beginning and end of menstruation"
+                        }
+                      }
+                    },
+                    "created": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "timestamp of creation date"
+                    },
+                    "lastUpdated": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "timestamp when this data has been updated last"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "userInputAcceptedSigned": {
+          "$ref": "#/definitions/UserInputAcceptedSigned"
+        }
+      },
+      "example": {
+        "id": "c1460993-e8cd-47cb-a059-0755e4855757",
+        "userId": "534a3ac1-aba5-4bf8-a595-7ea0ae4dba74",
+        "date": "2017-09-20T22:00:00.000Z",
+        "aggregatedSigned": {
+          "aggregated": {
+            "date": "2017-09-20T00:00:00.000Z",
+            "instantTime": {
+              "temperature": 36.8,
+              "timestamp": "2017-09-20T05:58:00.000Z",
+              "desiredTime": "06:00:00.000Z"
+            },
+            "basal": {
+              "temperature": 36.6,
+              "sleepingPeriodId": "4a904a91-cabf-417e-981c-5be70654ae98",
+              "timestamp": "2017-08-20T04:34:17.000Z"
+            },
+            "cycle": {
+              "id": "eb74fad9-cec2-4c9b-b5e4-64b102bab987",
+              "counter": 3
+            },
+            "sleepingPeriodIds": [
+              "b3c5ecf8-3e13-4912-a4e8-ae42f1ad1315",
+              "4a904a91-cabf-417e-981c-5be70654ae98"
+            ],
+            "cycleDayCounter": 3,
+            "fertile": {
+              "state": false,
+              "ovulation": false,
+              "prognosis": true
+            },
+            "menstruation": {
+              "state": false,
+              "prognosis": true
+            },
+            "created": "2017-09-20T08:20:00.000Z",
+            "lastUpdated": "2017-09-20T12:29:22.717Z"
+          },
+          "signature": "a server side signature :)",
+          "signatureCreated": "2017-09-20T08:22:00.000Z"
+        },
+        "userInputAcceptedSigned": {
+          "userInputAccepted": {
+            "acceptedDate": "2017-09-20T12:29:22.717Z",
+            "userInputSigned": {
+              "userInput": {
+                "date": "2017-09-20T22:00:00.000Z",
+                "payload": {
+                  "menstrualIntensity": "0",
+                  "cervicalMucus": "s+",
+                  "disturbingFactors": [
+                    "sleepLately",
+                    "alcohol",
+                    "emotionalPressure"
+                  ]
+                }
+              },
+              "signature": "a client side signature :)",
+              "signatureCreated": "2017-09-20T08:22:00.000Z"
+            },
+            "created": "2017-09-20T08:20:00.000Z",
+            "lastUpdated": "2017-09-20T08:22:03.500Z"
+          },
+          "signature": "another server side signature :)",
+          "signatureCreated": "2017-19-19T08:22:03.000Z"
+        }
+      }
+    },
+    "UserInputAcceptedSigned": {
+      "description": "current state of the user input for that day, signed by the app, accepted and signed by the server",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SignedObject"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "userInputAccepted": {
+              "type": "object",
+              "description": "signed (by app) user input for that day, accepted by server",
+              "properties": {
+                "userInputSigned": {
+                  "$ref": "#/definitions/UserInputSigned"
+                },
+                "acceptedDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "timestamp when server accepted the created or last updated user input for that day"
+                },
+                "created": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "timestamp of creation date"
+                },
+                "lastUpdated": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "timestamp when this data has been updated last"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "UserInputSigned": {
+      "description": "current state of the user input for that day signed by the app",
+      "allOf": [
+        {
+          "$ref": "#/definitions/SignedObject"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "userInput": {
+              "$ref": "#/definitions/UserInput"
+            }
+          }
+        }
+      ]
+    },
+    "UserInput": {
+      "type": "object",
+      "description": "created or last updated user input for that day",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "day for which the user inserted this data"
+        },
+        "payload": {
+          "type": "object",
+          "description": "object containing key value pairs of user input",
+          "properties": {
+            "cervicalMucus": {
+              "type": "string",
+              "description": "cervix mucus consistance / Cervixschleimsymptom\n* keine Angabe (default) [null] * t (nichts gesehen) [t] * ∅ (nicht sichtbar) [-] * f (normale Qualität) [f] * s (sehr gute Qualität) [s] * s+ (exzellente Qualität) [s+]",
+              "enum": [
+                "t",
+                "-",
+                "f",
+                "s",
+                "s+"
+              ]
+            },
+            "cervixPosition": {
+              "type": "string",
+              "description": "position of cervix / Muttermundstand\n* keine Angabe (default) [null] * tiefstehend [deep] * mittel [medium] * hochstehend [high]",
+              "enum": [
+                "deep",
+                "medium",
+                "high"
+              ]
+            },
+            "cervixOpenness": {
+              "type": "string",
+              "description": "is the cervix opened or closed / Muttermundöffnung\n* keine Angabe (default) [null] * geschlossen [closed] * leicht geöffnet [partlyOpen] * geöffnet [open]",
+              "enum": [
+                "closed",
+                "partlyOpen",
+                "open"
+              ]
+            },
+            "cervixSoftness": {
+              "type": "string",
+              "description": "is the cervix soft or hard / Muttermundbeschaffenheit\n* keine Angabe (default) [null] * weich [soft] * hart (wie Nasenknorpel) [firm]",
+              "enum": [
+                "soft",
+                "firm"
+              ]
+            },
+            "intercourse": {
+              "type": "boolean",
+              "description": "Geschlechtsverkehr\n* keine Angabe (default) [null] * ja [true] * nein [false]"
+            },
+            "additionalContraceptive": {
+              "type": "boolean",
+              "description": "zusätzliche Verhütung; ONLY IF intercourse == true\n* keine Angabe (default) [null] * geschützt [true] * ungeschützt [false]"
+            },
+            "menstruation": {
+              "type": "string",
+              "description": "Periode\n* keine Angabe - keine Menstruation (default) [null] * Menstruation [menstruation] * Zwischenblutung [intermenstrualBleeding]",
+              "enum": [
+                "menstruation",
+                "intermenstrualBleeding"
+              ]
+            },
+            "menstrualIntensity": {
+              "type": "number",
+              "format": "float",
+              "description": "Stärke der Blutung; ONLY IF menstruation != null; currently only predefined values\n* \"-\" (schwache Blutung) [0.2] * \"o\" (mittelstarke Blutung) [0.5] * + (starke Blutung) [1]",
+              "enum": [
+                0.2,
+                0.5,
+                1
+              ]
+            },
+            "disturbingFactors": {
+              "type": "array",
+              "description": "Störfaktoren; multiselectable; predefined values; additional values can be added when \"Sonstiges\" is selected, then addDisturbingFactor can be filled\n\n* ungewohnt spätes Zubettgehen [sleepLately]\n* ungewohnter Alkoholgenuss [alcohol]\n* Stress [stress]\n* seelische Belastung [emotionalPressure]\n* Zeitumstellung [clockChange]\n* Zeitverschiebung [timeShift]\n* kurze oder gestörte Nachtruhe[shortNight]\n* Essen spätabends [lateSupper]\n* Umgebungswechsel (Reisen, Urlaub, Klimawechsel) [changeOfEnvironment]\n* Erkrankung und Unpässlichkeiten/Fieber [fever]\n* andere Krankheit [illness]\n* Medikament [medicine]\n* Thermometerwechsel im Zyklus [changedSensor]\n* Aufregung [excitement]\n* Feiern spätabends [party]\n* Schichtarbeit [shiftWork]\n* Sonstiges [other]",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "sleepLately",
+                  "alcohol",
+                  "stress",
+                  "emotionalPressure",
+                  "clockChange",
+                  "timeShift",
+                  "shortNight",
+                  "lateSupper",
+                  "changeOfEnvironment",
+                  "fever",
+                  "illness",
+                  "medicine",
+                  "changedSensor",
+                  "excitement",
+                  "party",
+                  "shiftWork",
+                  "other"
+                ]
+              }
+            },
+            "addDisturbingFactor": {
+              "type": "string",
+              "maxLength": 50,
+              "description": "free text field to add additional disturbing factor; ONLY IF \"other\" is selected in disturbingFactors"
+            },
+            "info": {
+              "type": "string",
+              "description": "notes / Notizen",
+              "maxLength": 500
+            }
+          }
+        }
+      }
+    },
+    "DeviceInfoObject": {
+      "type": "object",
+      "description": "short device info; should be a trackle device",
+      "required": [
+        "deviceId",
+        "deviceName",
+        "deviceTypeKey"
+      ],
+      "properties": {
+        "deviceId": {
+          "type": "string",
+          "description": "UUID of this device"
+        },
+        "deviceName": {
+          "type": "string",
+          "description": "name or description of this device so that the user will know which device it is; can be set by a user or the administrator via ubirch admin ui"
+        },
+        "deviceTypeKey": {
+          "type": "string",
+          "description": "one of the keys, delivered by the device type list REST endpoint of the ubirch REST API; should be 'trackleSensor' here"
+        }
+      },
+      "example": {
+        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+        "deviceName": "trackle d971aca0-7769-401b-a402-6c42c22be847",
+        "deviceTypeKey": "trackleSensor"
+      }
+    },
+    "TemperatureObject": {
+      "type": "object",
+      "description": "temperature value with timestamp of the measurement; can contain additional properties especially that this item is one of the lowest, a basal value, or a flag that and why this value should be ignored",
+      "required": [
+        "id",
+        "timestamp",
+        "temp"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "UUID of the message sent from sensor containing this temperature value"
+        },
+        "deviceId": {
+          "type": "string",
+          "description": "UUID of the trackle sensor the message containing this temperature value was sent from"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the timestamp of the message; when this temperature value is measured by the trackle sensor"
+        },
+        "temp": {
+          "type": "number",
+          "format": "float",
+          "description": "temperature value"
+        },
+        "basal": {
+          "type": "boolean",
+          "default": false,
+          "description": "if true then this item is a basal value as much as to say that this one of the values with the lowest temperature value of the whole nicht"
+        },
+        "ignore": {
+          "type": "boolean",
+          "default": false,
+          "description": "if true then this item should be ignored"
+        },
+        "ignoreComment": {
+          "type": "string",
+          "description": "if ignore = true this contains the reason why this value should be ignored"
+        }
+      },
+      "example": {
+        "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
+        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+        "timestamp": "2016-06-04T23:41:58.887Z",
+        "temp": 36.019999999999996,
+        "basal": true,
+        "ignore": true,
+        "ignoreComment": "out of body"
+      }
+    },
+    "BasalTemperatureObject": {
+      "type": "object",
+      "description": "basal temperature value\n- the lowest measured temperature value in the corresponding sleeping period - with timestamp of the first measurement of this value - can contain additional properties, the user has inserted in the UI for this sleeping period",
+      "required": [
+        "sleepingPeriodId",
+        "timestamp",
+        "temperature"
+      ],
+      "properties": {
+        "sleepingPeriodId": {
+          "type": "string",
+          "description": "id of the sleepingPeriodTemperatureCurve; for drilldown to sleeping period temperature in cycle chart"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the timestamp when the lowest temperature is measured the first time by the trackle sensor"
+        },
+        "temperature": {
+          "type": "number",
+          "format": "float",
+          "description": "basal temperature value"
+        }
+      },
+      "example": {
+        "timestamp": "2016-09-01T23:50:38.001Z",
+        "temperature": 36.040000000000006,
+        "sleepingPeriodId": "fb8bce6a-d7cb-4288-9aee-04ca627ab364"
+      }
+    },
+    "SleepingPeriodObject": {
+      "type": "object",
+      "required": [
+        "id",
+        "deviceId",
+        "temperatures"
+      ],
+      "description": "contains the measured temperature values of one sleeping period\nthe data has been cleaned already\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled\nthe data whith the basal values (minimum) are marked",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "unique id of this sleeping period temperature curve; is used to drill down from cycle curve to sleeping period curve"
+        },
+        "deviceId": {
+          "type": "string",
+          "description": "UUID of the trackle sensor this temperature values were measured with"
+        },
+        "from": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the timestamp of the first temperature value measured in this sleeping period"
+        },
+        "to": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the timestamp of the last temperature value measured in this sleeping period"
+        },
+        "temperatures": {
+          "description": "all measured temperature values of the sleeping period\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TemperatureObject"
+          }
+        }
+      },
+      "example": {
+        "id": "fb8bce6a-d7cb-4288-9aee-04ca627ab364",
+        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+        "from": "2016-06-04T23:41:58.887Z",
+        "to": "2016-06-05T08:27:24.413Z",
+        "temperatures": [
+          {
+            "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
+            "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+            "timestamp": "2016-06-04T23:42:56.323Z",
+            "temperature": 35.2,
+            "ignore": true,
+            "ignoreComment": "out of body"
+          },
+          {
+            "id": "1291b73e-bb7c-440c-a93b-9d75f3bcdb1c",
+            "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+            "timestamp": "2016-06-04T23:41:58.887Z",
+            "temp": 36.019999999999996,
+            "basal": true
+          },
+          {
+            "id": "d90ee0a6-e7b6-45c6-bf59-028d960bdeec",
+            "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+            "timestamp": "2016-06-04T23:43:53.776Z",
+            "temperature": 36.25
+          }
+        ]
+      }
+    },
+    "CycleInfoObject": {
+      "type": "object",
+      "discriminator": "CycleInfoObject",
+      "description": "info object for cycles; short info of a cycle; contains every info except the basalTemperatures array; especcially for listing cycles and to organize all cycles of a user",
+      "required": [
+        "id",
+        "periodBegin",
+        "periodEnd",
+        "cycleEnd"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "unique id of this cycle"
+        },
+        "periodBegin": {
+          "type": "string",
+          "format": "time-date",
+          "description": "day when the menstruation of this cycle started; because a cycle starts with the menstruation phase this is also the cycle begin date"
+        },
+        "periodEnd": {
+          "type": "object",
+          "description": "date when the menstruation ended; a 'prognosis' flag can be set if it's not clear if the menstruation is finished yet",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "time-date"
+            },
+            "prognosis": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "cycleEnd": {
+          "type": "object",
+          "description": "date of the cycle end; a cycle ends if the user inserts the next menstruation begin date; in the current cycle a 'prognosis' flag is set to true because the cycle has not yet been finished by the insertion of the next menstruation begin; in this case the cycle end is calculated to the greater (newer) date of the following\n* the timestamp of the newest basal temperature value + 1 day (if the cycle contains basal temperature values)\n* periodBegin + defaultCycleLength",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "time-date"
+            },
+            "prognosis": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "fertileBegin": {
+          "type": "object",
+          "description": "optional the ovulation and fertile phase can be calculated; fertileBegin is the date of the begin of the fertile phase; before the ovulation is measured time range of the fertile phase is not clear and a 'prognosis' flag will be set",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "time-date"
+            },
+            "prognosis": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "fertileEnd": {
+          "type": "object",
+          "description": "optional the ovulation and fertile phase can be calculated; fertileEnd is the date of the end of the fertile phase; before the ovulation is measured time range of the fertile phase is not clear and a 'prognosis' flag will be set",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "time-date"
+            },
+            "prognosis": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
+        "ovulation": {
+          "type": "object",
+          "description": "optional the ovulation and fertile phase can be calculated; ovulation contains the date of the ovulation; before the ovulation is measured it can be calculated from existing cycles and will be marked with a 'prognosis' flag",
+          "properties": {
+            "date": {
+              "type": "string",
+              "format": "time-date"
+            },
+            "prognosis": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        }
+      },
+      "example": {
+        "id": "8f77620e-cfb3-4d4b-b12e-631d7485496c",
+        "periodBegin": "2016-05-27T00:00:00.000Z",
+        "periodEnd": {
+          "timestamp": "2016-06-01T00:00:00.000Z"
+        },
+        "cycleEnd": {
+          "timestamp": "2016-06-24T00:00:00.000Z",
+          "prognosis": true
+        },
+        "ovulation": {
+          "timestamp": "2016-06-10T00:00:00.000Z",
+          "prognosis": true
+        },
+        "fertileBegin": {
+          "timestamp": "2016-06-05T00:00:00.000Z",
+          "prognosis": true
+        },
+        "fertileEnd": {
+          "timestamp": "2016-06-12T00:00:00.000Z",
+          "prognosis": true
+        }
+      }
+    },
+    "CycleObject": {
+      "description": "contains the cycle relevant data like\n\n- all calculated basal temperature values of this cycle\n- start and end of the cycle, possibly prognosticated\n- start and end of the menstruation\n- start and end of the fertile phase with the date of the ovulation if calculated, possibly prognosticated\n- optionally addition properties",
+      "allOf": [
+        {
+          "$ref": "#/definitions/CycleInfoObject"
+        },
+        {
+          "type": "object",
+          "required": [
+            "basalTemperatures"
+          ],
+          "properties": {
+            "basalTemperatures": {
+              "type": "array",
+              "description": "all calculated basal temperature values of this cycle\n- sorted by timestamp\n- in ascending order\n- at most one item per day\n- intervals between timestamps do not need to be equal",
+              "items": {
+                "$ref": "#/definitions/BasalTemperatureObject"
+              }
+            },
+            "additionalInfos": {
+              "description": "every item of data can have additional properties; referenced by timestamp",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "reference to the item of data array, this properties are assigned to"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "description": "key value pairs of properties"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "example": {
+        "id": "3652c261-7d0c-4436-920c-2164fc074529",
+        "periodBegin": "2016-06-28T12:14:45.370Z",
+        "periodEnd": {
+          "timestamp": "2016-07-03T12:14:45.370Z"
+        },
+        "cycleEnd": {
+          "timestamp": "2016-07-26T12:14:45.369Z"
+        },
+        "ovulation": {
+          "timestamp": "2016-07-12T12:14:45.370Z"
+        },
+        "fertileBegin": {
+          "timestamp": "2016-07-07T12:14:45.370Z"
+        },
+        "fertileEnd": {
+          "timestamp": "2016-07-14T12:14:45.370Z"
+        },
+        "basalTemperatures": [
+          {
+            "sleepingPeriodId": "31fc661c-2b99-4884-a605-ff0f99760906",
+            "timestamp": "2016-07-04T12:14:45.370Z",
+            "temperature": 36.31
+          },
+          {
+            "sleepingPeriodId": "5e39dd02-7b16-4ff7-a70e-8385dd6de6d2",
+            "timestamp": "2016-07-05T12:14:45.370Z",
+            "temperature": 36.29
+          },
+          {
+            "sleepingPeriodId": "42facad5-5047-43d3-9227-3fc7dc282ec4",
+            "timestamp": "2016-07-06T12:14:45.370Z",
+            "temperature": 36.28
+          },
+          {
+            "sleepingPeriodId": "1643412c-fff4-4022-b2b8-2b369b227776",
+            "timestamp": "2016-07-07T12:14:45.370Z",
+            "temperature": 36.34
+          }
+        ]
+      }
+    },
+    "PeriodObject": {
+      "type": "object",
+      "description": "period object containing the date of the beginning of the period and the device id of the used device",
+      "required": [
+        "periodBegin"
+      ],
+      "properties": {
+        "periodBegin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "timestamp of the day, when the period began"
+        },
+        "additionalInfos": {
+          "type": "object",
+          "description": "optionally additional properties can be added; any valid json will be accepted"
+        }
+      },
+      "example": {
+        "periodBegin": "2016-11-16T00:00:00.000Z",
+        "additionalInfos": {}
+      }
+    },
+    "HealthResponse200": {
+      "description": "response if server is healthy",
+      "type": "object",
+      "required": [
+        "version",
+        "status",
+        "message"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NOK"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "description": "welcome string with build information ( $GO_PIPELINE_NAME / $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )"
+        }
+      },
+      "example": {
+        "version": "1.0",
+        "status": "OK",
+        "message": "Welcome to the ubirchTrackleService ( BUILD_trackle-service / 79 / noRev )"
+      }
+    },
+    "HealthResponse400": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/HealthResponse200"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "message": "this is some error message"
+      }
+    },
+    "DeepCheckHealthResponse200": {
+      "description": "response of deep check if server is healthy",
+      "type": "object",
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "message": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "array with all errors that occurred"
+        }
+      },
+      "example": {
+        "status": true,
+        "message": []
+      }
+    },
+    "DeepCheckHealthResponse500": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/DeepCheckHealthResponse200"
+        }
+      ],
+      "example": {
+        "status": false,
+        "message": [
+          "unable to connect to the database"
+        ]
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "error object with error code and message",
+      "required": [
+        "apiVersion",
+        "status",
+        "error"
+      ],
+      "properties": {
+        "apiVersion": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "description": "KO because it's an error"
+        },
+        "error": {
+          "type": "object",
+          "required": [
+            "errorId",
+            "errorMessage"
+          ],
+          "properties": {
+            "errorId": {
+              "type": "string",
+              "enum": [
+                "ErrorTimeOut",
+                "ErrorNotHandled",
+                "ErrorFatalIntern",
+                "ErrorMissingParams",
+                "ErrorParseJson",
+                "ErrorInvalidSignature"
+              ]
+            },
+            "errorMessage": {
+              "type": "string",
+              "enum": [
+                "request could not be processed in time",
+                "request could not be handled",
+                "fatal internal error",
+                "missing parameters",
+                "cannot parse incoming json doc",
+                "Verification of signature failed"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
