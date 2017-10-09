@@ -231,47 +231,6 @@
         }
       }
     },
-    "/period/begin": {
-      "post": {
-        "tags": [
-          "trackle",
-          "cycle"
-        ],
-        "summary": "sets a period begin date",
-        "description": "the user inserts the date, when her menstruation has begun; used to finish the current cycle or to start to initial cycle, when the user opens the app the first time\n\n- only possible for the current or initial menstrual cycle\n\n- creates a new 'current' cycle, starting with the inserted period start date\n\n- finishes the currents cycle if exists",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "period",
-            "description": "period object containing the date of the beginning of the period and the device id of the used device",
-            "schema": {
-              "$ref": "#/definitions/PeriodObject"
-            }
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer token identifying the related user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the new created current cycle beginning with the inserted period start date",
-            "schema": {
-              "$ref": "#/definitions/CycleObject"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
     "/cycle/info/list": {
       "get": {
         "tags": [
@@ -513,39 +472,6 @@
         "responses": {
           "200": {
             "description": "Successful response - no news are good news"
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/cycle/current": {
-      "get": {
-        "tags": [
-          "trackle",
-          "cycle"
-        ],
-        "summary": "GET current cycle data",
-        "description": "returns the current, not finished cycle\n\n- only return cycle if requesting user owns it",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer token identifying the related user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the data of the current cycle",
-            "schema": {
-              "$ref": "#/definitions/CycleObject"
-            }
           },
           "400": {
             "description": "Not successful response",
@@ -1356,28 +1282,6 @@
             "temperature": 36.34
           }
         ]
-      }
-    },
-    "PeriodObject": {
-      "type": "object",
-      "description": "period object containing the date of the beginning of the period and the device id of the used device",
-      "required": [
-        "periodBegin"
-      ],
-      "properties": {
-        "periodBegin": {
-          "type": "string",
-          "format": "date-time",
-          "description": "timestamp of the day, when the period began"
-        },
-        "additionalInfos": {
-          "type": "object",
-          "description": "optionally additional properties can be added; any valid json will be accepted"
-        }
-      },
-      "example": {
-        "periodBegin": "2016-11-16T00:00:00.000Z",
-        "additionalInfos": {}
       }
     },
     "HealthResponse200": {
