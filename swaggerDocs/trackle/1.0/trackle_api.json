@@ -334,46 +334,6 @@
                     }
                 }
             }
-        },
-        "/cycle/sleepingPeriod/{sleepingPeriodId}": {
-            "get": {
-                "tags": [
-                    "trackle",
-                    "sleepingPeriod"
-                ],
-                "summary": "sleeping period temperature curve",
-                "description": "return the data that has been measured during the sleeping period",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "sleepingPeriodId",
-                        "description": "id of the sleeping period curve; UUID",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "header",
-                        "name": "Authorization",
-                        "description": "Bearer token identifying the related user",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response; returns the requested sleeping period temperature curve",
-                        "schema": {
-                            "$ref": "#/definitions/SleepingPeriodObject"
-                        }
-                    },
-                    "400": {
-                        "description": "Not successful response",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -457,71 +417,6 @@
                 "timestamp": "2016-09-01T23:50:38.001Z",
                 "temperature": 36.040000000000006,
                 "sleepingPeriodId": "fb8bce6a-d7cb-4288-9aee-04ca627ab364"
-            }
-        },
-        "SleepingPeriodObject": {
-            "type": "object",
-            "required": [
-                "id",
-                "deviceId",
-                "temperatures"
-            ],
-            "description": "contains the measured temperature values of one sleeping period\nthe data has been cleaned already\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled\nthe data whith the basal values (minimum) are marked",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "description": "unique id of this sleeping period temperature curve; is used to drill down from cycle curve to sleeping period curve"
-                },
-                "deviceId": {
-                    "type": "string",
-                    "description": "UUID of the trackle sensor this temperature values were measured with"
-                },
-                "from": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "the timestamp of the first temperature value measured in this sleeping period"
-                },
-                "to": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "the timestamp of the last temperature value measured in this sleeping period"
-                },
-                "temperatures": {
-                    "description": "all measured temperature values of the sleeping period\n- sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/TemperatureObject"
-                    }
-                }
-            },
-            "example": {
-                "id": "fb8bce6a-d7cb-4288-9aee-04ca627ab364",
-                "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-                "from": "2016-06-04T23:41:58.887Z",
-                "to": "2016-06-05T08:27:24.413Z",
-                "temperatures": [
-                    {
-                        "id": "18ceb213-7549-4e5c-914a-8c7b6f4bcdd7",
-                        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-                        "timestamp": "2016-06-04T23:42:56.323Z",
-                        "temperature": 35.2,
-                        "ignore": true,
-                        "ignoreComment": "out of body"
-                    },
-                    {
-                        "id": "1291b73e-bb7c-440c-a93b-9d75f3bcdb1c",
-                        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-                        "timestamp": "2016-06-04T23:41:58.887Z",
-                        "temp": 36.019999999999996,
-                        "basal": true
-                    },
-                    {
-                        "id": "d90ee0a6-e7b6-45c6-bf59-028d960bdeec",
-                        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
-                        "timestamp": "2016-06-04T23:43:53.776Z",
-                        "temperature": 36.25
-                    }
-                ]
             }
         },
         "CycleInfoObject": {
