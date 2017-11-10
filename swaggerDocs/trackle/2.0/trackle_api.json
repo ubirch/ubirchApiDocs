@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "trackle REST API",
-    "description": "This is the definition of the trackle REST API containing the following parts:|\n- getting data (from device and user input) for one day or a range or days\n- endpoints to create and update userinput\n- managing cycle data - CRUD\n- getting trackle RAW data of sleeping periods\n- endpoint to insert menstruation dates (deprecated - part of new userinput endpoints)\n- get trackle devices of authenticated user"
+    "description": "This is the definition of the trackle REST API containing the following parts:|\n- getting data (from device and user input) for one day or a range or days\n- endpoints to create and update userinput\n- getting trackle RAW data of sleeping periods"
   },
   "basePath": "/api/trackleService/v2",
   "produces": [
@@ -406,7 +406,7 @@
                         },
                         "prognosis": {
                           "type": "boolean",
-                          "default": true,
+                          "default": false,
                           "description": "true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured"
                         },
                         "ovulation": {
@@ -418,17 +418,28 @@
                     },
                     "menstruation": {
                       "type": "object",
-                      "description": "menstruation state of the day",
+                      "description": "menstruation state of the day; menstruation is aggregated by backend from bleedingIntensity inserted by user; if bleeding implies menstruation, intermenstrual bleeding or even ovulation depends on intensitiy and moment of bleeding during user's cycle",
                       "properties": {
                         "state": {
                           "type": "boolean",
-                          "default": true,
+                          "default": false,
                           "description": "true if this day is during the menstruation of the user"
                         },
                         "prognosis": {
                           "type": "boolean",
-                          "default": true,
-                          "description": "user has to insert at least beginning and end of menstruation"
+                          "default": false,
+                          "description": "true if the menstruation state of this day is a prognosis; this is the case if this menstruation is in the future or (maybe) user has not inserted bleeding at a day the backend expects user's menstruation"
+                        }
+                      }
+                    },
+                    "intermenstrualBleeding": {
+                      "type": "object",
+                      "description": "set if an intermenstrual bleeding uccurred at the day; aggregated by backend from bleedingIntensity inserted by user; if bleeding implies menstruation, intermenstrual bleeding or even ovulation depends on intensitiy and moment of bleeding during user's cycle",
+                      "properties": {
+                        "state": {
+                          "type": "boolean",
+                          "default": false,
+                          "description": "true if intermenstrual bleeding uccurred at the day"
                         }
                       }
                     },
@@ -631,19 +642,12 @@
               "type": "boolean",
               "description": "zusätzliche Verhütung; ONLY IF intercourse == true\n* keine Angabe (default) [null] * geschützt [true] * ungeschützt [false]"
             },
-            "menstruation": {
-              "type": "string",
-              "description": "Periode\n* keine Angabe - keine Menstruation (default) [null] * Menstruation [menstruation] * Zwischenblutung [intermenstrualBleeding]",
-              "enum": [
-                "menstruation",
-                "intermenstrualBleeding"
-              ]
-            },
-            "menstrualIntensity": {
+            "bleedingIntensity": {
               "type": "number",
               "format": "float",
-              "description": "Stärke der Blutung; ONLY IF menstruation != null; currently only predefined values\n* \"-\" (schwache Blutung) [0.2] * \"o\" (mittelstarke Blutung) [0.5] * + (starke Blutung) [1]",
+              "description": "Stärke der Blutung; currently only predefined values\n* \"-\" (schwache Blutung) [0.2] * \"o\" (mittelstarke Blutung) [0.5] * + (starke Blutung) [1] * \".\" (Schmierblutung) [0.1]",
               "enum": [
+                0.1,
                 0.2,
                 0.5,
                 1
