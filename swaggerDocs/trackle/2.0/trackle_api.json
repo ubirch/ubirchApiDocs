@@ -401,17 +401,14 @@
                       "properties": {
                         "state": {
                           "type": "boolean",
-                          "default": true,
                           "description": "true if the user is fertile at that day"
                         },
                         "prognosis": {
                           "type": "boolean",
-                          "default": false,
                           "description": "true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured"
                         },
                         "ovulation": {
                           "type": "boolean",
-                          "default": false,
                           "description": "true if the ovulation probably happened at this day"
                         }
                       }
@@ -422,12 +419,10 @@
                       "properties": {
                         "state": {
                           "type": "boolean",
-                          "default": false,
                           "description": "true if this day is during the menstruation of the user"
                         },
                         "prognosis": {
                           "type": "boolean",
-                          "default": false,
                           "description": "true if the menstruation state of this day is a prognosis; this is the case if this menstruation is in the future or (maybe) user has not inserted bleeding at a day the backend expects user's menstruation"
                         }
                       }
@@ -498,6 +493,9 @@
               "state": false,
               "prognosis": true
             },
+            "intermenstrualBleeding": {
+              "state": false
+            },
             "created": "2017-09-20T08:20:00.000Z",
             "lastUpdated": "2017-09-20T12:29:22.717Z"
           },
@@ -511,7 +509,7 @@
               "userInput": {
                 "date": "2017-09-20T22:00:00.000Z",
                 "payload": {
-                  "menstrualIntensity": "0",
+                  "bleedingIntensity": 0.2,
                   "cervicalMucus": "s+",
                   "disturbingFactors": [
                     "sleepLately",
