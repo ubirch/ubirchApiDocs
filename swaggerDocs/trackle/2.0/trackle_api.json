@@ -271,6 +271,47 @@
         }
       }
     },
+    "/user/check/{hashedEmail}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "profile"
+        ],
+        "summary": "CHECK if user exists",
+        "description": "check existance of user by hashed email address",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hashedEmail",
+            "description": "hashed email address",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns if user for given email address already exists or not",
+            "schema": {
+              "type": "object",
+              "required": [
+                "exists"
+              ],
+              "properties": {
+                "exists": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response; especially if user already exists",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/user/info": {
       "post": {
         "tags": [
@@ -278,8 +319,15 @@
           "profile"
         ],
         "summary": "CREATE user",
-        "description": "create user by display name and email address; a user for given email address MUST NOT exist already",
+        "description": "create user by email address and display name; a user for given email address MUST NOT exist already",
         "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "userInfoSigned",
@@ -310,7 +358,7 @@
           "profile"
         ],
         "summary": "READ user info",
-        "description": "returns user info containing user profile data",
+        "description": "returns user info account data",
         "parameters": [
           {
             "in": "header",
@@ -959,6 +1007,9 @@
     },
     "UserInfo": {
       "type": "object",
+      "required": [
+        "email"
+      ],
       "description": "user account specific data",
       "properties": {
         "name": {
