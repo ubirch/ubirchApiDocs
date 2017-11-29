@@ -214,6 +214,157 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /user/info:
+    post:
+      tags:
+        - trackle
+        - profile
+      summary: CREATE user
+      description: >-
+        create user by display name and email address; a user for given email
+        address MUST NOT exist already
+      parameters:
+        - in: body
+          name: userInfoSigned
+          description: >-
+            the user data the user inserted to create an account, signed by the
+            app
+          schema:
+            $ref: '#/definitions/UserInfoSigned'
+      responses:
+        '200':
+          description: >-
+            Successful response; returns the created user info object,
+            containing the account creation timestamp
+          schema:
+            $ref: '#/definitions/UserInfoAcceptedSigned'
+        '400':
+          description: Not successful response; especially if user already exists
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - trackle
+        - profile
+      summary: READ user info
+      description: returns user info containing user profile data
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns the requested user info
+          schema:
+            $ref: '#/definitions/UserInfoAcceptedSigned'
+        '400':
+          description: Not successful response; especially if user doesn't exist
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /user/settings:
+    post:
+      tags:
+        - trackle
+        - profile
+      summary: WRITE user settings
+      description: set and edit user specific settings
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: userSettingsSigned
+          description: 'user settings the user inserted or changed, signed by the app'
+          schema:
+            $ref: '#/definitions/UserSettingsSigned'
+      responses:
+        '200':
+          description: >-
+            Successful response; returns the user settings signed by the app,
+            wrapped in an object documenting that the server accepted and signed
+            that content sent by the app
+          schema:
+            $ref: '#/definitions/UserSettingsAcceptedSigned'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - trackle
+        - profile
+      summary: READ user settings
+      description: returns user specific settings
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: >-
+            Successful response; returns the user settings signed by the app,
+            wrapped in an object documenting that the server accepted and signed
+            that content sent by the app
+          schema:
+            $ref: '#/definitions/UserSettingsAcceptedSigned'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /user/stats:
+    get:
+      tags:
+        - trackle
+        - profile
+      summary: READ user cycle statistics
+      description: >-
+        return statistics about users cycles analysed from collected measured
+        temperatures and user inputs
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns the requested user statistics
+          schema:
+            $ref: '#/definitions/CycleStatsSigned'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /user/profile:
+    get:
+      tags:
+        - trackle
+        - profile
+      summary: READ user profile
+      description: >-
+        returns user profile containing user info, user settings and cycle
+        statistics
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns the requested user profile
+          schema:
+            $ref: '#/definitions/UserProfile'
+        '400':
+          description: Not successful response; especially if user doesn't exist
+          schema:
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   SignedObject:
     type: object
@@ -230,6 +381,31 @@ definitions:
         type: string
         format: date-time
         description: the timestamp when this signature was created
+  AcceptedSignedObject:
+    allOf:
+      - $ref: '#/definitions/SignedObject'
+      - type: object
+        discriminator: AcceptedSignedObject
+        description: >-
+          the additional contained property/object is signed by the app, that
+          has been accepted and signed by server afterwards
+        required:
+          - acceptedDate
+        properties:
+          acceptedDate:
+            type: string
+            format: date-time
+            description: >-
+              timestamp when server accepted the created or last updated signed
+              data
+          created:
+            type: string
+            format: date-time
+            description: timestamp of creation date
+          lastUpdated:
+            type: string
+            format: date-time
+            description: timestamp when this data has been last updated
   DayInfoObject:
     type: object
     description: >-
@@ -456,29 +632,11 @@ definitions:
       current state of the user input for that day, signed by the app, accepted
       and signed by the server
     allOf:
-      - $ref: '#/definitions/SignedObject'
+      - $ref: '#/definitions/AcceptedSignedObject'
       - type: object
         properties:
-          userInputAccepted:
-            type: object
-            description: 'signed (by app) user input for that day, accepted by server'
-            properties:
-              userInputSigned:
-                $ref: '#/definitions/UserInputSigned'
-              acceptedDate:
-                type: string
-                format: date-time
-                description: >-
-                  timestamp when server accepted the created or last updated
-                  user input for that day
-              created:
-                type: string
-                format: date-time
-                description: timestamp of creation date
-              lastUpdated:
-                type: string
-                format: date-time
-                description: timestamp when this data has been updated last
+          userInputSigned:
+            $ref: '#/definitions/UserInputSigned'
   UserInputSigned:
     description: current state of the user input for that day signed by the app
     allOf:
@@ -642,6 +800,183 @@ definitions:
             type: string
             description: notes / Notizen
             maxLength: 500
+  UserProfile:
+    type: object
+    description: |-
+      contains all data for profile for READ access
+      * user info * user specific settings * cycle statistics
+    properties:
+      userInfo:
+        $ref: '#/definitions/UserInfoAcceptedSigned'
+      userSettings:
+        $ref: '#/definitions/UserSettingsAcceptedSigned'
+      cycleStats:
+        $ref: '#/definitions/CycleStatsSigned'
+  UserInfoAcceptedSigned:
+    description: 'user info, signed by the app, accepted and signed by the server'
+    allOf:
+      - $ref: '#/definitions/AcceptedSignedObject'
+      - type: object
+        properties:
+          userInfoSigned:
+            $ref: '#/definitions/UserInfoSigned'
+          activeSince:
+            type: string
+            format: date-time
+            description: >-
+              timestamp when user created her trackle account; cannot be set by
+              user
+  UserInfoSigned:
+    description: user info signed by app
+    allOf:
+      - $ref: '#/definitions/SignedObject'
+      - type: object
+        properties:
+          userInfo:
+            $ref: '#/definitions/UserInfo'
+  UserInfo:
+    type: object
+    description: user account specific data
+    properties:
+      name:
+        type: string
+        description: display name to communicate with user in app
+      email:
+        type: string
+        description: email address of user; currently used for user identification
+  UserSettingsAcceptedSigned:
+    description: >-
+      current state of the user specific settings, signed by the app, accepted
+      and signed by the server
+    allOf:
+      - $ref: '#/definitions/AcceptedSignedObject'
+      - type: object
+        properties:
+          userSettingsSigned:
+            $ref: '#/definitions/UserSettingsSigned'
+  UserSettingsSigned:
+    description: user settings signed by app
+    allOf:
+      - $ref: '#/definitions/SignedObject'
+      - type: object
+        properties:
+          userSettings:
+            $ref: '#/definitions/UserSettings'
+  UserSettings:
+    type: object
+    description: user specific settings; key value pairs; can be changed by user
+    additionalProperties:
+      type: string
+  CycleStatsSigned:
+    description: cycle stats of the user signed by backend
+    allOf:
+      - $ref: '#/definitions/SignedObject'
+      - type: object
+        properties:
+          cycleStats:
+            $ref: '#/definitions/CycleStats'
+  CycleStats:
+    type: object
+    description: >-
+      statistics about users cycles analysed from collected measured
+      temperatures and user inputs
+    properties:
+      cycle:
+        type: object
+        description: cycle specific statistics
+        properties:
+          currentNo:
+            type: integer
+            description: number of current cycle; start counting with cycle 0
+          measuredCount:
+            type: integer
+            description: number of measured cycles
+          avLength:
+            type: number
+            format: float
+            description: average length of all measured cycles
+          shortest:
+            type: integer
+            description: shortest cycle duration of all measured cycles
+          longest:
+            type: integer
+            description: longest cycle duration of all measured cycles
+      menstruation:
+        type: object
+        description: menstruation specific statistics
+        properties:
+          avLength:
+            type: number
+            format: float
+            description: >-
+              average length of all determined menstruations; determined from
+              user input of bleeding intensity
+          nextDate:
+            type: string
+            format: date-time
+            description: >-
+              forecast on which day the next menstruation should start; ends
+              with time 00:00:00
+          nextLength:
+            type: integer
+            description: forecast about duration of the next menstruation
+      fertile:
+        type: object
+        description: fertility specific statistics
+        properties:
+          infertileDaysAtCycleBegin:
+            type: number
+            format: float
+            description: number of infertile days at the beginning of each cycle
+          avLengthFirstHalf:
+            type: number
+            format: float
+            description: average length of the duration of cycle before ovulation
+          avLengthSecondHalf:
+            type: number
+            format: float
+            description: average length of the duration of cycle after ovulation
+      ovulation:
+        type: object
+        description: ovulation specific statistics
+        properties:
+          lastConfirmed:
+            type: string
+            format: date-time
+            description: >-
+              last date for which backend determines an ovulation; ends with
+              time 00:00:00
+          nextDate:
+            type: string
+            format: date-time
+            description: >-
+              forecast on which day the next ovulation should happen; ends with
+              time 00:00:00
+          avCycleDay:
+            type: number
+            format: float
+            description: >-
+              average number of days of cycle after which ovulation of user
+              happens 
+    example:
+      cycle:
+        currentNo: 4
+        measuredCount: 3
+        avLength: 26.66
+        shortest: 25
+        longest: 28
+      menstruation:
+        avLength: 3.5
+        nextDate: '2018-01-18T00:00:00.000Z'
+        nextLength: 4
+      fertile:
+        infertileDaysAtCycleBegin: 5
+        avLengthFirstHalf: 12.83
+        avLengthSecondHalf: 13.78
+      ovulation:
+        lastConfirmed: '2017-12-20T00:00:00.000Z'
+        nextDate: '2018-01-04T00:00:00.000Z'
+        avCycleDay: 12.83
   TemperatureObject:
     type: object
     description: >-
