@@ -47,6 +47,74 @@ paths:
           description: something is not fine
           schema:
             $ref: '#/definitions/DeepCheckHealthResponse500'
+  /claim:
+    post:
+      tags:
+        - trackle
+        - sensor
+      summary: CLAIM sensor
+      description: >-
+        prerequisition: trackle sensor and app already performed a handshake
+        with the ubrich-trackle-key app found a trackle sensor and want to claim
+        it; afterwards app and sensor can communicate trust worthy
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: claimRequestSigned
+          description: 'data of the found sensor the app want to claim, signed by app'
+          schema:
+            $ref: '#/definitions/ClaimRequestSigned'
+      responses:
+        '200':
+          description: >-
+            Successful response; return "ok" when claiming request was
+            successful
+          schema:
+            type: string
+            enum:
+              - ok
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ClaimErrorResponse'
+  /unclaim:
+    post:
+      tags:
+        - trackle
+        - sensor
+      summary: UNCLAIM sensor
+      description: >-
+        prerequisition: user claimed given trackle sensor by app user want to
+        unclaim his claimed trackle sensor; because only one trackle sensor can
+        be claimed with a user account at the same time
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: unclaimRequestSigned
+          description: 'id of sensor the app want to unclaim, signed by app'
+          schema:
+            $ref: '#/definitions/ClaimRequestSigned'
+      responses:
+        '200':
+          description: >-
+            Successful response; return "ok" when unclaiming request was
+            successful
+          schema:
+            type: string
+            enum:
+              - ok
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/UnclaimErrorResponse'
   /userInput:
     post:
       tags:
@@ -75,7 +143,7 @@ paths:
             that content sent by the app
           schema:
             $ref: '#/definitions/UserInputAcceptedSigned'
-        '500':
+        '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
@@ -110,7 +178,7 @@ paths:
             that content sent by the app
           schema:
             $ref: '#/definitions/UserInputAcceptedSigned'
-        '500':
+        '400':
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
@@ -440,6 +508,111 @@ definitions:
             type: string
             format: date-time
             description: timestamp when this data has been last updated
+  ErrorResponseObject:
+    discriminator: ErrorResponseObject
+    type: object
+    description: error object with error code and message
+    required:
+      - apiVersion
+      - status
+      - error
+    properties:
+      apiVersion:
+        type: string
+      status:
+        type: string
+        description: KO because it's an error
+      error:
+        type: object
+        required:
+          - errorId
+          - errorMessage
+        properties:
+          errorId:
+            type: string
+          errorMessage:
+            type: string
+  ClaimRequestSigned:
+    description: claim request signed by app
+    allOf:
+      - $ref: '#/definitions/SignedObject'
+      - type: object
+        properties:
+          hashedHwDeviceId:
+            type: string
+            description: hashed hardware device id of trackle sensor the app want to claim
+          timestamp:
+            type: string
+            format: date-time
+            description: timestamp when the app sent the claim request to the backend
+  ClaimErrorResponse:
+    description: possible errors for claiming request
+    allOf:
+      - $ref: '#/definitions/ErrorResponseObject'
+      - type: object
+        properties:
+          error:
+            type: object
+            properties:
+              errorId:
+                type: string
+                enum:
+                  - ErrorUnknownDevice
+                  - ErrorDeviceInvalid
+                  - ErrorDeviceAlreadyClaimed
+                  - ErrorTimeOut
+                  - ErrorNotHandled
+                  - ErrorFatalIntern
+                  - ErrorMissingParams
+                  - ErrorParseJson
+                  - ErrorInvalidSignature
+              errorMessage:
+                type: string
+                enum:
+                  - device id is unknown
+                  - device id is invalid
+                  - >-
+                    device which should be claimed is already claimed by another
+                    user
+                  - request could not be processed in time
+                  - request could not be handled
+                  - fatal internal error
+                  - missing parameters
+                  - cannot parse incoming json doc
+                  - Verification of signature failed
+  UnclaimErrorResponse:
+    description: possible errors for unclaiming request
+    allOf:
+      - $ref: '#/definitions/ErrorResponseObject'
+      - type: object
+        properties:
+          error:
+            type: object
+            properties:
+              errorId:
+                type: string
+                enum:
+                  - ErrorUnknownDevice
+                  - ErrorDeviceInvalid
+                  - ErrorDeviceNoClaimedByUser
+                  - ErrorTimeOut
+                  - ErrorNotHandled
+                  - ErrorFatalIntern
+                  - ErrorMissingParams
+                  - ErrorParseJson
+                  - ErrorInvalidSignature
+              errorMessage:
+                type: string
+                enum:
+                  - device id is unknown
+                  - device id is invalid
+                  - device is not claimed by requesting user
+                  - request could not be processed in time
+                  - request could not be handled
+                  - fatal internal error
+                  - missing parameters
+                  - cannot parse incoming json doc
+                  - Verification of signature failed
   DayInfoObject:
     type: object
     description: >-
@@ -1194,39 +1367,29 @@ definitions:
       message:
         - unable to connect to the database
   ErrorResponse:
-    type: object
-    description: error object with error code and message
-    required:
-      - apiVersion
-      - status
-      - error
-    properties:
-      apiVersion:
-        type: string
-      status:
-        type: string
-        description: KO because it's an error
-      error:
-        type: object
-        required:
-          - errorId
-          - errorMessage
+    description: default error object with error code and message
+    allOf:
+      - $ref: '#/definitions/ErrorResponseObject'
+      - type: object
         properties:
-          errorId:
-            type: string
-            enum:
-              - ErrorTimeOut
-              - ErrorNotHandled
-              - ErrorFatalIntern
-              - ErrorMissingParams
-              - ErrorParseJson
-              - ErrorInvalidSignature
-          errorMessage:
-            type: string
-            enum:
-              - request could not be processed in time
-              - request could not be handled
-              - fatal internal error
-              - missing parameters
-              - cannot parse incoming json doc
-              - Verification of signature failed
+          error:
+            type: object
+            properties:
+              errorId:
+                type: string
+                enum:
+                  - ErrorTimeOut
+                  - ErrorNotHandled
+                  - ErrorFatalIntern
+                  - ErrorMissingParams
+                  - ErrorParseJson
+                  - ErrorInvalidSignature
+              errorMessage:
+                type: string
+                enum:
+                  - request could not be processed in time
+                  - request could not be handled
+                  - fatal internal error
+                  - missing parameters
+                  - cannot parse incoming json doc
+                  - Verification of signature failed
