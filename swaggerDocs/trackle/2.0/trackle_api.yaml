@@ -370,8 +370,8 @@ paths:
       tags:
         - trackle
         - profile
-      summary: WRITE user settings
-      description: set and edit user specific settings
+      summary: CREATE user settings
+      description: set user specific settings
       parameters:
         - in: header
           name: Authorization
@@ -380,7 +380,36 @@ paths:
           type: string
         - in: body
           name: userSettingsSigned
-          description: 'user settings the user inserted or changed, signed by the app'
+          description: 'user settings the user inserted initially, signed by the app'
+          schema:
+            $ref: '#/definitions/UserSettingsSigned'
+      responses:
+        '200':
+          description: >-
+            Successful response; returns the user settings signed by the app,
+            wrapped in an object documenting that the server accepted and signed
+            that content sent by the app
+          schema:
+            $ref: '#/definitions/UserSettingsAcceptedSigned'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    put:
+      tags:
+        - trackle
+        - profile
+      summary: UPDATE user settings
+      description: update user specific settings
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: userSettingsSigned
+          description: 'user settings the user changed, signed by the app'
           schema:
             $ref: '#/definitions/UserSettingsSigned'
       responses:
@@ -419,7 +448,7 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /user/stats:
+  /cycle/stats:
     get:
       tags:
         - trackle
@@ -436,7 +465,7 @@ paths:
           type: string
       responses:
         '200':
-          description: Successful response; returns the requested user statistics
+          description: Successful response; returns the requested user cycle statistics
           schema:
             $ref: '#/definitions/CycleStatsSigned'
         '400':
