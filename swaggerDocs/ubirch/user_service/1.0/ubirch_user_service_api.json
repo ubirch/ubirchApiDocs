@@ -355,6 +355,35 @@
         }
       }
     },
+    "/user/emailExists/{email_address}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "email_address",
+          "description": "email address to search with",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "user service",
+          "user"
+        ],
+        "summary": "find user based on an email address",
+        "responses": {
+          "200": {
+            "description": "user exists"
+          },
+          "400": {
+            "description": "user not found",
+            "schema": {
+              "$ref": "#/definitions/EmailAddressQueryError"
+            }
+          }
+        }
+      }
+    },
     "/group": {
       "post": {
         "tags": [
@@ -857,6 +886,19 @@
         "status": "NOK",
         "errorType": "QueryError",
         "errorMessage": "failed to find user"
+      }
+    },
+    "EmailAddressQueryError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "QueryError",
+        "errorMessage": "no user with given email address exists"
       }
     },
     "UserDeleteError": {
