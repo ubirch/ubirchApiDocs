@@ -1167,6 +1167,10 @@
       "description": "all information required to register a user",
       "type": "object",
       "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "user's display name"
+        },
         "email": {
           "type": "string",
           "description": "user's email address"
