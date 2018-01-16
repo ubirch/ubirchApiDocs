@@ -150,7 +150,7 @@
       "post": {
         "tags": [
           "trackle",
-          "day"
+          "user input"
         ],
         "summary": "CREATE user input",
         "description": "user set properties and inserted data for a day",
@@ -189,7 +189,7 @@
       "put": {
         "tags": [
           "trackle",
-          "day"
+          "user input"
         ],
         "summary": "CREATE or UPDATE user input",
         "description": "user set properties and inserted data or update existing data for a day; !!important!! properties that had already been set in an earlier operation will be deleted by an update call when they are missing in the userInput object!!",
@@ -221,6 +221,37 @@
             "description": "Not successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": [
+          "trackle",
+          "user"
+        ],
+        "summary": "register a user",
+        "description": "register a user and store their public and private key (private can only be decrypted on user's device)",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "register",
+            "description": "all information needed to register a user",
+            "schema": {
+              "$ref": "#/definitions/RegistrationObject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success"
+          },
+          "400": {
+            "description": "failed",
+            "schema": {
+              "$ref": "#/definitions/RegistrationError"
             }
           }
         }
@@ -851,6 +882,19 @@
         }
       ]
     },
+    "RegistrationError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "RegistrationError",
+        "errorMessage": "failed to create user record"
+      }
+    },
     "DayInfoObject": {
       "type": "object",
       "description": "all available data for one day. From user input the authenticated user inserted or that have been measured by the user's device or that have been aggregated from known information in the backend",
@@ -1118,6 +1162,32 @@
           }
         }
       ]
+    },
+    "RegistrationObject": {
+      "description": "all information required to register a user",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "user's email address"
+        },
+        "encryptedPrivateKey": {
+          "type": "string",
+          "description": "(BASE64 encoded) encrypted private key to enable crypto operations on multiple devices"
+        },
+        "hashedSecret": {
+          "type": "string",
+          "description": "SHA512( lower(trim(passphrase)) + lower(trim(email)) )"
+        },
+        "publicKey": {
+          "type": "object",
+          "description": "public key JSON as accepted by ubirch-key-service"
+        },
+        "locale": {
+          "type": "string",
+          "description": "ISO 639 language code"
+        }
+      }
     },
     "UserInput": {
       "type": "object",
@@ -1710,6 +1780,34 @@
           }
         }
       ]
+    },
+    "TrackleError": {
+      "description": "trackle error response based on default ubirch error object",
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "enum": [
+            "1.0"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "OK",
+            "NOK"
+          ]
+        },
+        "errorType": {
+          "type": "string"
+        },
+        "errorMessage": {
+          "type": "string",
+          "enum": [
+            "RegistrationError"
+          ]
+        }
+      }
     }
   }
 }
