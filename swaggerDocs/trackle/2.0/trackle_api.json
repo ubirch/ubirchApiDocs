@@ -885,7 +885,7 @@
     "RegistrationError": {
       "allOf": [
         {
-          "$ref": "#/definitions/ErrorResponse"
+          "$ref": "#/definitions/TrackleError"
         }
       ],
       "example": {

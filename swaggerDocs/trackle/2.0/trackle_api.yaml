@@ -600,7 +600,7 @@ definitions:
                   - Verification of signature failed
   RegistrationError:
     allOf:
-      - $ref: '#/definitions/ErrorResponse'
+      - $ref: '#/definitions/TrackleError'
     example:
       version: '1.0'
       status: NOK
