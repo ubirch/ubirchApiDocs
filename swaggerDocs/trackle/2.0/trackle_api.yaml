@@ -212,20 +212,21 @@ paths:
       summary: login a user
       description: login a user. registered users could get their encrypted secret key.
       parameters:
-        - in: email
-          name: Email adress
-          description: current user email address
+        - in: query
+          name: hashedEmail
+          description: current user email address hashed with SHA256
           required: true
           type: string
-        - in: hashedSecret
-          name: hashed authorization secret
+        - in: query
+          name: hashedSecret
           description: hashed authorization secret which is derived from user passphrase
           required: true
           type: string
       responses:
         '201':
           description: success
-          $ref: '#/definitions/LoginSuccessful'
+          schema:
+            $ref: '#/definitions/LoginSuccessful'
         '400':
           description: failed
           schema:
