@@ -257,6 +257,50 @@
         }
       }
     },
+    "/user/login": {
+      "get": {
+        "tags": [
+          "trackle",
+          "user"
+        ],
+        "summary": "login a user",
+        "description": "login a user. registered users could get their encrypted secret key.",
+        "parameters": [
+          {
+            "in": "email",
+            "name": "Email adress",
+            "description": "current user email address",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "hashedSecret",
+            "name": "hashed authorization secret",
+            "description": "hashed authorization secret which is derived from user passphrase",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success",
+            "$ref": "#/definitions/LoginSuccessful"
+          },
+          "400": {
+            "description": "failed",
+            "schema": {
+              "$ref": "#/definitions/LoginError"
+            }
+          },
+          "500": {
+            "description": "failed",
+            "schema": {
+              "$ref": "#/definitions/LoginError"
+            }
+          }
+        }
+      }
+    },
     "/day/{day}": {
       "get": {
         "tags": [
@@ -893,6 +937,24 @@
         "status": "NOK",
         "errorType": "RegistrationError",
         "errorMessage": "failed to create user record"
+      }
+    },
+    "LoginError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/TrackleError"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "LoginError",
+        "errorMessage": "failed to login user"
+      }
+    },
+    "LoginSuccessful": {
+      "example": {
+        "encryptedPrivateKey": "06bb7aab-275a-4812-adbb-31226754c5d3"
       }
     },
     "DayInfoObject": {
