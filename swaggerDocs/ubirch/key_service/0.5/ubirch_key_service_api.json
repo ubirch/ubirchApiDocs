@@ -9,7 +9,7 @@
     "https"
   ],
   "host": "key.dev.ubirch.com",
-  "basePath": "/api/keyService/v0.5",
+  "basePath": "/api/keyService/v1",
   "produces": [
     "application/json"
   ],
