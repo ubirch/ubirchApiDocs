@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 0.5.0
+  version: 1.0.0
   title: ubirch key service REST API
   description: >-
     This is the definition of the ubirch key service REST API containing the

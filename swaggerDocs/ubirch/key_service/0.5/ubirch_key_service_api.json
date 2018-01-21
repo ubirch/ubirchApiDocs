@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "0.5.0",
+    "version": "1.0.0",
     "title": "ubirch key service REST API",
     "description": "This is the definition of the ubirch key service REST API containing the following parts:|\n- key registry where public keys of devices and apps can be stored and requested\n- handshakes between two parties can be performed\n- through direct communication (TODO)\n- without direct communication with handshake objects tranfered through the key service"
   },
