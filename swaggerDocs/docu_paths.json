@@ -19,7 +19,7 @@
       },
       {
         "name": "ubirch Key Service",
-        "version": "0.5",
+        "version": "1.0",
         "uri": "/ubirch/key_service/0.5/ubirch_key_service_api.yaml"
       },
       {
