@@ -744,12 +744,6 @@ definitions:
     type: object
     description: all available data for one day. From user input the authenticated user inserted or that have been measured by the user's device or that have been aggregated from known information in the backend
     properties:
-      id:
-        type: string
-        description: UUID to reference this DayInfoObject
-      userId:
-        type: string
-        description: UUID as a reference to the user/owner of this data
       date:
         type: string
         format: date-time
@@ -860,8 +854,6 @@ definitions:
       userInputAcceptedSigned:
         $ref: '#/definitions/UserInputAcceptedSigned'
     example:
-      id: c1460993-e8cd-47cb-a059-0755e4855757
-      userId: 534a3ac1-aba5-4bf8-a595-7ea0ae4dba74
       date: '2017-09-20T22:00:00.000Z'
       aggregatedSigned:
         aggregated:
