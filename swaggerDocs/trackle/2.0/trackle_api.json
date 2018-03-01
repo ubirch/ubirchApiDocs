@@ -303,6 +303,46 @@
         }
       }
     },
+    "/cycle/id/{cycleId}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "GET cycle data",
+        "description": "returns cycle related information",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "id of the cycle",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested cycle data",
+            "schema": {
+              "$ref": "#/definitions/CycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/day/{day}": {
       "get": {
         "tags": [
@@ -957,6 +997,94 @@
     "LoginSuccessful": {
       "example": {
         "encryptedPrivateKey": "06bb7aab-275a-4812-adbb-31226754c5d3"
+      }
+    },
+    "CycleObject": {
+      "type": "object",
+      "description": "all available data for one cycle.",
+      "required": [
+        "cycleCounter",
+        "cycleBegin",
+        "created",
+        "lastUpdated"
+      ],
+      "properties": {
+        "cycleCounter": {
+          "type": "integer",
+          "description": "running counter of all cycles"
+        },
+        "cycleBegin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "first day in this cycle"
+        },
+        "cycleEnd": {
+          "type": "string",
+          "format": "date-time",
+          "description": "last day in this cycle"
+        },
+        "cycleLength": {
+          "type": "integer",
+          "description": "number of days the cycle lasted"
+        },
+        "menstruationLength": {
+          "type": "integer",
+          "description": "number of days menstruation lasted"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "cycle's creation date"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "cycle's last modified date"
+        }
+      }
+    },
+    "CycleAggregated": {
+      "type": "object",
+      "description": "aggregated information in relation to a cycle",
+      "properties": {
+        "nfpBaseline": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/NfpBaseline"
+            }
+          ]
+        }
+      }
+    },
+    "NfpBaseline": {
+      "type": "object",
+      "description": "NFP charts typically include a baseline. This object provides all relevant information about it.",
+      "required": [
+        "temperature",
+        "begin",
+        "end"
+      ],
+      "properties": {
+        "temperature": {
+          "type": "number",
+          "format": "float",
+          "description": "baseline should be drawn at this temperature"
+        },
+        "begin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "baseline's first day"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "baseline's last day"
+        }
+      },
+      "example": {
+        "temperature": 36.35,
+        "begin": "2018-03-01T00:00:00.000Z",
+        "end": "2018-03-01T00:00:00.000Z"
       }
     },
     "DayInfoObject": {

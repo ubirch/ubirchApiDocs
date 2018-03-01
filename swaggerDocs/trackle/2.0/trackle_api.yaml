@@ -2,14 +2,10 @@ swagger: '2.0'
 info:
   version: 2.0.0
   title: trackle REST API
-  description: >-
-    This is the definition of the trackle REST API containing the following
-    parts:|
-
+  description: |-
+    This is the definition of the trackle REST API containing the following parts:|
     - getting data (from device and user input) for one day or a range or days
-
     - endpoints to create and update userinput
-
     - getting trackle RAW data of sleeping periods
 basePath: /api/trackleService/v2
 produces:
@@ -53,10 +49,7 @@ paths:
         - trackle
         - sensor
       summary: CLAIM sensor
-      description: >-
-        prerequisition: trackle sensor and app already performed a handshake
-        with the ubrich-trackle-key app found a trackle sensor and want to claim
-        it; afterwards app and sensor can communicate trust worthy
+      description: 'prerequisition: trackle sensor and app already performed a handshake with the ubrich-trackle-key app found a trackle sensor and want to claim it; afterwards app and sensor can communicate trust worthy'
       parameters:
         - in: header
           name: Authorization
@@ -70,9 +63,7 @@ paths:
             $ref: '#/definitions/ClaimRequestSigned'
       responses:
         '200':
-          description: >-
-            Successful response; return "ok" when claiming request was
-            successful
+          description: Successful response; return "ok" when claiming request was successful
           schema:
             type: string
             enum:
@@ -87,10 +78,7 @@ paths:
         - trackle
         - sensor
       summary: UNCLAIM sensor
-      description: >-
-        prerequisition: user claimed given trackle sensor by app user want to
-        unclaim his claimed trackle sensor; because only one trackle sensor can
-        be claimed with a user account at the same time
+      description: 'prerequisition: user claimed given trackle sensor by app user want to unclaim his claimed trackle sensor; because only one trackle sensor can be claimed with a user account at the same time'
       parameters:
         - in: header
           name: Authorization
@@ -104,9 +92,7 @@ paths:
             $ref: '#/definitions/ClaimRequestSigned'
       responses:
         '200':
-          description: >-
-            Successful response; return "ok" when unclaiming request was
-            successful
+          description: Successful response; return "ok" when unclaiming request was successful
           schema:
             type: string
             enum:
@@ -130,17 +116,12 @@ paths:
           type: string
         - in: body
           name: userInputSigned
-          description: >-
-            the data the user inserted and uploaded for one day, signed by the
-            app
+          description: 'the data the user inserted and uploaded for one day, signed by the app'
           schema:
             $ref: '#/definitions/UserInputSigned'
       responses:
         '200':
-          description: >-
-            Successful response; returns the user input signed by the app,
-            wrapped in an object documenting that the server accepted and signed
-            that content sent by the app
+          description: 'Successful response; returns the user input signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app'
           schema:
             $ref: '#/definitions/UserInputAcceptedSigned'
         '400':
@@ -152,11 +133,7 @@ paths:
         - trackle
         - user input
       summary: CREATE or UPDATE user input
-      description: >-
-        user set properties and inserted data or update existing data for a day;
-        !!important!! properties that had already been set in an earlier
-        operation will be deleted by an update call when they are missing in the
-        userInput object!!
+      description: user set properties and inserted data or update existing data for a day; !!important!! properties that had already been set in an earlier operation will be deleted by an update call when they are missing in the userInput object!!
       parameters:
         - in: header
           name: Authorization
@@ -165,17 +142,12 @@ paths:
           type: string
         - in: body
           name: userInputSigned
-          description: >-
-            the updated data the user inserted and uploaded for one day, signed
-            by the app
+          description: 'the updated data the user inserted and uploaded for one day, signed by the app'
           schema:
             $ref: '#/definitions/UserInputSigned'
       responses:
         '200':
-          description: >-
-            Successful response; returns the user input signed by the app,
-            wrapped in an object documenting that the server accepted and signed
-            that content sent by the app
+          description: 'Successful response; returns the user input signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app'
           schema:
             $ref: '#/definitions/UserInputAcceptedSigned'
         '400':
@@ -188,9 +160,7 @@ paths:
         - trackle
         - user
       summary: register a user
-      description: >-
-        register a user and store their public and private key (private can only
-        be decrypted on user's device)
+      description: register a user and store their public and private key (private can only be decrypted on user's device)
       parameters:
         - in: body
           name: register
@@ -235,6 +205,33 @@ paths:
           description: failed
           schema:
             $ref: '#/definitions/LoginError'
+  '/cycle/id/{cycleId}':
+    get:
+      tags:
+        - trackle
+        - cycle
+      summary: GET cycle data
+      description: returns cycle related information
+      parameters:
+        - in: path
+          name: cycleId
+          description: id of the cycle
+          required: true
+          type: string
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Successful response; returns the requested cycle data
+          schema:
+            $ref: '#/definitions/CycleObject'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   '/day/{day}':
     get:
       tags:
@@ -253,10 +250,7 @@ paths:
           type: string
           format: date
       summary: data for a day
-      description: >-
-        Query all available data for one day, that the authenticated user has
-        inserted for that day or that have been measured by the user's device or
-        that have been aggregated from known information in the backend
+      description: 'Query all available data for one day, that the authenticated user has inserted for that day or that have been measured by the user''s device or that have been aggregated from known information in the backend'
       responses:
         '200':
           description: Successful response; returns an trackle day info object
@@ -290,11 +284,7 @@ paths:
           type: string
           format: date
       summary: data for a day
-      description: >-
-        Query all available data for a range of days, that the authenticated
-        user has inserted for that days or that have been measured by the user's
-        device or that have been aggregated from known information in the
-        backend
+      description: 'Query all available data for a range of days, that the authenticated user has inserted for that days or that have been measured by the user''s device or that have been aggregated from known information in the backend'
       responses:
         '200':
           description: Successful response; returns an array of trackle day info objects
@@ -326,9 +316,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns the requested sleeping period
-            temperature curve
+          description: Successful response; returns the requested sleeping period temperature curve
           schema:
             $ref: '#/definitions/SleepingPeriodObject'
         '400':
@@ -350,9 +338,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns if user for given email address already
-            exists or not
+          description: Successful response; returns if user for given email address already exists or not
           schema:
             type: object
             required:
@@ -370,9 +356,7 @@ paths:
         - trackle
         - profile
       summary: CREATE user
-      description: >-
-        create user by email address and display name; a user for given email
-        address MUST NOT exist already
+      description: create user by email address and display name; a user for given email address MUST NOT exist already
       parameters:
         - in: header
           name: Authorization
@@ -381,16 +365,12 @@ paths:
           type: string
         - in: body
           name: userInfoSigned
-          description: >-
-            the user data the user inserted to create an account, signed by the
-            app
+          description: 'the user data the user inserted to create an account, signed by the app'
           schema:
             $ref: '#/definitions/UserInfoSigned'
       responses:
         '200':
-          description: >-
-            Successful response; returns the created user info object,
-            containing the account creation timestamp
+          description: 'Successful response; returns the created user info object, containing the account creation timestamp'
           schema:
             $ref: '#/definitions/UserInfoAcceptedSigned'
         '400':
@@ -438,10 +418,7 @@ paths:
             $ref: '#/definitions/UserSettingsSigned'
       responses:
         '200':
-          description: >-
-            Successful response; returns the user settings signed by the app,
-            wrapped in an object documenting that the server accepted and signed
-            that content sent by the app
+          description: 'Successful response; returns the user settings signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app'
           schema:
             $ref: '#/definitions/UserSettingsAcceptedSigned'
         '400':
@@ -467,10 +444,7 @@ paths:
             $ref: '#/definitions/UserSettingsSigned'
       responses:
         '200':
-          description: >-
-            Successful response; returns the user settings signed by the app,
-            wrapped in an object documenting that the server accepted and signed
-            that content sent by the app
+          description: 'Successful response; returns the user settings signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app'
           schema:
             $ref: '#/definitions/UserSettingsAcceptedSigned'
         '400':
@@ -491,10 +465,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns the user settings signed by the app,
-            wrapped in an object documenting that the server accepted and signed
-            that content sent by the app
+          description: 'Successful response; returns the user settings signed by the app, wrapped in an object documenting that the server accepted and signed that content sent by the app'
           schema:
             $ref: '#/definitions/UserSettingsAcceptedSigned'
         '400':
@@ -507,9 +478,7 @@ paths:
         - trackle
         - profile
       summary: READ user cycle statistics
-      description: >-
-        return statistics about users cycles analysed from collected measured
-        temperatures and user inputs
+      description: return statistics about users cycles analysed from collected measured temperatures and user inputs
       parameters:
         - in: header
           name: Authorization
@@ -531,9 +500,7 @@ paths:
         - trackle
         - profile
       summary: READ user profile
-      description: >-
-        returns user profile containing user info, user settings and cycle
-        statistics
+      description: 'returns user profile containing user info, user settings and cycle statistics'
       parameters:
         - in: header
           name: Authorization
@@ -570,18 +537,14 @@ definitions:
       - $ref: '#/definitions/SignedObject'
       - type: object
         discriminator: AcceptedSignedObject
-        description: >-
-          the additional contained property/object is signed by the app, that
-          has been accepted and signed by server afterwards
+        description: 'the additional contained property/object is signed by the app, that has been accepted and signed by server afterwards'
         required:
           - acceptedDate
         properties:
           acceptedDate:
             type: string
             format: date-time
-            description: >-
-              timestamp when server accepted the created or last updated signed
-              data
+            description: timestamp when server accepted the created or last updated signed data
           created:
             type: string
             format: date-time
@@ -653,9 +616,7 @@ definitions:
                 enum:
                   - device id is unknown
                   - device id is invalid
-                  - >-
-                    device which should be claimed is already claimed by another
-                    user
+                  - device which should be claimed is already claimed by another user
                   - request could not be processed in time
                   - request could not be handled
                   - fatal internal error
@@ -714,12 +675,74 @@ definitions:
   LoginSuccessful:
     example:
       encryptedPrivateKey: 06bb7aab-275a-4812-adbb-31226754c5d3
+  CycleObject:
+    type: object
+    description: all available data for one cycle.
+    required:
+      - cycleCounter
+      - cycleBegin
+      - created
+      - lastUpdated
+    properties:
+      cycleCounter:
+        type: integer
+        description: running counter of all cycles
+      cycleBegin:
+        type: string
+        format: date-time
+        description: first day in this cycle
+      cycleEnd:
+        type: string
+        format: date-time
+        description: last day in this cycle
+      cycleLength:
+        type: integer
+        description: number of days the cycle lasted
+      menstruationLength:
+        type: integer
+        description: number of days menstruation lasted
+      created:
+        type: string
+        format: date-time
+        description: cycle's creation date
+      lastUpdated:
+        type: string
+        format: date-time
+        description: cycle's last modified date
+  CycleAggregated:
+    type: object
+    description: aggregated information in relation to a cycle
+    properties:
+      nfpBaseline:
+        allOf:
+          - $ref: '#/definitions/NfpBaseline'
+  NfpBaseline:
+    type: object
+    description: NFP charts typically include a baseline. This object provides all relevant information about it.
+    required:
+      - temperature
+      - begin
+      - end
+    properties:
+      temperature:
+        type: number
+        format: float
+        description: baseline should be drawn at this temperature
+      begin:
+        type: string
+        format: date-time
+        description: baseline's first day
+      end:
+        type: string
+        format: date-time
+        description: baseline's last day
+    example:
+      temperature: 36.35
+      begin: '2018-03-01T00:00:00.000Z'
+      end: '2018-03-01T00:00:00.000Z'
   DayInfoObject:
     type: object
-    description: >-
-      all available data for one day. From user input the authenticated user
-      inserted or that have been measured by the user's device or that have been
-      aggregated from known information in the backend
+    description: all available data for one day. From user input the authenticated user inserted or that have been measured by the user's device or that have been aggregated from known information in the backend
     properties:
       id:
         type: string
@@ -747,10 +770,7 @@ definitions:
                     description: the day this data is about
                   instantTime:
                     type: object
-                    description: >-
-                      values at the given instant time (defined by NFP as the
-                      best instant time to measure the temperature every day,
-                      adjusted by the user)
+                    description: 'values at the given instant time (defined by NFP as the best instant time to measure the temperature every day, adjusted by the user)'
                     properties:
                       temperature:
                         type: number
@@ -759,40 +779,25 @@ definitions:
                       timestamp:
                         type: string
                         format: date-time
-                        description: >-
-                          the real timestamp when the instant time temperature
-                          is measured; it is the nearest measured value round
-                          about the instantTime.desiredTime
+                        description: the real timestamp when the instant time temperature is measured; it is the nearest measured value round about the instantTime.desiredTime
                       desiredTime:
                         type: string
-                        description: >-
-                          instant time (given by NFP and adjusted by the user)
-                          when the temperature is and will be measured every
-                          day; in full-time format (e.g. 06:00:00.000Z)
+                        description: 'instant time (given by NFP and adjusted by the user) when the temperature is and will be measured every day; in full-time format (e.g. 06:00:00.000Z)'
                   basal:
                     type: object
-                    description: >-
-                      lowest measured values of the whole sleeping period of
-                      that day
+                    description: lowest measured values of the whole sleeping period of that day
                     properties:
                       temperature:
                         type: number
                         format: double
-                        description: >-
-                          lowest measured temperature of the whole sleeping
-                          period of that day
+                        description: lowest measured temperature of the whole sleeping period of that day
                       sleepingPeriodId:
                         type: string
-                        description: >-
-                          UUID of the sleeping period during which this basal
-                          temperature is measured (for drilldown to sleeping
-                          period temperature)
+                        description: UUID of the sleeping period during which this basal temperature is measured (for drilldown to sleeping period temperature)
                       timestamp:
                         type: string
                         format: date-time
-                        description: >-
-                          the timestamp when the basal temperature is measured
-                          the first time during the sleeping period
+                        description: the timestamp when the basal temperature is measured the first time during the sleeping period
                   cycle:
                     type: object
                     description: user's cycle during the given date
@@ -803,24 +808,16 @@ definitions:
                       counter:
                         type: integer
                         format: int32
-                        description: >-
-                          the number of the cycle; all cycles measured with
-                          trackle are numbered consecutively
+                        description: the number of the cycle; all cycles measured with trackle are numbered consecutively
                   sleepingPeriodIds:
                     type: array
                     items:
                       type: string
-                      description: >-
-                        UUIDs of all sleeping periods measured during this day;
-                        if the user sleeps several time during one day and
-                        always uses the device or removes the device temporarily
-                        during the night, several sleeping periods are generated
+                      description: 'UUIDs of all sleeping periods measured during this day; if the user sleeps several time during one day and always uses the device or removes the device temporarily during the night, several sleeping periods are generated'
                   cycleDayCounter:
                     type: integer
                     format: int32
-                    description: >-
-                      number of the day inside the cycle (every cycle starts
-                      with day number 1)
+                    description: number of the day inside the cycle (every cycle starts with day number 1)
                   fertile:
                     type: object
                     description: 'fertile state of the day, if the user is fertile or not'
@@ -830,42 +827,23 @@ definitions:
                         description: true if the user is fertile at that day
                       prognosis:
                         type: boolean
-                        description: >-
-                          true if the fertility of this day is a prognosis; this
-                          is the case if the ovulation of this cycle has not yet
-                          been measured
+                        description: true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured
                       ovulation:
                         type: boolean
                         description: true if the ovulation probably happened at this day
                   menstruation:
                     type: object
-                    description: >-
-                      menstruation state of the day; menstruation is aggregated
-                      by backend from bleedingIntensity inserted by user; if
-                      bleeding implies menstruation, intermenstrual bleeding or
-                      even ovulation depends on intensitiy and moment of
-                      bleeding during user's cycle
+                    description: 'menstruation state of the day; menstruation is aggregated by backend from bleedingIntensity inserted by user; if bleeding implies menstruation, intermenstrual bleeding or even ovulation depends on intensitiy and moment of bleeding during user''s cycle'
                     properties:
                       state:
                         type: boolean
-                        description: >-
-                          true if this day is during the menstruation of the
-                          user
+                        description: true if this day is during the menstruation of the user
                       prognosis:
                         type: boolean
-                        description: >-
-                          true if the menstruation state of this day is a
-                          prognosis; this is the case if this menstruation is in
-                          the future or (maybe) user has not inserted bleeding
-                          at a day the backend expects user's menstruation
+                        description: true if the menstruation state of this day is a prognosis; this is the case if this menstruation is in the future or (maybe) user has not inserted bleeding at a day the backend expects user's menstruation
                   intermenstrualBleeding:
                     type: object
-                    description: >-
-                      set if an intermenstrual bleeding uccurred at the day;
-                      aggregated by backend from bleedingIntensity inserted by
-                      user; if bleeding implies menstruation, intermenstrual
-                      bleeding or even ovulation depends on intensitiy and
-                      moment of bleeding during user's cycle
+                    description: 'set if an intermenstrual bleeding uccurred at the day; aggregated by backend from bleedingIntensity inserted by user; if bleeding implies menstruation, intermenstrual bleeding or even ovulation depends on intensitiy and moment of bleeding during user''s cycle'
                     properties:
                       state:
                         type: boolean
@@ -936,9 +914,7 @@ definitions:
         signature: 'another server side signature :)'
         signatureCreated: '2017-19-19T08:22:03.000Z'
   UserInputAcceptedSigned:
-    description: >-
-      current state of the user input for that day, signed by the app, accepted
-      and signed by the server
+    description: 'current state of the user input for that day, signed by the app, accepted and signed by the server'
     allOf:
       - $ref: '#/definitions/AcceptedSignedObject'
       - type: object
@@ -965,9 +941,7 @@ definitions:
         description: user's email address
       encryptedPrivateKey:
         type: string
-        description: >-
-          (BASE64 encoded) encrypted private key to enable crypto operations on
-          multiple devices
+        description: (BASE64 encoded) encrypted private key to enable crypto operations on multiple devices
       hashedSecret:
         type: string
         description: SHA512( lower(trim(passphrase)) + lower(trim(email)) )
@@ -991,12 +965,9 @@ definitions:
         properties:
           cervicalMucus:
             type: string
-            description: >-
+            description: |-
               cervix mucus consistance / Cervixschleimsymptom
-
-              * keine Angabe (default) [null] * t (nichts gesehen) [t] * ∅
-              (nicht sichtbar) [-] * f (normale Qualität) [f] * s (sehr gute
-              Qualität) [s] * s+ (exzellente Qualität) [s+]
+              * keine Angabe (default) [null] * t (nichts gesehen) [t] * ∅ (nicht sichtbar) [-] * f (normale Qualität) [f] * s (sehr gute Qualität) [s] * s+ (exzellente Qualität) [s+]
             enum:
               - t
               - '-'
@@ -1005,33 +976,27 @@ definitions:
               - s+
           cervixPosition:
             type: string
-            description: >-
+            description: |-
               position of cervix / Muttermundstand
-
-              * keine Angabe (default) [null] * tiefstehend [deep] * mittel
-              [medium] * hochstehend [high]
+              * keine Angabe (default) [null] * tiefstehend [deep] * mittel [medium] * hochstehend [high]
             enum:
               - deep
               - medium
               - high
           cervixOpenness:
             type: string
-            description: >-
+            description: |-
               is the cervix opened or closed / Muttermundöffnung
-
-              * keine Angabe (default) [null] * geschlossen [closed] * leicht
-              geöffnet [partlyOpen] * geöffnet [open]
+              * keine Angabe (default) [null] * geschlossen [closed] * leicht geöffnet [partlyOpen] * geöffnet [open]
             enum:
               - closed
               - partlyOpen
               - open
           cervixSoftness:
             type: string
-            description: >-
+            description: |-
               is the cervix soft or hard / Muttermundbeschaffenheit
-
-              * keine Angabe (default) [null] * weich [soft] * hart (wie
-              Nasenknorpel) [firm]
+              * keine Angabe (default) [null] * weich [soft] * hart (wie Nasenknorpel) [firm]
             enum:
               - soft
               - firm
@@ -1042,19 +1007,15 @@ definitions:
               * keine Angabe (default) [null] * ja [true] * nein [false]
           additionalContraceptive:
             type: boolean
-            description: >-
+            description: |-
               zusätzliche Verhütung; ONLY IF intercourse == true
-
-              * keine Angabe (default) [null] * geschützt [true] * ungeschützt
-              [false]
+              * keine Angabe (default) [null] * geschützt [true] * ungeschützt [false]
           bleedingIntensity:
             type: number
             format: float
-            description: >-
+            description: |-
               Stärke der Blutung; currently only predefined values
-
-              * "-" (schwache Blutung) [0.2] * "o" (mittelstarke Blutung) [0.5]
-              * + (starke Blutung) [1] * "." (Schmierblutung) [0.1]
+              * "-" (schwache Blutung) [0.2] * "o" (mittelstarke Blutung) [0.5] * + (starke Blutung) [1] * "." (Schmierblutung) [0.1]
             enum:
               - 0.1
               - 0.2
@@ -1062,45 +1023,25 @@ definitions:
               - 1
           disturbingFactors:
             type: array
-            description: >-
-              Störfaktoren; multiselectable; predefined values; additional
-              values can be added when "Sonstiges" is selected, then
-              addDisturbingFactor can be filled
-
+            description: |-
+              Störfaktoren; multiselectable; predefined values; additional values can be added when "Sonstiges" is selected, then addDisturbingFactor can be filled
 
               * ungewohnt spätes Zubettgehen [sleepLately]
-
               * ungewohnter Alkoholgenuss [alcohol]
-
               * Stress [stress]
-
               * seelische Belastung [emotionalPressure]
-
               * Zeitumstellung [clockChange]
-
               * Zeitverschiebung [timeShift]
-
               * kurze oder gestörte Nachtruhe[shortNight]
-
               * Essen spätabends [lateSupper]
-
-              * Umgebungswechsel (Reisen, Urlaub, Klimawechsel)
-              [changeOfEnvironment]
-
+              * Umgebungswechsel (Reisen, Urlaub, Klimawechsel) [changeOfEnvironment]
               * Erkrankung und Unpässlichkeiten/Fieber [fever]
-
               * andere Krankheit [illness]
-
               * Medikament [medicine]
-
               * Thermometerwechsel im Zyklus [changedSensor]
-
               * Aufregung [excitement]
-
               * Feiern spätabends [party]
-
               * Schichtarbeit [shiftWork]
-
               * Sonstiges [other]
             items:
               type: string
@@ -1125,9 +1066,7 @@ definitions:
           addDisturbingFactor:
             type: string
             maxLength: 50
-            description: >-
-              free text field to add additional disturbing factor; ONLY IF
-              "other" is selected in disturbingFactors
+            description: free text field to add additional disturbing factor; ONLY IF "other" is selected in disturbingFactors
           info:
             type: string
             description: notes / Notizen
@@ -1155,9 +1094,7 @@ definitions:
           activeSince:
             type: string
             format: date-time
-            description: >-
-              timestamp when user created her trackle account; cannot be set by
-              user
+            description: timestamp when user created her trackle account; cannot be set by user
   UserInfoSigned:
     description: user info signed by app
     allOf:
@@ -1179,9 +1116,7 @@ definitions:
         type: string
         description: email address of user; currently used for user identification
   UserSettingsAcceptedSigned:
-    description: >-
-      current state of the user specific settings, signed by the app, accepted
-      and signed by the server
+    description: 'current state of the user specific settings, signed by the app, accepted and signed by the server'
     allOf:
       - $ref: '#/definitions/AcceptedSignedObject'
       - type: object
@@ -1211,9 +1146,7 @@ definitions:
             $ref: '#/definitions/CycleStats'
   CycleStats:
     type: object
-    description: >-
-      statistics about users cycles analysed from collected measured
-      temperatures and user inputs
+    description: statistics about users cycles analysed from collected measured temperatures and user inputs
     properties:
       cycle:
         type: object
@@ -1242,15 +1175,11 @@ definitions:
           avLength:
             type: number
             format: float
-            description: >-
-              average length of all determined menstruations; determined from
-              user input of bleeding intensity
+            description: average length of all determined menstruations; determined from user input of bleeding intensity
           nextDate:
             type: string
             format: date-time
-            description: >-
-              forecast on which day the next menstruation should start; ends
-              with time 00:00:00
+            description: 'forecast on which day the next menstruation should start; ends with time 00:00:00'
           nextLength:
             type: integer
             description: forecast about duration of the next menstruation
@@ -1277,21 +1206,15 @@ definitions:
           lastConfirmed:
             type: string
             format: date-time
-            description: >-
-              last date for which backend determines an ovulation; ends with
-              time 00:00:00
+            description: 'last date for which backend determines an ovulation; ends with time 00:00:00'
           nextDate:
             type: string
             format: date-time
-            description: >-
-              forecast on which day the next ovulation should happen; ends with
-              time 00:00:00
+            description: 'forecast on which day the next ovulation should happen; ends with time 00:00:00'
           avCycleDay:
             type: number
             format: float
-            description: >-
-              average number of days of cycle after which ovulation of user
-              happens 
+            description: 'average number of days of cycle after which ovulation of user happens '
     example:
       cycle:
         currentNo: 4
@@ -1313,10 +1236,7 @@ definitions:
         avCycleDay: 12.83
   TemperatureObject:
     type: object
-    description: >-
-      temperature value with timestamp of the measurement; can contain
-      additional properties especially that this item is one of the lowest, a
-      basal value, or a flag that and why this value should be ignored
+    description: 'temperature value with timestamp of the measurement; can contain additional properties especially that this item is one of the lowest, a basal value, or a flag that and why this value should be ignored'
     required:
       - id
       - timestamp
@@ -1327,15 +1247,11 @@ definitions:
         description: UUID of the message sent from sensor containing this temperature value
       deviceId:
         type: string
-        description: >-
-          UUID of the trackle sensor the message containing this temperature
-          value was sent from
+        description: UUID of the trackle sensor the message containing this temperature value was sent from
       timestamp:
         type: string
         format: date-time
-        description: >-
-          the timestamp of the message; when this temperature value is measured
-          by the trackle sensor
+        description: the timestamp of the message; when this temperature value is measured by the trackle sensor
       temp:
         type: number
         format: float
@@ -1343,18 +1259,14 @@ definitions:
       basal:
         type: boolean
         default: false
-        description: >-
-          if true then this item is a basal value as much as to say that this
-          one of the values with the lowest temperature value of the whole nicht
+        description: if true then this item is a basal value as much as to say that this one of the values with the lowest temperature value of the whole nicht
       ignore:
         type: boolean
         default: false
         description: if true then this item should be ignored
       ignoreComment:
         type: string
-        description: >-
-          if ignore = true this contains the reason why this value should be
-          ignored
+        description: if ignore = true this contains the reason why this value should be ignored
     example:
       id: 18ceb213-7549-4e5c-914a-8c7b6f4bcdd7
       deviceId: d971aca0-7769-401b-a402-6c42c22be847
@@ -1369,44 +1281,30 @@ definitions:
       - id
       - deviceId
       - temperatures
-    description: >-
+    description: |-
       contains the measured temperature values of one sleeping period
-
       the data has been cleaned already
-
-      - no duplicated values - no senseless values - cut off start and end
-      values, during which the sensor isn't already in body or has not yet
-      settled
-
+      - no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled
       the data whith the basal values (minimum) are marked
     properties:
       id:
         type: string
-        description: >-
-          unique id of this sleeping period temperature curve; is used to drill
-          down from cycle curve to sleeping period curve
+        description: unique id of this sleeping period temperature curve; is used to drill down from cycle curve to sleeping period curve
       deviceId:
         type: string
         description: UUID of the trackle sensor this temperature values were measured with
       from:
         type: string
         format: date-time
-        description: >-
-          the timestamp of the first temperature value measured in this sleeping
-          period
+        description: the timestamp of the first temperature value measured in this sleeping period
       to:
         type: string
         format: date-time
-        description: >-
-          the timestamp of the last temperature value measured in this sleeping
-          period
+        description: the timestamp of the last temperature value measured in this sleeping period
       temperatures:
-        description: >-
+        description: |-
           all measured temperature values of the sleeping period
-
-          - sorted by timestamp - in ascending order - with unique timestamps -
-          intervals between timestamps do not need to be equal - basal values
-          (minimum) are marked
+          - sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked
         type: array
         items:
           $ref: '#/definitions/TemperatureObject'
@@ -1448,15 +1346,11 @@ definitions:
           - NOK
       message:
         type: string
-        description: >-
-          welcome string with build information ( $GO_PIPELINE_NAME /
-          $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )
+        description: welcome string with build information ( $GO_PIPELINE_NAME / $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )
     example:
       version: '1.0'
       status: OK
-      message: >-
-        Welcome to the ubirchTrackleService ( BUILD_trackle-service / 79 / noRev
-        )
+      message: Welcome to the ubirchTrackleService ( BUILD_trackle-service / 79 / noRev )
   HealthResponse400:
     allOf:
       - $ref: '#/definitions/HealthResponse200'
