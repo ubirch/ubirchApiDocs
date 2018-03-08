@@ -1401,10 +1401,9 @@
             },
             "cervixPosition": {
               "type": "string",
-              "description": "position of cervix / Muttermundstand\n* keine Angabe (default) [null] * tiefstehend [deep] * mittel [medium] * hochstehend [high]",
+              "description": "position of cervix / Muttermundstand\n* keine Angabe (default) [null] * tiefstehend [low] * hochstehend [high]",
               "enum": [
-                "deep",
-                "medium",
+                "low",
                 "high"
               ]
             },

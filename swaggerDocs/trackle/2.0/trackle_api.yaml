@@ -970,10 +970,9 @@ definitions:
             type: string
             description: |-
               position of cervix / Muttermundstand
-              * keine Angabe (default) [null] * tiefstehend [deep] * mittel [medium] * hochstehend [high]
+              * keine Angabe (default) [null] * tiefstehend [low] * hochstehend [high]
             enum:
-              - deep
-              - medium
+              - low
               - high
           cervixOpenness:
             type: string
