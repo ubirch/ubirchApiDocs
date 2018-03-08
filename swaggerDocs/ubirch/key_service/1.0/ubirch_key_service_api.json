@@ -46,6 +46,35 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "key registry"
+        ],
+        "summary": "allows us to delete public keys",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "publicKeyToDelete",
+            "description": "the public key to delete including signature of publicKey field",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeletePublicKey"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "delete was successful"
+          },
+          "400": {
+            "description": "delete failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
       }
     },
     "/pubkey/current/hardwareId/{hardwareId}": {
@@ -151,38 +180,6 @@
           },
           "400": {
             "description": "No successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "key registry",
-          "2BImplemented"
-        ],
-        "summary": "delete public key",
-        "description": "deletes the public key for the given pubKeyID from the key registry",
-        "parameters": [
-          {
-            "name": "pubkeyid",
-            "in": "path",
-            "description": "unique id of the public key to find it in the key registry",
-            "required": true,
-            "type": "number",
-            "format": "integer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the public key that has been deleted from the keyRegistry",
-            "schema": {
-              "$ref": "#/definitions/PublicKey"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -559,6 +556,28 @@
           "validNotBefore": "2017-08-03T09:51:36.000Z",
           "validNotAfter": "2018-02-03T09:51:36.000Z"
         },
+        "signature": "MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw=="
+      }
+    },
+    "DeletePublicKey": {
+      "description": "a public key to delete",
+      "type": "object",
+      "required": [
+        "publicKey",
+        "signature"
+      ],
+      "properties": {
+        "publicKey": {
+          "type": "string",
+          "description": "Base 64 encoded public key as used in _PublicKeyInfo_ (see endpoint: PUT /pubKey)"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Base64 encoded signature of input field _publicKey_"
+        }
+      },
+      "example": {
+        "publicKey": "MC0wCAYDK2VkCgEBAyEAovEmQJuiWdrb5hV/mhG1SF9Vul7tRveYZ74Mk+Okjhg=",
         "signature": "MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw=="
       }
     },

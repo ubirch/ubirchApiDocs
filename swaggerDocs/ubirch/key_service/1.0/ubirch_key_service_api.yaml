@@ -2,19 +2,12 @@ swagger: '2.0'
 info:
   version: 1.0.0
   title: ubirch key service REST API
-  description: >-
-    This is the definition of the ubirch key service REST API containing the
-    following parts:|
-
-    - key registry where public keys of devices and apps can be stored and
-    requested
-
+  description: |-
+    This is the definition of the ubirch key service REST API containing the following parts:|
+    - key registry where public keys of devices and apps can be stored and requested
     - handshakes between two parties can be performed
-
     - through direct communication (TODO)
-
-    - without direct communication with handshake objects tranfered through the
-    key service
+    - without direct communication with handshake objects tranfered through the key service
 schemes:
   - https
 host: key.dev.ubirch.com
@@ -31,11 +24,7 @@ paths:
       parameters:
         - in: body
           name: pubkey
-          description: >-
-            the new public key object with the pubKey that should be stored for
-            the unique pubKeyId - also part of the pub key object - in the key
-            registry to be able to find the public key; pubKeyId may not exist
-            already
+          description: the new public key object with the pubKey that should be stored for the unique pubKeyId - also part of the pub key object - in the key registry to be able to find the public key; pubKeyId may not exist already
           required: true
           schema:
             $ref: '#/definitions/PublicKey'
@@ -46,6 +35,25 @@ paths:
             $ref: '#/definitions/PublicKey'
         '400':
           description: No successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    delete:
+      tags:
+        - key registry
+      summary: allows us to delete public keys
+      operationId: ''
+      parameters:
+        - in: body
+          name: publicKeyToDelete
+          description: the public key to delete including signature of publicKey field
+          required: true
+          schema:
+            $ref: '#/definitions/DeletePublicKey'
+      responses:
+        '200':
+          description: delete was successful
+        '400':
+          description: delete failed
           schema:
             $ref: '#/definitions/ErrorResponse'
   '/pubkey/current/hardwareId/{hardwareId}':
@@ -77,23 +85,17 @@ paths:
         - key registry
         - 2BImplemented
       summary: updates public key
-      description: >-
-        updates the given public key found by pubKeyID in the key registry with
-        the given data; the public key must exist already
+      description: updates the given public key found by pubKeyID in the key registry with the given data; the public key must exist already
       parameters:
         - name: pubkeyid
           in: path
-          description: >-
-            unique id of the public key; pubKeyId must exist already in the
-            keyRegistry
+          description: unique id of the public key; pubKeyId must exist already in the keyRegistry
           required: true
           type: number
           format: integer
         - in: body
           name: pubkey
-          description: >-
-            the public key object with the new pubKey data that the existing
-            pubKey should be updated with
+          description: the public key object with the new pubKey data that the existing pubKey should be updated with
           required: true
           schema:
             $ref: '#/definitions/PublicKey'
@@ -128,59 +130,27 @@ paths:
           description: No successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-    delete:
-      tags:
-        - key registry
-        - 2BImplemented
-      summary: delete public key
-      description: deletes the public key for the given pubKeyID from the key registry
-      parameters:
-        - name: pubkeyid
-          in: path
-          description: unique id of the public key to find it in the key registry
-          required: true
-          type: number
-          format: integer
-      responses:
-        '200':
-          description: >-
-            Successful response; returns the public key that has been deleted
-            from the keyRegistry
-          schema:
-            $ref: '#/definitions/PublicKey'
-        '400':
-          description: Not successful response
-          schema:
-            $ref: '#/definitions/ErrorResponse'
   /handshake:
     post:
       tags:
         - handshake
         - 2BImplemented
       summary: new handshake
-      description: >-
-        initiates a new handshake for handshake process without direct
-        communication
+      description: initiates a new handshake for handshake process without direct communication
       parameters:
         - in: body
           name: handshake
-          description: >-
-            the necessary data to initiate a handshake that are the pubKeyIds of
-            both handshake parties
+          description: the necessary data to initiate a handshake that are the pubKeyIds of both handshake parties
           required: true
           schema:
             $ref: '#/definitions/HandshakeObject'
       responses:
         '200':
-          description: >-
-            Successful response; returns the new created handshakeObject; the
-            keyRegistry has added the following
-
+          description: |-
+            Successful response; returns the new created handshakeObject; the keyRegistry has added the following
 
             - pubKeys of both handshake parties
-
             - state = init
-
             - new unique handshake id
           schema:
             $ref: '#/definitions/HandshakeObject'
@@ -200,9 +170,7 @@ paths:
         - handshake
         - 2BImplemented
       summary: returns handshake data
-      description: >-
-        returns the full handshake dataset of the handshake identified by the
-        handshake id
+      description: returns the full handshake dataset of the handshake identified by the handshake id
       parameters:
         - in: path
           name: handshakeid
@@ -228,9 +196,7 @@ paths:
         - handshake
         - 2BImplemented
       summary: updates handshake data
-      description: >-
-        updates the handshake dataset found by handshake id in the key registry
-        with the given data
+      description: updates the handshake dataset found by handshake id in the key registry with the given data
       parameters:
         - in: path
           name: handshakeid
@@ -245,9 +211,7 @@ paths:
             $ref: '#/definitions/HandshakeObject'
       responses:
         '200':
-          description: >-
-            Successful response; returns the handshakeObject updated with the
-            new data
+          description: Successful response; returns the handshakeObject updated with the new data
           schema:
             $ref: '#/definitions/HandshakeState'
         '400':
@@ -274,9 +238,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns the handshakeObject that has been
-            deleted from the keyRegistry
+          description: Successful response; returns the handshakeObject that has been deleted from the keyRegistry
           schema:
             $ref: '#/definitions/HandshakeState'
         '400':
@@ -295,9 +257,7 @@ paths:
         - handshake
         - 2BImplemented
       summary: returns open handshakes
-      description: >-
-        returns a full list of all handshakes in an open state for this pubKeyId
-        as an array;  handshakeObjects are returned
+      description: returns a full list of all handshakes in an open state for this pubKeyId as an array;  handshakeObjects are returned
       parameters:
         - in: path
           name: pubkeyid
@@ -306,9 +266,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns the requested handshakeObjects as an
-            array
+          description: Successful response; returns the requested handshakeObjects as an array
           schema:
             type: array
             items:
@@ -369,9 +327,7 @@ paths:
             $ref: '#/definitions/HandshakeStateObject'
       responses:
         '200':
-          description: >-
-            Successful response; returns the handshakeStateObject updated with
-            the new state
+          description: Successful response; returns the handshakeStateObject updated with the new state
           schema:
             $ref: '#/definitions/HandshakeStateObject'
         '400':
@@ -390,9 +346,7 @@ paths:
         - handshake
         - 2BImplemented
       summary: returns states of all open handshakes
-      description: >-
-        returns a full list of states for all handshakes in an open state for
-        this pubKeyId as an array
+      description: returns a full list of states for all handshakes in an open state for this pubKeyId as an array
       parameters:
         - in: path
           name: pubkeyid
@@ -401,9 +355,7 @@ paths:
           type: string
       responses:
         '200':
-          description: >-
-            Successful response; returns the requested handshakeStateObjects as
-            an array
+          description: Successful response; returns the requested handshakeStateObjects as an array
           schema:
             type: array
             items:
@@ -437,11 +389,7 @@ definitions:
         description: Base64 encoded public key
       pubKeyId:
         type: string
-        description: >-
-          the server will set it to the _pubKey_ if left empty: typically the
-          hash of _pubKey_ (algorithm tends to depend on _algorithm_) but can
-          also be the _pubKey_, too (useful for ECC keys whose hash would
-          otherwise be longer than the actual key)
+        description: 'the server will set it to the _pubKey_ if left empty: typically the hash of _pubKey_ (algorithm tends to depend on _algorithm_) but can also be the _pubKey_, too (useful for ECC keys whose hash would otherwise be longer than the actual key)'
       algorithm:
         type: string
         description: algorithm of the public key
@@ -475,14 +423,10 @@ definitions:
         $ref: '#/definitions/PublicKeyInfo'
       signature:
         type: string
-        description: >-
-          Base 64 encoded signature of the _pubkeyInfo_ (created with key
-          described in _pubkeyInfo_)
+        description: Base 64 encoded signature of the _pubkeyInfo_ (created with key described in _pubkeyInfo_)
       previousPubKeySignature:
         type: string
-        description: >-
-          (optional) Base 64 encoded signature of the _pubkeyInfo_ (created with
-          previous key)
+        description: (optional) Base 64 encoded signature of the _pubkeyInfo_ (created with previous key)
     example:
       pubKeyInfo:
         hwDeviceId: 4150473037-547268290-3238389072-173590267
@@ -491,8 +435,23 @@ definitions:
         created: '2017-08-03T09:51:36.000Z'
         validNotBefore: '2017-08-03T09:51:36.000Z'
         validNotAfter: '2018-02-03T09:51:36.000Z'
-      signature: >-
-        MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw==
+      signature: MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw==
+  DeletePublicKey:
+    description: a public key to delete
+    type: object
+    required:
+      - publicKey
+      - signature
+    properties:
+      publicKey:
+        type: string
+        description: 'Base 64 encoded public key as used in _PublicKeyInfo_ (see endpoint: PUT /pubKey)'
+      signature:
+        type: string
+        description: Base64 encoded signature of input field _publicKey_
+    example:
+      publicKey: MC0wCAYDK2VkCgEBAyEAovEmQJuiWdrb5hV/mhG1SF9Vul7tRveYZ74Mk+Okjhg=
+      signature: MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw==
   SignedPackage:
     description: signature wrapper for any payload
     type: object
@@ -510,9 +469,7 @@ definitions:
       created:
         type: integer
         format: int64
-        description: >-
-          timestamp of creation date, will be generated on server at creation
-          time
+        description: 'timestamp of creation date, will be generated on server at creation time'
   PubKey:
     description: public key object with the pubKey and it's unique pubKeyId
     type: object
@@ -571,24 +528,17 @@ definitions:
         $ref: '#/definitions/Nonce'
   Nonce:
     type: object
-    description: >-
-      both parties of the handshake ask the other side to decrypt a random value
-      (nonce), it encrypted with the public key of the other side, to check the
-      correctness of this public key
+    description: 'both parties of the handshake ask the other side to decrypt a random value (nonce), it encrypted with the public key of the other side, to check the correctness of this public key'
     properties:
       value:
         type: string
         description: 'test phrase (nonce), encrypted with pubKey or decrypted as plaintext'
       encrypted:
         type: boolean
-        description: >-
-          if true then the value of this nonce is encrypted, if false then it's
-          decrypted and in plain text
+        description: 'if true then the value of this nonce is encrypted, if false then it''s decrypted and in plain text'
   HandshakeObject:
     type: object
-    description: >-
-      handshake object transfers content required to perform a handshake between
-      two parties
+    description: handshake object transfers content required to perform a handshake between two parties
     allOf:
       - $ref: '#/definitions/SignedPackage'
       - type: object
@@ -670,9 +620,7 @@ definitions:
           - cannot delete PubKey from datatbase
           - cannot find destination given by pubKeyId
           - handshake failed because the destination didn't responde in time
-          - >-
-            Decrypted result value of handshake process isn't equal with
-            encrypted random value
+          - Decrypted result value of handshake process isn't equal with encrypted random value
           - Verification of signature failed
           - Cannot find handshake data of given handshakeId
           - Handshake process has been interrupted by the other part
