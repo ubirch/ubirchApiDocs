@@ -154,6 +154,37 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /user:
+    delete:
+      tags:
+        - trackle
+        - user
+      summary: delete user in non-production environments
+      description: |-
+        allows us to delete users in non-production environments including:
+        - trackle-service: userDevices
+        - avatar-service: deleted from device owner lists
+        - user-service: user record
+        - key-service: public key
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: publicKeyToDelete
+          description: signed public key delete request (forwarded to key-service)
+          required: true
+          schema:
+            $ref: '#/definitions/DeletePublicKey'
+      responses:
+        '200':
+          description: successfully deleted user information
+        '400':
+          description: user deletion failed
+          schema:
+            $ref: '#/definitions/ErrorResponse'
   /user/register:
     post:
       tags:
@@ -943,6 +974,22 @@ definitions:
       locale:
         type: string
         description: ISO 639 language code
+  DeletePublicKey:
+    description: a public key to delete
+    type: object
+    required:
+      - publicKey
+      - signature
+    properties:
+      publicKey:
+        type: string
+        description: 'Base 64 encoded public key as used in _PublicKeyInfo_ (see endpoint: PUT /pubKey)'
+      signature:
+        type: string
+        description: Base64 encoded signature of input field _publicKey_
+    example:
+      publicKey: MC0wCAYDK2VkCgEBAyEAxUQcVYd3dt7jAJBtulZoz8QDftnND2X5//ittJ7XAhs=
+      signature: /kED2IJKCAyro/szRoylAwaEx3E8U2OFI8zHNB8cEHdxy8JtgoR81YL1X/o7Xzkz30eqNjIsWfhmQNdaIma2Aw==
   UserInput:
     type: object
     description: created or last updated user input for that day
@@ -1395,30 +1442,3 @@ definitions:
                   - ErrorParseJson
                   - ErrorInvalidSignature
               errorMessage:
-                type: string
-                enum:
-                  - request could not be processed in time
-                  - request could not be handled
-                  - fatal internal error
-                  - missing parameters
-                  - cannot parse incoming json doc
-                  - Verification of signature failed
-  TrackleError:
-    description: trackle error response based on default ubirch error object
-    type: object
-    properties:
-      version:
-        type: string
-        enum:
-          - '1.0'
-      status:
-        type: string
-        enum:
-          - OK
-          - NOK
-      errorType:
-        type: string
-      errorMessage:
-        type: string
-        enum:
-          - RegistrationError

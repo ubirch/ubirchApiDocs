@@ -226,6 +226,45 @@
         }
       }
     },
+    "/user": {
+      "delete": {
+        "tags": [
+          "trackle",
+          "user"
+        ],
+        "summary": "delete user in non-production environments",
+        "description": "allows us to delete users in non-production environments including:\n- trackle-service: userDevices\n- avatar-service: deleted from device owner lists\n- user-service: user record\n- key-service: public key",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "publicKeyToDelete",
+            "description": "signed public key delete request (forwarded to key-service)",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeletePublicKey"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successfully deleted user information"
+          },
+          "400": {
+            "description": "user deletion failed",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/user/register": {
       "post": {
         "tags": [
@@ -1373,6 +1412,28 @@
           "type": "string",
           "description": "ISO 639 language code"
         }
+      }
+    },
+    "DeletePublicKey": {
+      "description": "a public key to delete",
+      "type": "object",
+      "required": [
+        "publicKey",
+        "signature"
+      ],
+      "properties": {
+        "publicKey": {
+          "type": "string",
+          "description": "Base 64 encoded public key as used in _PublicKeyInfo_ (see endpoint: PUT /pubKey)"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Base64 encoded signature of input field _publicKey_"
+        }
+      },
+      "example": {
+        "publicKey": "MC0wCAYDK2VkCgEBAyEAxUQcVYd3dt7jAJBtulZoz8QDftnND2X5//ittJ7XAhs=",
+        "signature": "/kED2IJKCAyro/szRoylAwaEx3E8U2OFI8zHNB8cEHdxy8JtgoR81YL1X/o7Xzkz30eqNjIsWfhmQNdaIma2Aw=="
       }
     },
     "UserInput": {
