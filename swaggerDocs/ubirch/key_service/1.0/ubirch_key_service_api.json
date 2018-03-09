@@ -577,8 +577,8 @@
         }
       },
       "example": {
-        "publicKey": "MC0wCAYDK2VkCgEBAyEAovEmQJuiWdrb5hV/mhG1SF9Vul7tRveYZ74Mk+Okjhg=",
-        "signature": "MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw=="
+        "publicKey": "MC0wCAYDK2VkCgEBAyEArTqgHBLwYqyh3h4GUw4VdK7FX2qxx6b2r0tcmwJ+5pw=",
+        "signature": "bK6an5dE9At/WZIuSBSiUqnbid/9XcZAFItfU04q+hCAyWGfIt4dLSf9TGx0/i6eD0Xm9Mb4a8PBCznQvtdRDA=="
       }
     },
     "SignedPackage": {
