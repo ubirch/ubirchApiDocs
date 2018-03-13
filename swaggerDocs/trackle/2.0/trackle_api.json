@@ -527,7 +527,7 @@
           {
             "in": "path",
             "name": "hashedEmail",
-            "description": "hashed email address",
+            "description": "hashed email address (SHA-512)",
             "required": true,
             "type": "string"
           }
