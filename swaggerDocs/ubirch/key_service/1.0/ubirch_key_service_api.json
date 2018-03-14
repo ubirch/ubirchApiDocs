@@ -66,10 +66,10 @@
         ],
         "responses": {
           "200": {
-            "description": "delete was successful"
+            "description": "delete was successful or key did not exist"
           },
           "400": {
-            "description": "delete failed",
+            "description": "signature was invalid",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
