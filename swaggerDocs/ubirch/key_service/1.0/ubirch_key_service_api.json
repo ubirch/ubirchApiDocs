@@ -495,7 +495,7 @@
         },
         "pubKeyId": {
           "type": "string",
-          "description": "the server will set it to the _pubKey_ if left empty: typically the hash of _pubKey_ (algorithm tends to depend on _algorithm_) but can also be the _pubKey_, too (useful for ECC keys whose hash would otherwise be longer than the actual key)"
+          "description": "(optional) typically the hash of _pubKey_ (depending on _algorithm_) but can also be the _pubKey_"
         },
         "algorithm": {
           "type": "string",
