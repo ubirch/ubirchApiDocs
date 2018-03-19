@@ -6,9 +6,13 @@ info:
     This is the definition of the trackle REST API containing the following
     parts:|
 
-    - getting data (from device and user input) for one day or a range or days
+    - getting data (from device and user input) for one day, a range or days or a cycle
 
     - endpoints to create and update userinput
+    
+    - registration and login of trackle user accounts (including deletion of accounts)
+    
+    - read cycle statistics of user
 
     - getting trackle RAW data of sleeping periods
 basePath: /api/trackleService/v2
@@ -940,6 +944,14 @@ definitions:
                     description: >-
                       number of the day inside the cycle (every cycle starts
                       with day number 1)
+                  dragon:
+                    type: boolean
+                    description: if set to true this day should be marked as a dragon in basal body temperature curve
+                    default: false
+                  ignore:
+                    type: boolean
+                    description: if set to true this day should be marked as to be ignored in basal body temperature curve
+                    default: false
                   fertile:
                     type: object
                     description: 'fertile state of the day, if the user is fertile or not'
