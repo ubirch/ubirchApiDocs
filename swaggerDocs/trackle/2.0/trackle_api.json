@@ -1316,7 +1316,8 @@
               "b3c5ecf8-3e13-4912-a4e8-ae42f1ad1315",
               "4a904a91-cabf-417e-981c-5be70654ae98"
             ],
-            "cycleDayCounter": 3,
+            "cycleDayCounter": 14,
+            "dragon": true,
             "fertile": {
               "state": false,
               "ovulation": false,
