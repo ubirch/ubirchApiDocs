@@ -16,35 +16,38 @@ basePath: /api/avatarService/v1
 produces:
   - application/json
 paths:
-  /device/data/raw:
-    post:
+  /check:
+    get:
       tags:
         - avatar service
-        - raw data
-      summary: state update of device
-      description: >-
-        over this endpoint the devices send regularly their states in a raw
-        format; to synchronize the device with its avatar and minimize the
-        overhead and communication the response contains already the differences
-        to its avatars state in device readable raw format to update the device
-      parameters:
-        - in: body
-          name: rawData
-          description: the device sends its current state in a raw format
-          required: true
-          schema:
-            $ref: '#/definitions/DeviceDataRawObject'
+        - health
+      summary: health monitor
+      description: allows a quick check if the service is still up.
       responses:
         '200':
-          description: >-
-            Successful response; returnes the delta between devices and avatars
-            state in device readable raw format to update the device
+          description: everything is fine
           schema:
-            $ref: '#/definitions/DeviceDataRawObject'
+            $ref: '#/definitions/HealthResponse200'
         '400':
-          description: Not successful response
+          description: something is not fine
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/HealthResponse400'
+  /deepCheck:
+    get:
+      tags:
+        - avatar service
+        - health
+      summary: health monitor deep check
+      description: allows a deep check of the service
+      responses:
+        '200':
+          description: everything is fine
+          schema:
+            $ref: '#/definitions/DeepCheckHealthResponse200'
+        '500':
+          description: something is not fine
+          schema:
+            $ref: '#/definitions/DeepCheckHealthResponse500'
   /device:
     post:
       tags:
@@ -241,6 +244,98 @@ paths:
             avatar
           schema:
             $ref: '#/definitions/DeviceState'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /device/update:
+    post:
+      tags:
+        - avatar service
+        - raw data
+      summary: state update of device with configuration update in response
+      description: >-
+        over this endpoint the devices send their states in a raw data format;
+        the response always contains the configuration update for the device
+      parameters:
+        - in: body
+          name: rawData
+          description: the device sends its current state in a raw format
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceMessageObject'
+      responses:
+        '200':
+          description: Successful response; returns configuration update for the device
+          schema:
+            $ref: '#/definitions/DeviceConfigObject'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /device/update/mpack:
+    post:
+      tags:
+        - avatar service
+        - raw data
+      summary: state update of device in message pack format with configuration update in response
+      description: >-
+        over this endpoint the devices send regularly their states in message pack format (see ubirch protocol definition in "https://github.com/ubirch/ubirch-protocol"); the response always contains the configuration update for the device
+      parameters:
+        - in: body
+          name: rawData
+          description: the device sends its current state in message pack format, containing the information of the DeviceMessageObject
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceMessageObject'
+        - in: query
+          name: js
+          type: boolean
+          required: false
+          default: false
+          description: if set to true the response is responded in JSON format to be readable (for explanation purpose)
+      responses:
+        '200':
+          description: >-
+            Successful response; returns configuration update for the device
+            
+            * in message pack format if js=false (default)
+            * in JSON format if js=true
+          schema:
+            $ref: '#/definitions/DeviceConfigObject'
+        '400':
+          description:  >-
+            No Successful response; returns error message
+            
+            * in message pack format if js=false (default)
+            * in JSON format if js=true
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /device/data/raw:
+    post:
+      tags:
+        - avatar service
+        - raw data
+      summary: state update of device
+      description: >-
+        over this endpoint the devices send regularly their states in a raw
+        format; to synchronize the device with its avatar and minimize the
+        overhead and communication the response contains already the differences
+        to its avatars state in device readable raw format to update the device
+      parameters:
+        - in: body
+          name: rawData
+          description: the device sends its current state in a raw format
+          required: true
+          schema:
+            $ref: '#/definitions/DeviceMessageObject'
+      responses:
+        '200':
+          description: >-
+            Successful response; returnes the delta between devices and avatars
+            state in device readable raw format to update the device
+          schema:
+            $ref: '#/definitions/DeviceMessageObject'
         '400':
           description: Not successful response
           schema:
@@ -940,24 +1035,83 @@ definitions:
             p: 101460
             h: 6424
   DeviceDataRawObject:
+    description: raw data message sent between device and avatar service
+    type: object
+    required:
+      - v
+      - a
+      - p
+    properties:
+      id:
+        description: >-
+          message id, UUID, usually device sends it's messages without an ID,
+          created on server when it receives a message without an ID
+        type: string
+      v:
+        description: |-
+          protocol version:|
+
+            * 0.0.0: unsigned message
+            * 0.0.3: signed message with handle to previous signature in message chain; parameter s and chainedHash required
+            
+        type: string
+      a:
+        description: hashed hardware device ID
+        type: string
+      s:
+        description: signature of this message; only required if message is signed
+      chainedHash:
+        description: signature of previous message in message chain; optional
+        type: string
+      p:
+        description: >-
+          payload in a raw data format; can be a single message object OR an
+          array of message objects; properties of the message object depends on
+          the device type
+        type: object
+      ts:
+        description: timestamp of creation of this message
+        type: string
+        format: date-time
+  DeviceMessageObject:
     description: >-
       raw data sent from device as its current state; is stored as it is in the
       raw data base and transformed by the avatar service into a processed
       message stored in the processed data base
     type: object
+    allOf:
+      - $ref: '#/definitions/DeviceDataRawObject'
     example:
-      id: 088cbf99-4cb3-44cb-bb0c-e507bd7ff150
-      v: 0.0.3
-      a: >-
-        OO0qCisAGHrly4t5Hpa8HYznnF4VFwtmvOMl1beelYw2yd57NyX8gTXKwSDo9i7xXYmqV4n3Xkk56row9rOoKw==
-      k: MC0wCAYDK2VkCgEBAyEARlZtLMiu5mDQ6rAvmobL76qSR9wW5PGBl/mp0uHW4BY=
-      ts: '2016-12-08T11:59:03.896Z'
-      s: >-
-        ImBJ9ehi7xmpIYtVOX57OApx7QeHWhHcVvX4n5R96ljjTEdgmmxncuL3SoEUiCqroqXgZmEIJxj2tv3r4ONyBg==
+      application/json:
+        v: 0.0.3
+        a: >-
+          i0jL4/MwJnoa7acT7qsjsL8egsM+qlKVqgGs3mEW03VJy4HDgbPVP/cqLZWu50vr+c8XI0WThCg7ISkfoZ8sog==
+        s: >-
+          guwm0lQho14EnoZUurLmr1n6qocWG8nxXUBoHyi04ycuXlNRFuZOgywnCVMsgu3Th7FZGJBQMSscti+fJ6P2Aw==
+        chainedHash: >-
+          guwm0lQho14EnoZUurLmr1n6qocWG8nxXUBoHyi04ycuXlNRFuZOgywnCVMsgu3Th7FZGJBQMSscti+fJ6P2Aw==
+        p:
+          - t: 28.59
+            p: 1013.04
+            h: 32.52
+            a: 1.75
+            la: '52.478680'
+            lo: '13.369360'
+            ba: 100
+            lp: 0
+            e: 0
+  DeviceConfigObject:
+    description: configuration in a raw data format to update device configuration
+    type: object
+    allOf:
+      - $ref: '#/definitions/DeviceDataRawObject'
+    example:
+      id: f9fdd585-a411-4a7a-82ef-2b3bcfedd926
+      v: 0.0.0
+      a: MC0wCAYDK2VkCgEBAyEA6dhKwQYCrE2gGcItXZGxc7Wi01jKaej9QvR3QCxxFlo=
       p:
-        - t: 3424
-          p: 101460
-          h: 6424
+        i: 900
+      ts: '2017-08-01T11:09:03.797Z'
   DeviceType:
     description: object containing properties of a device type
     type: object
@@ -1035,38 +1189,100 @@ definitions:
           - 'ubirch#1'
           - sensor
           - btcDemo
+  HealthResponse200:
+    description: response if server is healthy
+    type: object
+    required:
+      - version
+      - status
+      - message
+    properties:
+      version:
+        type: string
+      status:
+        type: string
+        enum:
+          - OK
+          - NOK
+      message:
+        type: string
+        description: >-
+          welcome string with build information ( $GO_PIPELINE_NAME /
+          $GO_PIPELINE_LABEL / $GO_PIPELINE_REVISION )
+    example:
+      version: '1.0'
+      status: OK
+      message: >-
+        Welcome to the ubirchAvatarService ( BUILD_ubirch-avatar-service /
+        git_rev_5b66c25_372 / 5b66c255eb3ba2a53be305cf2519d75b3b019b94 )
+  HealthResponse400:
+    allOf:
+      - $ref: '#/definitions/HealthResponse200'
+    example:
+      version: '1.0'
+      status: NOK
+      message: this is some error message
+  DeepCheckHealthResponse200:
+    description: response of deep check if server is healthy
+    type: object
+    required:
+      - status
+      - message
+    properties:
+      status:
+        type: string
+        enum:
+          - true
+          - false
+      message:
+        type: array
+        items:
+          type: string
+        description: array with all errors that occurred
+    example:
+      status: true
+      message: []
+  DeepCheckHealthResponse500:
+    allOf:
+      - $ref: '#/definitions/DeepCheckHealthResponse200'
+    example:
+      status: false
+      message:
+        - unable to connect to the database
   ErrorResponse:
     type: object
     description: error object with error code and message
     required:
-      - apiVersion
+      - version
       - status
-      - error
+      - errorType
+      - errorMessage
     properties:
-      apiVersion:
+      version:
         type: string
+        enum:
+          - '1.0'
       status:
         type: string
-        description: KO because it's an error
-      error:
-        type: object
-        required:
-          - errorId
-          - errorMessage
-        properties:
-          errorId:
-            type: string
-            enum:
-              - ErrorTimeOut
-              - ErrorNotHandled
-              - ErrorFatalIntern
-              - ErrorMissingParams
-              - ErrorParseJson
-          errorMessage:
-            type: string
-            enum:
-              - request could not be processed in time
-              - request could not be handled
-              - fatal internal error
-              - missing parameters
-              - cannot parse incoming json doc
+        description: NOK because it's an error
+        enum:
+          - OK
+          - NOK
+      errorType:
+        type: string
+        enum:
+          - RegistrationError
+          - ErrorTimeOut
+          - ErrorNotHandled
+          - ErrorFatalIntern
+          - ErrorMissingParams
+          - ErrorParseJson
+      errorMessage:
+        type: string
+        enum:
+          - something went wrong with the registration
+          - request could not be processed in time
+          - request could not be handled
+          - fatal internal error
+          - missing parameters
+          - cannot parse incoming json doc
