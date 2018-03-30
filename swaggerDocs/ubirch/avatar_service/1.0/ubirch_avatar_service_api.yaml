@@ -256,7 +256,10 @@ paths:
       summary: state update of device with configuration update in response
       description: >-
         over this endpoint the devices send their states in a raw data format;
-        the response always contains the configuration update for the device
+        
+        it is stored as it is in the raw data base and transformed by the avatar service into a processed message stored in the processed data base;
+        
+        the response always contains the configuration update for the device if no error occures
       parameters:
         - in: body
           name: rawData
@@ -278,9 +281,18 @@ paths:
       tags:
         - avatar service
         - raw data
+      produces:
+          - application/json
+          - application/octet-stream
+      consumes:
+          - application/octet-stream
       summary: state update of device in message pack format with configuration update in response
       description: >-
-        over this endpoint the devices send regularly their states in message pack format (see ubirch protocol definition in "https://github.com/ubirch/ubirch-protocol"); the response always contains the configuration update for the device
+        over this endpoint the devices  send regularly their states in message pack format (see ubirch protocol definition in "https://github.com/ubirch/ubirch-protocol");
+        
+        it is stored as it is in the raw data base and transformed by the avatar service into a processed message stored in the processed data base;
+        
+        the response always contains the configuration update for the device if no error occures; the response is also in message pack format (even error messages), except the js query parameter is set to true, then the response is responded in JSON format to be readable
       parameters:
         - in: body
           name: rawData
@@ -1035,7 +1047,7 @@ definitions:
             p: 101460
             h: 6424
   DeviceDataRawObject:
-    description: raw data message sent between device and avatar service
+    description: raw data sent between device and avatar service
     type: object
     required:
       - v
@@ -1075,14 +1087,11 @@ definitions:
         format: date-time
   DeviceMessageObject:
     description: >-
-      raw data sent from device as its current state; is stored as it is in the
-      raw data base and transformed by the avatar service into a processed
-      message stored in the processed data base
+      raw data message sent between device and avatar service
     type: object
     allOf:
       - $ref: '#/definitions/DeviceDataRawObject'
     example:
-      application/json:
         v: 0.0.3
         a: >-
           i0jL4/MwJnoa7acT7qsjsL8egsM+qlKVqgGs3mEW03VJy4HDgbPVP/cqLZWu50vr+c8XI0WThCg7ISkfoZ8sog==
@@ -1091,7 +1100,7 @@ definitions:
         chainedHash: >-
           guwm0lQho14EnoZUurLmr1n6qocWG8nxXUBoHyi04ycuXlNRFuZOgywnCVMsgu3Th7FZGJBQMSscti+fJ6P2Aw==
         p:
-          - t: 28.59
+          - t: 28.58
             p: 1013.04
             h: 32.52
             a: 1.75
@@ -1106,12 +1115,12 @@ definitions:
     allOf:
       - $ref: '#/definitions/DeviceDataRawObject'
     example:
-      id: f9fdd585-a411-4a7a-82ef-2b3bcfedd926
-      v: 0.0.0
-      a: MC0wCAYDK2VkCgEBAyEA6dhKwQYCrE2gGcItXZGxc7Wi01jKaej9QvR3QCxxFlo=
-      p:
-        i: 900
-      ts: '2017-08-01T11:09:03.797Z'
+        id: f9fdd585-a411-4a7a-82ef-2b3bcfedd926
+        v: 0.0.0
+        a: MC0wCAYDK2VkCgEBAyEA6dhKwQYCrE2gGcItXZGxc7Wi01jKaej9QvR3QCxxFlo=
+        p:
+          i: 900
+        ts: '2017-08-01T11:09:03.797Z'
   DeviceType:
     description: object containing properties of a device type
     type: object
