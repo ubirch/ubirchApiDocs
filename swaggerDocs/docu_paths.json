@@ -28,20 +28,5 @@
         "uri": "/ubirch/user_service/1.0/ubirch_user_service_api.yaml"
       }
     ]
-  },
-  {
-    "bundlename": "trackle service REST API",
-    "services": [
-      {
-        "name": "trackle Service",
-        "version": "1.0",
-        "uri": "/trackle/1.0/trackle_api.yaml"
-      },
-      {
-        "name": "trackle Service",
-        "version": "2.0 - work in progress",
-        "uri": "/trackle/2.0/trackle_api.yaml"
-      }
-    ]
   }
 ]
