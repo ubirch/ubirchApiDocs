@@ -527,7 +527,7 @@
           {
             "in": "path",
             "name": "hashedEmail",
-            "description": "hashed email address (SHA-512)",
+            "description": "hashed email address (SHA-512(email_tolower_trim))",
             "required": true,
             "type": "string"
           }
@@ -1299,12 +1299,12 @@
           "aggregated": {
             "date": "2017-09-20T00:00:00.000Z",
             "instantTime": {
-              "temperature": 36.8,
+              "temperature": 36.81,
               "timestamp": "2017-09-20T05:58:00.000Z",
               "desiredTime": "06:00:00.000Z"
             },
             "basal": {
-              "temperature": 36.6,
+              "temperature": 36.62,
               "sleepingPeriodId": "4a904a91-cabf-417e-981c-5be70654ae98",
               "timestamp": "2017-08-20T04:34:17.000Z"
             },
@@ -1403,13 +1403,9 @@
           "type": "string",
           "description": "user's display name"
         },
-        "email": {
-          "type": "string",
-          "description": "user's email address"
-        },
         "encryptedPrivateKey": {
           "type": "string",
-          "description": "(BASE64 encoded) encrypted private key to enable crypto operations on multiple devices"
+          "description": "(BASE64 encoded) encrypted private key to enable crypto operations on multiple devices; can only be decrypted on device by user's passphrase"
         },
         "hashedSecret": {
           "type": "string",

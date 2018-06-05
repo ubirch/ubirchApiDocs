@@ -6,12 +6,14 @@ info:
     This is the definition of the trackle REST API containing the following
     parts:|
 
-    - getting data (from device and user input) for one day, a range or days or a cycle
+    - getting data (from device and user input) for one day, a range or days or
+    a cycle
 
     - endpoints to create and update userinput
-    
-    - registration and login of trackle user accounts (including deletion of accounts)
-    
+
+    - registration and login of trackle user accounts (including deletion of
+    accounts)
+
     - read cycle statistics of user
 
     - getting trackle RAW data of sleeping periods
@@ -407,7 +409,7 @@ paths:
       parameters:
         - in: path
           name: hashedEmail
-          description: hashed email address (SHA-512)
+          description: hashed email address (SHA-512(email_tolower_trim))
           required: true
           type: string
       responses:
@@ -946,11 +948,15 @@ definitions:
                       with day number 1)
                   dragon:
                     type: boolean
-                    description: if set to true this day should be marked as a dragon in basal body temperature curve
+                    description: >-
+                      if set to true this day should be marked as a dragon in
+                      basal body temperature curve
                     default: false
                   ignore:
                     type: boolean
-                    description: if set to true this day should be marked as to be ignored in basal body temperature curve
+                    description: >-
+                      if set to true this day should be marked as to be ignored
+                      in basal body temperature curve
                     default: false
                   fertile:
                     type: object
@@ -1090,14 +1096,11 @@ definitions:
       displayName:
         type: string
         description: user's display name
-      email:
-        type: string
-        description: user's email address
       encryptedPrivateKey:
         type: string
         description: >-
           (BASE64 encoded) encrypted private key to enable crypto operations on
-          multiple devices
+          multiple devices; can only be decrypted on device by user's passphrase
       hashedSecret:
         type: string
         description: SHA512( lower(trim(passphrase)) + lower(trim(email)) )
