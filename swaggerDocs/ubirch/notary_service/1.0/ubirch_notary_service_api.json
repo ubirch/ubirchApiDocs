@@ -1,0 +1,189 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the ubirch notarize API. It allows to anchor data or hashes in the Bitcoin Blockchain",
+    "version": "1.0.0",
+    "title": "ubirch notarize service",
+    "contact": {
+      "email": "info@ubirch.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "notary-dev.api.ubirch.com:8080",
+  "basePath": "/v1/notaryService",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/notarize": {
+      "post": {
+        "tags": [
+          "notarize"
+        ],
+        "summary": "anchor data or hash in the blockchain",
+        "description": "This path lets you store a hash (max. 80 bytes) in the bitcoin blockchain and you will receive a transaction ID together with a link to an external blockchain viewer to verify the transaction later. To anchor a photo, hash the binary photo data: `shasum -a 512 photo.png` and use the resulting hexadecimal hex string in the data field.",
+        "operationId": "notarize",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The hash to be notarized.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Notarize"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The transaction ID and a link.",
+            "schema": {
+              "$ref": "#/definitions/NotarizeResponse"
+            }
+          }
+        }
+      }
+    },
+    "/verify": {
+      "post": {
+        "tags": [
+          "verify"
+        ],
+        "summary": "verify a previous notarization with the transaction hash and original data hash.",
+        "description": "Takes a transaction hash and the original data has and verifies that the transaction is valid and the OP_RETURN contents of the transaction matches the data hash.",
+        "operationId": "verify",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The transaction hash and the data to be verified.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Verify"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A json response with the confirmation time and the amount of confirmations from the bitcoint network.",
+            "schema": {
+              "$ref": "#/definitions/VerifyResponse"
+            }
+          },
+          "400": {
+            "description": "A transaction was found, but the data has does not match.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "The connection to the bitcoin network failed or transaction was not found",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Notarize": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string",
+          "description": "A hexadecimal encoded hash string (max. 80 bytes). Only use [0-9a-z] for the hash (lower case only!)."
+        },
+        "dataIsHash": {
+          "type": "boolean",
+          "description": "Indicates that the contents of 'data' is a hash instead of data."
+        }
+      },
+      "example": {
+        "data": "dec5b5e130d1694e65b1bf3f915024d51e87817248ab625e8732e183c321a9aaa09f92c04ed3d1d3a5b173838bd40ff5b1c8bb6318bcea70f4f72a8bff0ec2a1",
+        "dataIsHash": true
+      }
+    },
+    "NotarizeResponse": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The blockchain transcation hash. This is the receipt for the blockchain transaction and must be kept with the data."
+        },
+        "txHashLink": {
+          "type": "string",
+          "description": "A link to an external blockchain transaction viewer to verify the transaction independently."
+        }
+      },
+      "example": {
+        "hash": "ed9622c2cdb3579b49a7d253e7b004782fdbbcded3d2750acb723c554735398b",
+        "txHashLink": "https://www.blocktrail.com/tBTC/tx/ed9622c2cdb3579b49a7d253e7b004782fdbbcded3d2750acb723c554735398b"
+      }
+    },
+    "Verify": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The transaction hash."
+        },
+        "data": {
+          "type": "string",
+          "description": "The original data hash to be verified."
+        }
+      },
+      "example": {
+        "hash": "ed9622c2cdb3579b49a7d253e7b004782fdbbcded3d2750acb723c554735398b",
+        "data": "dec5b5e130d1694e65b1bf3f915024d51e87817248ab625e8732e183c321a9aaa09f92c04ed3d1d3a5b173838bd40ff5b1c8bb6318bcea70f4f72a8bff0ec2a1"
+      }
+    },
+    "VerifyResponse": {
+      "properties": {
+        "confirmed": {
+          "type": "string",
+          "description": "The time of the transaction confirmation."
+        },
+        "confirmations": {
+          "type": "integer",
+          "description": "The amount of confirmations from the network."
+        }
+      },
+      "example": {
+        "confirmed": "2018-07-04T21:48:47Z",
+        "confirmations": 3
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "The error message"
+        }
+      },
+      "example": {
+        "error": "data mismatch: dec5b5e130d1694e65b1bf3f915024d51e87817248ab625e8732e183c321a9aaa09f92c04ed3d1d3a5b173838bd40ff5b1c8bb6318bcea70f4f72a8bff0ec2a1"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
