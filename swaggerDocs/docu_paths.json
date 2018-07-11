@@ -13,6 +13,11 @@
         "uri": "/ubirch/auth_service/1.0/ubirch_auth_service_api.yaml"
       },
       {
+        "name": "ubirch Notary Service",
+        "version": "1.0",
+        "uri": "/ubirch/notary_service/1.0/ubirch_notary_service_api.yaml"
+      },
+      {
         "name": "ubirch Chain Service",
         "version": "1.0",
         "uri": "/ubirch/chain_service/1.0/ubirch_chain_service_api.yaml"

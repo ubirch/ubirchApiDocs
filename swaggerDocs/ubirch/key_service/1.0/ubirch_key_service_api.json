@@ -51,8 +51,7 @@
         "tags": [
           "key registry"
         ],
-        "summary": "allows us to delete public keys",
-        "operationId": "",
+        "summary": "delete a public key",
         "parameters": [
           {
             "in": "body",
@@ -70,6 +69,46 @@
           },
           "400": {
             "description": "signature was invalid",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/pubkey/mpack": {
+      "post": {
+        "tags": [
+          "key registry"
+        ],
+        "summary": "stores new public key in msgpack format",
+        "description": "stores the given public key with its unique pubKeyID",
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "pubkey",
+            "description": "a mgspack representation of the public key registration. The format follows both the json structure (with binary values instead of encoded) as well as the [ubirch-protocol](https://github.com/ubirch/ubirch-protocol#key-registration) format.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PublicKeyMpack"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns created public key",
+            "schema": {
+              "$ref": "#/definitions/PublicKey"
+            }
+          },
+          "400": {
+            "description": "No successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -558,6 +597,11 @@
         },
         "signature": "MfIJEmhbIQBwHK4URdqialGOyeg1ZKyIAGPmy5VZ8Cfim4hnu3c4SAzHdhHuu4UY0XP3BWgPRVXmf8/mv8s3Dw=="
       }
+    },
+    "PublicKeyMpack": {
+      "description": "public key registration package in msgpack (decode example into binary before posting!)",
+      "format": "binary",
+      "example": "95cd0012b000000000000000000000000039b29abc0186a9616c676f726974686dab4543435f45443235353139a7637265617465640eaa68774465766963654964b000000000000000000000000039b29abca67075624b6579da002055bdecad41f5f90f72d464c034eb0e2b0eeb42ca5d647d419c81d6932e8ae7c0ad76616c69644e6f744166746572ce01e1338dae76616c69644e6f744265666f72650eda00408f4f542e4996eccb66c8123b5c6ff89362f557711c8fef7e2c5aeb70d1d850a57298829a586f97841b4a72b2d0819450600d9b4e0b24a367d2fe730675951c02"
     },
     "DeletePublicKey": {
       "description": "a public key to delete",
