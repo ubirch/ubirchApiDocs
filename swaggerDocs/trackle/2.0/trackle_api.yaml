@@ -69,24 +69,50 @@ paths:
           description: Bearer token identifying the related user
           required: true
           type: string
-        - in: body
-          name: claimRequestSigned
-          description: 'data of the found sensor the app want to claim, signed by app'
-          schema:
-            $ref: '#/definitions/ClaimRequestSigned'
+        - in: path
+          name: hwDeviceId
+          description: hwDeviceId of the claimed device
+          required: true
+          type: String
       responses:
         '200':
           description: >-
-            Successful response; return "ok" when claiming request was
-            successful
+            Successful response, when device could be claimed
           schema:
-            type: string
-            enum:
-              - ok
+            type: object
+            properties:
+              version:
+                type: string
+              status:
+                type: string
+                enum:
+                  - ok
+              message:
+                type: string
+            example:
+              version: 1.0
+              status:  OK
+              message: "device device-test-user-trackle-051 claimed for user: User 2018-06-20T19:06:48.533+02:00"
         '400':
           description: Not successful response
           schema:
-            $ref: '#/definitions/ClaimErrorResponse'
+            type: object
+            properties:
+              version:
+                type: string
+              status:
+                type: string
+                enum:
+                  - nok
+              errorType:
+                type: string
+              message:
+                type: string
+            example:
+              version: 1.0
+              status:  nok
+              errorType: ValidationError
+              message: "device device-test-user-trackle-007 already claimed by 1 user(s)"
   /unclaim:
     post:
       tags:
