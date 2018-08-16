@@ -16,7 +16,7 @@ paths:
   /:
     get:
       tags:
-        - user service
+        - user-service
         - health
       summary: health monitor
       description: allows a quick check if the service is still up.
@@ -29,10 +29,43 @@ paths:
           description: something is not fine
           schema:
             $ref: '#/definitions/HealthResponse400'
+  /check:
+    get:
+      tags:
+        - user-service
+        - health
+        - welcome
+      summary: Welcome / Health
+      description: Check if service is up and running
+      responses:
+        '200':
+          description: Successful response; returns status object with welcome message
+          schema:
+            $ref: '#/definitions/HealthResponse200'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/HealthResponse400'
+  /deepCheck:
+    get:
+      tags:
+        - user-service
+        - health
+      summary: health monitor deep check
+      description: allows a deep check of the service
+      responses:
+        '200':
+          description: everything is fine
+          schema:
+            $ref: '#/definitions/DeepCheckHealthResponse200'
+        '500':
+          description: something is not fine
+          schema:
+            $ref: '#/definitions/DeepCheckHealthResponse500'
   /context:
     post:
       tags:
-        - user service
+        - user-service
         - context
       summary: create a context
       consumes:
@@ -54,7 +87,7 @@ paths:
             $ref: '#/definitions/ContextCreateError'
     put:
       tags:
-        - user service
+        - user-service
         - context
       summary: update a context
       consumes:
@@ -77,7 +110,7 @@ paths:
   '/context/{id}':
     get:
       tags:
-        - user service
+        - user-service
         - context
       summary: get context
       parameters:
@@ -97,7 +130,7 @@ paths:
             $ref: '#/definitions/ContextQueryError'
     delete:
       tags:
-        - user service
+        - user-service
         - context
       summary: delete context
       parameters:
@@ -118,7 +151,7 @@ paths:
   '/context/byName/{name}':
     get:
       tags:
-        - user service
+        - user-service
         - context
       summary: get context
       parameters:
@@ -138,7 +171,7 @@ paths:
             $ref: '#/definitions/ContextQueryError'
     delete:
       tags:
-        - user service
+        - user-service
         - context
       summary: delete context
       parameters:
@@ -159,7 +192,7 @@ paths:
   /user:
     post:
       tags:
-        - user service
+        - user-service
         - user
       summary: create user
       parameters:
@@ -180,7 +213,7 @@ paths:
             $ref: '#/definitions/UserCreateError'
     put:
       tags:
-        - user service
+        - user-service
         - user
       summary: update user
       parameters:
@@ -213,7 +246,7 @@ paths:
         type: string
     get:
       tags:
-        - user service
+        - user-service
         - user
       summary: find user based on providerId and externalUserId
       responses:
@@ -227,7 +260,7 @@ paths:
             $ref: '#/definitions/UserQueryError'
     delete:
       tags:
-        - user service
+        - user-service
         - user
       summary: delete user based on providerId and externalUserId
       responses:
@@ -246,7 +279,7 @@ paths:
         type: string
     get:
       tags:
-        - user service
+        - user-service
         - user
       summary: find user based on an email address
       responses:
@@ -259,7 +292,7 @@ paths:
   /group:
     post:
       tags:
-        - user service
+        - user-service
         - group
       summary: create group
       parameters:
@@ -280,7 +313,7 @@ paths:
             $ref: '#/definitions/GroupCreateError'
     put:
       tags:
-        - user service
+        - user-service
         - group
       summary: update group
       parameters:
@@ -308,7 +341,7 @@ paths:
         type: string
     get:
       tags:
-        - user service
+        - user-service
         - group
       summary: load group
       responses:
@@ -322,7 +355,7 @@ paths:
             $ref: '#/definitions/GroupQueryError'
     delete:
       tags:
-        - user service
+        - user-service
         - group
       summary: delete group
       responses:
@@ -343,7 +376,7 @@ paths:
     get:
       tags:
         - 2BImplemented
-        - user service
+        - user-service
         - group
       summary: add users to a group as allowed (allows them to access data of devices assigned to this group)
       responses:
@@ -356,7 +389,7 @@ paths:
     delete:
       tags:
         - 2BImplemented
-        - user service
+        - user-service
         - group
       summary: delete group
       responses:
@@ -369,7 +402,7 @@ paths:
   '/group/memberOf/{context_name}/{provider_id}/{external_user_id}':
     get:
       tags:
-        - user service
+        - user-service
         - group
       summary: load all groups a user owns or is a member of
       parameters:
@@ -398,7 +431,7 @@ paths:
   '/initData/{env_name}':
     get:
       tags:
-        - user service
+        - user-service
         - init
       summary: |-
         initialize contexts and create an admin user with a group in each context
@@ -447,6 +480,33 @@ definitions:
       version: '1.0'
       status: NOK
       message: this is some error message
+  DeepCheckHealthResponse200:
+    description: response of deep check if server is healthy
+    type: object
+    required:
+      - status
+      - message
+    properties:
+      status:
+        type: string
+        enum:
+          - true
+          - false
+      message:
+        type: array
+        items:
+          type: string
+        description: array with all errors that occurred
+    example:
+      status: true
+      message: []
+  DeepCheckHealthResponse500:
+    allOf:
+      - $ref: '#/definitions/DeepCheckHealthResponse200'
+    example:
+      status: false
+      message:
+        - unable to connect to the database
   ErrorResponse:
     type: object
     description: 'object with API version, status and error type and error message'

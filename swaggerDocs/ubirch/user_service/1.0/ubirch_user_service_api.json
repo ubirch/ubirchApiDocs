@@ -17,7 +17,7 @@
     "/": {
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "health"
         ],
         "summary": "health monitor",
@@ -38,10 +38,59 @@
         }
       }
     },
+    "/check": {
+      "get": {
+        "tags": [
+          "user-service",
+          "health",
+          "welcome"
+        ],
+        "summary": "Welcome / Health",
+        "description": "Check if service is up and running",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns status object with welcome message",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse200"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse400"
+            }
+          }
+        }
+      }
+    },
+    "/deepCheck": {
+      "get": {
+        "tags": [
+          "user-service",
+          "health"
+        ],
+        "summary": "health monitor deep check",
+        "description": "allows a deep check of the service",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckHealthResponse200"
+            }
+          },
+          "500": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckHealthResponse500"
+            }
+          }
+        }
+      }
+    },
     "/context": {
       "post": {
         "tags": [
-          "user service",
+          "user-service",
           "context"
         ],
         "summary": "create a context",
@@ -75,7 +124,7 @@
       },
       "put": {
         "tags": [
-          "user service",
+          "user-service",
           "context"
         ],
         "summary": "update a context",
@@ -111,7 +160,7 @@
     "/context/{id}": {
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "context"
         ],
         "summary": "get context",
@@ -141,7 +190,7 @@
       },
       "delete": {
         "tags": [
-          "user service",
+          "user-service",
           "context"
         ],
         "summary": "delete context",
@@ -173,7 +222,7 @@
     "/context/byName/{name}": {
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "context"
         ],
         "summary": "get context",
@@ -203,7 +252,7 @@
       },
       "delete": {
         "tags": [
-          "user service",
+          "user-service",
           "context"
         ],
         "summary": "delete context",
@@ -235,7 +284,7 @@
     "/user": {
       "post": {
         "tags": [
-          "user service",
+          "user-service",
           "user"
         ],
         "summary": "create user",
@@ -267,7 +316,7 @@
       },
       "put": {
         "tags": [
-          "user service",
+          "user-service",
           "user"
         ],
         "summary": "update user",
@@ -317,7 +366,7 @@
       ],
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "user"
         ],
         "summary": "find user based on providerId and externalUserId",
@@ -338,7 +387,7 @@
       },
       "delete": {
         "tags": [
-          "user service",
+          "user-service",
           "user"
         ],
         "summary": "delete user based on providerId and externalUserId",
@@ -367,7 +416,7 @@
       ],
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "user"
         ],
         "summary": "find user based on an email address",
@@ -387,7 +436,7 @@
     "/group": {
       "post": {
         "tags": [
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "create group",
@@ -419,7 +468,7 @@
       },
       "put": {
         "tags": [
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "update group",
@@ -462,7 +511,7 @@
       ],
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "load group",
@@ -483,7 +532,7 @@
       },
       "delete": {
         "tags": [
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "delete group",
@@ -515,7 +564,7 @@
       "get": {
         "tags": [
           "2BImplemented",
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "add users to a group as allowed (allows them to access data of devices assigned to this group)",
@@ -534,7 +583,7 @@
       "delete": {
         "tags": [
           "2BImplemented",
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "delete group",
@@ -554,7 +603,7 @@
     "/group/memberOf/{context_name}/{provider_id}/{external_user_id}": {
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "group"
         ],
         "summary": "load all groups a user owns or is a member of",
@@ -597,7 +646,7 @@
     "/initData/{env_name}": {
       "get": {
         "tags": [
-          "user service",
+          "user-service",
           "init"
         ],
         "summary": "initialize contexts and create an admin user with a group in each context\n depends on two environment variables:\n* ADMIN_PROVIDER_ID (e.g.: \"google\"\n* ADMIN_EXTERNAL_ID (user id with the OpenID Connect provider)",
@@ -664,6 +713,47 @@
         "version": "1.0",
         "status": "NOK",
         "message": "this is some error message"
+      }
+    },
+    "DeepCheckHealthResponse200": {
+      "description": "response of deep check if server is healthy",
+      "type": "object",
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "message": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "array with all errors that occurred"
+        }
+      },
+      "example": {
+        "status": true,
+        "message": []
+      }
+    },
+    "DeepCheckHealthResponse500": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/DeepCheckHealthResponse200"
+        }
+      ],
+      "example": {
+        "status": false,
+        "message": [
+          "unable to connect to the database"
+        ]
       }
     },
     "ErrorResponse": {
