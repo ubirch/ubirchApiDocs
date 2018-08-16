@@ -17,13 +17,15 @@
     "/": {
       "get": {
         "tags": [
-          "auth service"
+          "auth-service",
+          "health",
+          "welcome"
         ],
         "summary": "Welcome / Health",
         "description": "Check if service is up and running",
         "responses": {
           "200": {
-            "description": "Successful response; returnes status object with welcome message",
+            "description": "Successful response; returns status object with welcome message",
             "schema": {
               "$ref": "#/definitions/StatusResponse"
             }
@@ -37,10 +39,59 @@
         }
       }
     },
+    "/check": {
+      "get": {
+        "tags": [
+          "auth-service",
+          "health",
+          "welcome"
+        ],
+        "summary": "Welcome / Health",
+        "description": "Check if service is up and running",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns status object with welcome message",
+            "schema": {
+              "$ref": "#/definitions/StatusResponse"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/deepCheck": {
+      "get": {
+        "tags": [
+          "auth-service",
+          "health"
+        ],
+        "summary": "health monitor deep check",
+        "description": "allows a deep check of the service",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckHealthResponse200"
+            }
+          },
+          "500": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/DeepCheckHealthResponse500"
+            }
+          }
+        }
+      }
+    },
     "/providerInfo/list/{context}/{appId}": {
       "get": {
         "tags": [
-          "auth service",
+          "auth-service",
           "providerlist"
         ],
         "summary": "provider list",
@@ -83,7 +134,7 @@
     "/verify/code": {
       "post": {
         "tags": [
-          "auth service",
+          "auth-service",
           "token administration"
         ],
         "summary": "Verify Code",
@@ -118,8 +169,8 @@
     "/register": {
       "post": {
         "tags": [
-          "auth service",
-          "user service"
+          "auth-service",
+          "user"
         ],
         "summary": "Register new user",
         "description": "Register a new user for an OP token; precondition - user is already authenticated by OP",
@@ -151,8 +202,8 @@
     "/userInfo": {
       "get": {
         "tags": [
-          "auth service",
-          "user service"
+          "auth-service",
+          "user"
         ],
         "summary": "GET user data",
         "description": "returns stored user data",
@@ -182,8 +233,8 @@
       },
       "put": {
         "tags": [
-          "auth service",
-          "user service"
+          "auth-service",
+          "user"
         ],
         "summary": "UPDATE user data",
         "description": "updates user data",
@@ -224,7 +275,7 @@
     "/logout/{token}": {
       "get": {
         "tags": [
-          "auth service",
+          "auth-service",
           "token administration"
         ],
         "summary": "logout",
@@ -499,6 +550,47 @@
         "version": "1.0",
         "status": "OK",
         "message": "Welcome to the ubirchAuthService"
+      }
+    },
+    "DeepCheckHealthResponse200": {
+      "description": "response of deep check if server is healthy",
+      "type": "object",
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            true,
+            false
+          ]
+        },
+        "message": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "array with all errors that occurred"
+        }
+      },
+      "example": {
+        "status": true,
+        "message": []
+      }
+    },
+    "DeepCheckHealthResponse500": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/DeepCheckHealthResponse200"
+        }
+      ],
+      "example": {
+        "status": false,
+        "message": [
+          "unable to connect to the database"
+        ]
       }
     },
     "ErrorResponse": {
