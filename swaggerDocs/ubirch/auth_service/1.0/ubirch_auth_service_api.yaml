@@ -29,11 +29,11 @@ paths:
         '200':
           description: Successful response; returns status object with welcome message
           schema:
-            $ref: '#/definitions/StatusResponse'
+            $ref: '#/definitions/HealthResponse200'
         '400':
           description: Not successful response
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/HealthResponse400'
   /check:
     get:
       tags:
@@ -46,11 +46,11 @@ paths:
         '200':
           description: Successful response; returns status object with welcome message
           schema:
-            $ref: '#/definitions/StatusResponse'
+            $ref: '#/definitions/HealthResponse200'
         '400':
           description: Not successful response
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/HealthResponse400'
   /deepCheck:
     get:
       tags:
@@ -215,6 +215,96 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 definitions:
+  HealthResponse200:
+    description: response if server is healthy
+    type: object
+    required:
+      - version
+      - status
+      - message
+    properties:
+      version:
+        type: string
+      status:
+        type: string
+        enum:
+          - OK
+          - NOK
+      message:
+        type: string
+    example:
+      version: '1.0'
+      status: OK
+      message: Welcome to the ubirchUserService
+  HealthResponse400:
+    allOf:
+      - $ref: '#/definitions/HealthResponse200'
+    example:
+      version: '1.0'
+      status: NOK
+      message: this is some error message
+  DeepCheckHealthResponse200:
+    description: response of deep check if server is healthy
+    type: object
+    required:
+      - status
+      - message
+    properties:
+      status:
+        type: string
+        enum:
+          - true
+          - false
+      message:
+        type: array
+        items:
+          type: string
+        description: array with all errors that occurred
+    example:
+      status: true
+      message: []
+  ErrorResponse:
+    type: object
+    description: error object with error code and message
+    required:
+      - apiVersion
+      - status
+      - error
+    properties:
+      apiVersion:
+        type: string
+        example: 1.0.0
+      status:
+        type: string
+        description: NOK because it's an error
+        enum:
+          - NOK
+      error:
+        type: object
+        required:
+          - errorId
+          - errorMessage
+        properties:
+          errorId:
+            type: string
+            enum:
+              - ErrorTimeOut
+              - ErrorNotHandled
+              - ErrorFatalIntern
+              - ErrorMissingParams
+              - ErrorParseJson
+              - ErrorUserAlreadyExists
+              - ErrorNoUserForToken
+          errorMessage:
+            type: string
+            enum:
+              - request could not be processed in time
+              - request could not be handled
+              - fatal internal error
+              - missing parameters
+              - cannot parse incoming json doc
+              - user already exists
+              - no user exists for given token
   OpenIDConnectProviderInfo:
     type: object
     description: OpenID Connect provider configuration for a given context
@@ -360,49 +450,6 @@ definitions:
           displayName: my-best-friends-ubirch-group
         - id: 32c5c928-97a0-49b7-9d71-0b0517b7d13e
           displayName: another-friends-ubirch-group
-  StatusResponse:
-    type: object
-    description: status object with status message
-    required:
-      - apiVersion
-      - status
-      - message
-    properties:
-      apiVersion:
-        type: string
-      status:
-        type: string
-        enum:
-          - OK
-          - NOK
-        description: OK or NOK = not OK
-      message:
-        type: string
-        description: status description
-    example:
-      version: '1.0'
-      status: OK
-      message: Welcome to the ubirchAuthService
-  DeepCheckHealthResponse200:
-    description: response of deep check if server is healthy
-    type: object
-    required:
-      - status
-      - message
-    properties:
-      status:
-        type: string
-        enum:
-          - true
-          - false
-      message:
-        type: array
-        items:
-          type: string
-        description: array with all errors that occurred
-    example:
-      status: true
-      message: []
   DeepCheckHealthResponse500:
     allOf:
       - $ref: '#/definitions/DeepCheckHealthResponse200'
@@ -410,45 +457,3 @@ definitions:
       status: false
       message:
         - unable to connect to the database
-  ErrorResponse:
-    type: object
-    description: error object with error code and message
-    required:
-      - apiVersion
-      - status
-      - error
-    properties:
-      apiVersion:
-        type: string
-        example: 1.0.0
-      status:
-        type: string
-        description: NOK because it's an error
-        enum:
-          - NOK
-      error:
-        type: object
-        required:
-          - errorId
-          - errorMessage
-        properties:
-          errorId:
-            type: string
-            enum:
-              - ErrorTimeOut
-              - ErrorNotHandled
-              - ErrorFatalIntern
-              - ErrorMissingParams
-              - ErrorParseJson
-              - ErrorUserAlreadyExists
-              - ErrorNoUserForToken
-          errorMessage:
-            type: string
-            enum:
-              - request could not be processed in time
-              - request could not be handled
-              - fatal internal error
-              - missing parameters
-              - cannot parse incoming json doc
-              - user already exists
-              - no user exists for given token
