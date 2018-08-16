@@ -18,6 +18,7 @@ paths:
       tags:
         - user-service
         - health
+        - welcome
       summary: health monitor
       description: allows a quick check if the service is still up.
       responses:
@@ -189,12 +190,39 @@ paths:
           description: failed to delete context
           schema:
             $ref: '#/definitions/ContextDeleteError'
+  /register:
+    post:
+      tags:
+        - user-service
+        - user
+        - register
+      summary: user registration
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user registration object
+          description: user to register
+          required: true
+          schema:
+            $ref: '#/definitions/RegisterRequest'
+      responses:
+        '200':
+          description: user registration successful
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          description: failed to register user
+          schema:
+            $ref: '#/definitions/RegistrationError'
   /user:
     post:
       tags:
         - user-service
         - user
       summary: create user
+      consumes:
+        - application/json
       parameters:
         - in: body
           name: user object
@@ -216,6 +244,8 @@ paths:
         - user-service
         - user
       summary: update user
+      consumes:
+        - application/json
       parameters:
         - in: body
           name: user object
@@ -289,12 +319,71 @@ paths:
           description: user not found
           schema:
             $ref: '#/definitions/EmailAddressQueryError'
+  '/user/info/{context}/{provider_id}/{external_user_id}':
+    parameters:
+      - in: path
+        name: context
+        description: context name to search with
+        required: true
+        type: string
+      - in: path
+        name: provider_id
+        description: providerId to search with
+        required: true
+        type: string
+      - in: path
+        name: external_user_id
+        description: externalUserId to search with
+        required: true
+        type: string
+    get:
+      tags:
+        - user-service
+        - user
+        - user info
+      summary: 'find user infos based on a context, providerId and externalUserId'
+      responses:
+        '200':
+          description: user exists
+          schema:
+            $ref: '#/definitions/UserInfo'
+        '400':
+          description: user not found
+          schema:
+            $ref: '#/definitions/UserInfoGetError'
+  /user/info:
+    put:
+      tags:
+        - user-service
+        - user
+        - user info
+      summary: update user info
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user info object
+          description: user info to update
+          required: true
+          schema:
+            $ref: '#/definitions/UserInfoUpdate'
+      responses:
+        '200':
+          description: successfully update user info
+          schema:
+            $ref: '#/definitions/UserInfo'
+        '400':
+          description: failed to update user
+          schema:
+            $ref: '#/definitions/UserInfoUpdateError'
   /group:
     post:
       tags:
         - user-service
         - group
       summary: create group
+      consumes:
+        - application/json
       parameters:
         - in: body
           name: group object
@@ -316,6 +405,8 @@ paths:
         - user-service
         - group
       summary: update group
+      consumes:
+        - application/json
       parameters:
         - in: body
           name: group object
@@ -589,6 +680,37 @@ definitions:
       status: NOK
       errorType: DeleteError
       errorMessage: failed to delete context
+  RegisterRequest:
+    description: a user as we create it
+    type: object
+    required:
+      - context
+      - providerId
+      - userId
+      - displayName
+      - locale
+    properties:
+      context:
+        type: string
+        description: name of the context a user is registered in
+      providerId:
+        type: string
+        description: our id for the OpenID Connect provider
+      userId:
+        type: string
+        description: (external) userId as provided by the provider (see providerId). this is different from the internal userId.
+      userName:
+        type: string
+        description: display name of the user
+      locale:
+        type: string
+        description: language code as defined by ISO-639
+    example:
+      context: ubirch-local
+      providerId: google
+      userId: asdf-1234
+      userName: Jane Someone
+      locale: en-US
   UserCreateRequest:
     description: a user as we create it
     type: object
@@ -634,6 +756,118 @@ definitions:
       providerId: google
       displayName: Jane Someone
       locale: en
+  UserInfoGroup:
+    description: info about a group (as part of `UserInfo` responses)
+    type: object
+    required:
+      - id
+      - displayName
+    properties:
+      id:
+        type: string
+        description: always an UUID
+      displayName:
+        type: string
+      adminGroup:
+        type: boolean
+        description: if true the group is an administrators group; otherwise false (including when it's not defined)
+    example:
+      id: a4c08d88-7c43-4984-a568-0672b4431016
+      displayName: Jane Someone
+      adminGroup: true
+  UserInfo:
+    description: info about a user
+    type: object
+    required:
+      - displayName
+      - locale
+      - myGroups
+      - allowedGroups
+      - activeUser
+    properties:
+      displayName:
+        type: string
+      locale:
+        type: string
+        description: language code as defined by ISO-639
+      myGroups:
+        description: a list of all groups of this user
+        type: array
+        items:
+          $ref: '#/definitions/UserInfoGroup'
+      allowedGroups:
+        description: a list of all groups this user has been allowed to access
+        type: array
+        items:
+          $ref: '#/definitions/UserInfoGroup'
+      activeUser:
+        type: boolean
+        description: true if user has been activated; false otherwise
+    example:
+      displayName: Jane Someone
+      locale: en-US
+      myGroups:
+        - id: a4c08d88-7c43-4984-a568-0672b4431016
+          displayName: Jane Someone group
+      allowedGroups: []
+      activeUser: true
+  SimpleUserContext:
+    description: simple user context allowing us to find a user
+    type: object
+    required:
+      - context
+      - providerId
+      - userId
+    properties:
+      context:
+        type: string
+      providerId:
+        type: string
+      userId:
+        type: string
+        description: externalUserId as defined by provider
+    example:
+      context: ubirch-local
+      providerId: google
+      userId: asdf-1234
+  UserUpdate:
+    description: everything we can update in a user's info
+    type: object
+    required:
+      - displayName
+    properties:
+      displayName:
+        type: string
+    example:
+      displayName: new display name
+  UserInfoUpdate:
+    description: a user info update
+    type: object
+    required:
+      - simpleUserContext
+      - update
+    properties:
+      simpleUserContext:
+        items:
+          $ref: '#/definitions/SimpleUserContext'
+      update:
+        items:
+          $ref: '#/definitions/UserUpdate'
+    example:
+      simpleUserContext:
+        context: ubirch-local
+        providerId: google
+        userId: asdf-1234
+      update:
+        displayName: my new display name
+  RegistrationError:
+    allOf:
+      - $ref: '#/definitions/ErrorResponse'
+    example:
+      version: '1.0'
+      status: NOK
+      errorType: RegistrationError
+      errorMessage: failed to register new user
   UserCreateError:
     allOf:
       - $ref: '#/definitions/ErrorResponse'
@@ -666,6 +900,22 @@ definitions:
       status: NOK
       errorType: QueryError
       errorMessage: no user with given email address exists
+  UserInfoGetError:
+    allOf:
+      - $ref: '#/definitions/ErrorResponse'
+    example:
+      version: '1.0'
+      status: NOK
+      errorType: NoUserInfoFound
+      errorMessage: failed to get user info
+  UserInfoUpdateError:
+    allOf:
+      - $ref: '#/definitions/ErrorResponse'
+    example:
+      version: '1.0'
+      status: NOK
+      errorType: UpdateError
+      errorMessage: failed to update user
   UserDeleteError:
     allOf:
       - $ref: '#/definitions/ErrorResponse'
