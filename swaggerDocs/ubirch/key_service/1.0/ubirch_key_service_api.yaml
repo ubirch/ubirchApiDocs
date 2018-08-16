@@ -15,9 +15,60 @@ basePath: /api/keyService/v1
 produces:
   - application/json
 paths:
+  /:
+    get:
+      tags:
+        - key-service
+        - health
+        - welcome
+      summary: Welcome / Health
+      description: Check if service is up and running
+      responses:
+        '200':
+          description: Successful response; returns status object with welcome message
+          schema:
+            $ref: '#/definitions/StatusResponse'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /check:
+    get:
+      tags:
+        - key-service
+        - health
+        - welcome
+      summary: Welcome / Health
+      description: Check if service is up and running
+      responses:
+        '200':
+          description: Successful response; returns status object with welcome message
+          schema:
+            $ref: '#/definitions/StatusResponse'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /deepCheck:
+    get:
+      tags:
+        - key-service
+        - health
+      summary: health monitor deep check
+      description: allows a deep check of the service
+      responses:
+        '200':
+          description: everything is fine
+          schema:
+            $ref: '#/definitions/DeepCheckHealthResponse200'
+        '500':
+          description: something is not fine
+          schema:
+            $ref: '#/definitions/DeepCheckHealthResponse500'
   /pubkey:
     post:
       tags:
+        - key-service
         - key registry
       summary: stores new public key
       description: stores the given public key with its unique pubKeyID
@@ -39,6 +90,7 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     delete:
       tags:
+        - key-service
         - key registry
       summary: delete a public key
       parameters:
@@ -58,7 +110,9 @@ paths:
   /pubkey/mpack:
     post:
       tags:
+        - key-service
         - key registry
+        - MessagePack
       summary: stores new public key in msgpack format
       description: stores the given public key with its unique pubKeyID
       consumes:
@@ -84,6 +138,7 @@ paths:
   '/pubkey/current/hardwareId/{hardwareId}':
     get:
       tags:
+        - key-service
         - key registry
       summary: query only the currently valid public keys
       description: query the currently valid public keys based on a hardwareId
@@ -107,6 +162,7 @@ paths:
   '/pubkey/{pubkeyid}':
     put:
       tags:
+        - key-service
         - key registry
         - 2BImplemented
       summary: updates public key
@@ -135,6 +191,7 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     get:
       tags:
+        - key-service
         - key registry
         - 2BImplemented
       summary: get public key
@@ -156,6 +213,56 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
 definitions:
+  StatusResponse:
+    type: object
+    description: status object with status message
+    required:
+      - apiVersion
+      - status
+      - message
+    properties:
+      apiVersion:
+        type: string
+      status:
+        type: string
+        enum:
+          - OK
+          - NOK
+        description: OK or NOK = not OK
+      message:
+        type: string
+        description: status description
+    example:
+      version: '1.0'
+      status: OK
+      message: Welcome to the ubirchAuthService
+  DeepCheckHealthResponse200:
+    description: response of deep check if server is healthy
+    type: object
+    required:
+      - status
+      - message
+    properties:
+      status:
+        type: string
+        enum:
+          - true
+          - false
+      message:
+        type: array
+        items:
+          type: string
+        description: array with all errors that occurred
+    example:
+      status: true
+      message: []
+  DeepCheckHealthResponse500:
+    allOf:
+      - $ref: '#/definitions/DeepCheckHealthResponse200'
+    example:
+      status: false
+      message:
+        - unable to connect to the database
   PublicKeyInfo:
     description: the public key itself with all it's information
     type: object
