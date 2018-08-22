@@ -14,6 +14,30 @@
     "application/json"
   ],
   "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "avatar service",
+          "health"
+        ],
+        "summary": "health monitor",
+        "description": "allows a quick check if the service is still up.",
+        "responses": {
+          "200": {
+            "description": "everything is fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse200"
+            }
+          },
+          "400": {
+            "description": "something is not fine",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse400"
+            }
+          }
+        }
+      }
+    },
     "/check": {
       "get": {
         "tags": [
