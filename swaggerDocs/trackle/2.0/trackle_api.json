@@ -70,7 +70,7 @@
         }
       }
     },
-    "/device/claim": {
+    "/device/claim/:hardwareDeviceId": {
       "post": {
         "tags": [
           "trackle",
@@ -83,6 +83,13 @@
             "in": "header",
             "name": "Authorization",
             "description": "ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "hardwareDeviceId",
+            "description": "the `hardwareDeviceId `of the device to claim",
             "required": true,
             "type": "string"
           }
@@ -98,6 +105,12 @@
             "description": "device claiming failed",
             "schema": {
               "$ref": "#/definitions/ClaimErrorResponse"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -115,7 +128,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           },
@@ -154,7 +167,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           },
@@ -311,7 +324,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           }
@@ -342,7 +355,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           },
@@ -373,6 +386,38 @@
         }
       }
     },
+    "/day/lastupdated": {
+      "get": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "tells us when any day of a user has been last updated",
+        "responses": {
+          "202": {
+            "description": "successful response; returns last updated information",
+            "schema": {
+              "$ref": "#/definitions/LastUpdated"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/day/from/{fromDay}/until/{untilDay}": {
       "get": {
         "tags": [
@@ -383,7 +428,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           },
@@ -486,70 +531,24 @@
           "200": {
             "description": "Successful response; returns if user for given email address already exists or not",
             "schema": {
-              "type": "object",
-              "required": [
-                "exists"
-              ],
-              "properties": {
-                "exists": {
-                  "type": "boolean"
-                }
-              }
+              "$ref": "#/definitions/CheckEmailExists"
             }
           },
           "400": {
             "description": "Not successful response; especially if user already exists",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/CheckEmailError"
             }
           }
         }
       }
     },
     "/user/info": {
-      "post": {
-        "tags": [
-          "trackle",
-          "profile"
-        ],
-        "summary": "CREATE user",
-        "description": "create user by email address and display name; a user for given email address MUST NOT exist already",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer token identifying the related user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "body",
-            "name": "userInfoSigned",
-            "description": "the user data the user inserted to create an account, signed by the app",
-            "schema": {
-              "$ref": "#/definitions/UserInfoSigned"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the created user info object, containing the account creation timestamp",
-            "schema": {
-              "$ref": "#/definitions/UserInfoAcceptedSigned"
-            }
-          },
-          "400": {
-            "description": "Not successful response; especially if user already exists",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      },
       "get": {
         "tags": [
           "trackle",
-          "profile"
+          "profile",
+          "2BImplemented"
         ],
         "summary": "READ user info",
         "description": "returns user info account data",
@@ -557,7 +556,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           }
@@ -582,7 +581,9 @@
       "post": {
         "tags": [
           "trackle",
-          "profile"
+          "user",
+          "profile",
+          "2BImplemented"
         ],
         "summary": "CREATE user settings",
         "description": "set user specific settings",
@@ -590,7 +591,7 @@
           {
             "in": "header",
             "name": "Authorization",
-            "description": "Bearer token identifying the related user",
+            "description": "Bearer or ubirch token identifying the related user",
             "required": true,
             "type": "string"
           },
@@ -621,7 +622,9 @@
       "put": {
         "tags": [
           "trackle",
-          "profile"
+          "user",
+          "profile",
+          "2BImplemented"
         ],
         "summary": "UPDATE user settings",
         "description": "update user specific settings",
@@ -660,7 +663,9 @@
       "get": {
         "tags": [
           "trackle",
-          "profile"
+          "user",
+          "profile",
+          "2BImplemented"
         ],
         "summary": "READ user settings",
         "description": "returns user specific settings",
@@ -693,7 +698,9 @@
       "get": {
         "tags": [
           "trackle",
-          "profile"
+          "cycle",
+          "profile",
+          "2BImplemented"
         ],
         "summary": "READ user cycle statistics",
         "description": "return statistics about users cycles analysed from collected measured temperatures and user inputs",
@@ -726,7 +733,9 @@
       "get": {
         "tags": [
           "trackle",
-          "profile"
+          "user",
+          "profile",
+          "2BImplemented"
         ],
         "summary": "READ user profile",
         "description": "returns user profile containing user info, user settings and cycle statistics",
@@ -929,6 +938,10 @@
           "type": "integer",
           "description": "running counter of all cycles"
         },
+        "cycle1": {
+          "type": "boolean",
+          "description": "If true this cycle is being treated as the first one meaning that this one is being handled a bit different from all the other ones. Amongst other thing we're looking for an extra dragon."
+        },
         "cycleBegin": {
           "type": "string",
           "format": "date-time",
@@ -947,6 +960,18 @@
           "type": "integer",
           "description": "number of days menstruation lasted"
         },
+        "ovulationIndex": {
+          "type": "integer",
+          "description": "if set this is the index (as in array index; start counting with zero) of the ovulation day (e.g. if set to 14 then ovulation was detected on day 15)."
+        },
+        "postOvulationLength": {
+          "type": "integer",
+          "description": "if set we know how many days long the post-ovulation phase has been."
+        },
+        "aggregatedSigned": {
+          "$ref": "#/definitions/CycleAggregatedSigned",
+          "description": "aggregated information if available"
+        },
         "created": {
           "type": "string",
           "format": "date-time",
@@ -959,16 +984,50 @@
         }
       }
     },
+    "CycleAggregatedSigned": {
+      "type": "object",
+      "description": "aggregated information in relation to a cycle (signed by backend)",
+      "required": [
+        "aggregated",
+        "signature",
+        "signatureCreated"
+      ],
+      "properties": {
+        "aggregated": {
+          "$ref": "#/definitions/CycleAggregated"
+        },
+        "signature": {
+          "type": "string",
+          "description": "signature of `baseline` field as created by backend"
+        },
+        "signatureCreated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "time the signature had been created"
+        }
+      }
+    },
     "CycleAggregated": {
       "type": "object",
       "description": "aggregated information in relation to a cycle",
+      "required": [
+        "baseline",
+        "created",
+        "lastUpdated"
+      ],
       "properties": {
-        "nfpBaseline": {
-          "allOf": [
-            {
-              "$ref": "#/definitions/NfpBaseline"
-            }
-          ]
+        "baseline": {
+          "$ref": "#/definitions/NfpBaseline"
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "creation date of this `CycleAggregated`"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "last updated date of this `CycleAggregated`"
         }
       }
     },
@@ -1001,6 +1060,19 @@
         "temperature": 36.35,
         "begin": "2018-03-01T00:00:00.000Z",
         "end": "2018-03-01T00:00:00.000Z"
+      }
+    },
+    "LastUpdated": {
+      "type": "object",
+      "description": "tells us when most recent last updated of any of a user's days",
+      "properties": {
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "example": {
+        "lastUpdated": "2018-08-271T11:03:42.230Z"
       }
     },
     "DayInfoObject": {
@@ -1097,16 +1169,6 @@
                       "format": "int32",
                       "description": "number of the day inside the cycle (every cycle starts with day number 1)"
                     },
-                    "dragon": {
-                      "type": "boolean",
-                      "description": "if set to true this day should be marked as a dragon in basal body temperature curve",
-                      "default": false
-                    },
-                    "ignore": {
-                      "type": "boolean",
-                      "description": "if set to true this day should be marked as to be ignored in basal body temperature curve",
-                      "default": false
-                    },
                     "fertile": {
                       "type": "object",
                       "description": "fertile state of the day, if the user is fertile or not",
@@ -1115,15 +1177,20 @@
                           "type": "boolean",
                           "description": "true if the user is fertile at that day"
                         },
-                        "prognosis": {
-                          "type": "boolean",
-                          "description": "true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured"
-                        },
                         "ovulation": {
                           "type": "boolean",
                           "description": "true if the ovulation probably happened at this day"
+                        },
+                        "prognosis": {
+                          "type": "boolean",
+                          "description": "true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured"
                         }
                       }
+                    },
+                    "dragon": {
+                      "type": "boolean",
+                      "description": "if set to true this day should be marked as a dragon in basal body temperature curve",
+                      "default": false
                     },
                     "menstruation": {
                       "type": "object",
@@ -1139,16 +1206,10 @@
                         }
                       }
                     },
-                    "intermenstrualBleeding": {
-                      "type": "object",
-                      "description": "set if an intermenstrual bleeding uccurred at the day; aggregated by backend from bleedingIntensity inserted by user; if bleeding implies menstruation, intermenstrual bleeding or even ovulation depends on intensitiy and moment of bleeding during user's cycle",
-                      "properties": {
-                        "state": {
-                          "type": "boolean",
-                          "default": false,
-                          "description": "true if intermenstrual bleeding uccurred at the day"
-                        }
-                      }
+                    "nfpIgnore": {
+                      "type": "boolean",
+                      "description": "if set to true this day should be marked as to be ignored in basal body temperature curve",
+                      "default": false
                     },
                     "created": {
                       "type": "string",
@@ -1727,8 +1788,12 @@
       "type": "object",
       "required": [
         "id",
-        "deviceId",
-        "temperatures"
+        "userId",
+        "from",
+        "to",
+        "temperatures",
+        "created",
+        "lastUpdated"
       ],
       "description": "contains the measured temperature values of one sleeping period\nthe data has been cleaned already\n- no duplicated values - no senseless values - cut off start and end values, during which the sensor isn't already in body or has not yet settled\nthe data whith the basal values (minimum) are marked",
       "properties": {
@@ -1736,7 +1801,7 @@
           "type": "string",
           "description": "unique id of this sleeping period temperature curve; is used to drill down from cycle curve to sleeping period curve"
         },
-        "deviceId": {
+        "userId": {
           "type": "string",
           "description": "UUID of the trackle sensor this temperature values were measured with"
         },
@@ -1756,11 +1821,21 @@
           "items": {
             "$ref": "#/definitions/TemperatureObject"
           }
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "when this sleeping period had been created"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "when this sleeping period had been last updated"
         }
       },
       "example": {
         "id": "fb8bce6a-d7cb-4288-9aee-04ca627ab364",
-        "deviceId": "d971aca0-7769-401b-a402-6c42c22be847",
+        "userId": "d971aca0-7769-401b-a402-6c42c22be847",
         "from": "2016-06-04T23:41:58.887Z",
         "to": "2016-06-05T08:27:24.413Z",
         "temperatures": [
@@ -1785,7 +1860,9 @@
             "timestamp": "2016-06-04T23:43:53.776Z",
             "temperature": 36.25
           }
-        ]
+        ],
+        "created": "2016-06-04T23:41:58.837Z",
+        "lastUpdated": "2016-06-05T08:27:24.463Z"
       }
     },
     "HealthResponse200": {
@@ -1922,9 +1999,37 @@
         "errorMessage": {
           "type": "string",
           "enum": [
-            "RegistrationError"
+            "ServerError",
+            "RegistrationError",
+            "ValidationError"
           ]
         }
+      }
+    },
+    "ServerError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/TrackleError"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "ServerError",
+        "message": "message from most likely an exception"
+      }
+    },
+    "CheckEmailError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/TrackleError"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "ValidationError",
+        "message": "externalId does not exist"
       }
     },
     "UbirchJsonResponse": {
@@ -1946,6 +2051,18 @@
         "message": {
           "type": "string"
         }
+      }
+    },
+    "CheckEmailExists": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/UbirchJsonResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "OK",
+        "message": "externalId exists"
       }
     }
   }
