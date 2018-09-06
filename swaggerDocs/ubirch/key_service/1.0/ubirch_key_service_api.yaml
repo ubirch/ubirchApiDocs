@@ -107,6 +107,31 @@ paths:
           description: signature was invalid
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /pubkey/trust:
+    post:
+      tags:
+        - key-service
+        - key registry
+        - 2Bimplemented
+      summary: trust another key
+      parameters:
+        - in: body
+          name: trustedKey
+          description: key A expressing trust in key B
+          required: true
+          schema:
+            $ref: '#/definitions/TrustedKey'
+      responses:
+        '200':
+          description: trust has successfully been expressed
+        '400':
+          description: expressing trust failed
+          schema:
+            $ref: '#/definitions/TrustError'
+        '500':
+          description: server has a problem
+          schema:
+            $ref: '#/definitions/ServerError'
   /pubkey/mpack:
     post:
       tags:
@@ -296,6 +321,7 @@ definitions:
           - ErrorParseJson
           - ErrorCannotDeletePubKey
           - ErrorInvalidSignature
+          - TrustError
       errorMessage:
         type: string
         enum:
@@ -310,6 +336,14 @@ definitions:
           - cannot delete PubKey from datatbase
           - cannot find destination given by pubKeyId
           - Verification of signature failed
+  ServerError:
+    allOf:
+      - $ref: '#/definitions/ErrorResponse'
+    example:
+      version: '1.0'
+      status: NOK
+      errorType: ServerError
+      message: server has a problem
   PublicKeyInfo:
     description: the public key itself with all it's information
     type: object
@@ -396,3 +430,57 @@ definitions:
     example:
       publicKey: MC0wCAYDK2VkCgEBAyEAxUQcVYd3dt7jAJBtulZoz8QDftnND2X5//ittJ7XAhs=
       signature: /kED2IJKCAyro/szRoylAwaEx3E8U2OFI8zHNB8cEHdxy8JtgoR81YL1X/o7Xzkz30eqNjIsWfhmQNdaIma2Aw==
+  TrustedKey:
+    description: Expressed trust from one key to another and confirmed with a signature by the key-pair expressing trust.
+    type: object
+    required:
+      - trustRelation
+      - signature
+    properties:
+      trustRelation:
+        $ref: '#/definitions/TrustRelation'
+      signature:
+        description: signature of field `trustRelation` as created with the signing party's private key
+        type: string
+    example:
+      signature: kC8/xkzQhfwZrFmgnWfBhhOHi7UksNAc1GkVmljEj1+GfBOWAb5LddmqoVlmFakaG2nwp/ijX479TRtVCOBBDw==
+      trustRelation:
+        created: '2018-09-06T16:02:59.448Z'
+        fromKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+        toKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
+        validNotAfter: '2018-12-06T16:02:59.448Z'
+  TrustRelation:
+    description: describes a trust relationship between two keys A and B where A expresses it's trust of B.
+    type: object
+    required:
+      - created
+      - fromKey
+      - toKey
+    properties:
+      created:
+        type: string
+        format: date-time
+        description: date-time when key A expressed trust in key B
+      fromKey:
+        type: string
+        description: the full public key expressing trust
+      toKey:
+        type: string
+        description: the full public trust is being expressed into
+      validNotAfter:
+        type: string
+        format: date-time
+        description: (optional) trust can be expressed for a limited time
+    example:
+      created: '2018-09-06T16:02:59.448Z'
+      fromKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+      toKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
+      validNotAfter: '2018-12-06T16:02:59.448Z'
+  TrustError:
+    allOf:
+      - $ref: '#/definitions/ErrorResponse'
+    example:
+      version: '1.0'
+      status: NOK
+      errorType: TrustError
+      message: failed to trust another key
