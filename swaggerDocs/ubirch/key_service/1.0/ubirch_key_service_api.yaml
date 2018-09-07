@@ -237,6 +237,31 @@ paths:
           description: No successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
+  /pubkey/revoke:
+    post:
+      tags:
+        - key-service
+        - key registry
+        - 2Bimplemented
+      summary: revoke a key
+      parameters:
+        - in: body
+          name: signedRevoke
+          description: signed revokation request
+          required: true
+          schema:
+            $ref: '#/definitions/SignedRevoke'
+      responses:
+        '200':
+          description: key has been successfully revoked
+        '400':
+          description: revokation failed
+          schema:
+            $ref: '#/definitions/RevokeError'
+        '500':
+          description: server has a problem
+          schema:
+            $ref: '#/definitions/ServerError'
 definitions:
   HealthResponse200:
     description: response if server is healthy
@@ -322,6 +347,7 @@ definitions:
           - ErrorCannotDeletePubKey
           - ErrorInvalidSignature
           - TrustError
+          - RevokeError
       errorMessage:
         type: string
         enum:
@@ -484,3 +510,45 @@ definitions:
       status: NOK
       errorType: TrustError
       message: failed to trust another key
+  Revoke:
+    description: describes a key revokation
+    type: object
+    required:
+      - created
+      - key
+    properties:
+      created:
+        type: string
+        format: date-time
+        description: date-time when a key revokation request has been created
+      key:
+        type: string
+        description: the full public key to revoke
+    example:
+      created: '2018-09-07T12:14:16.872Z'
+      key: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+  SignedRevoke:
+    description: To revoke a key ownership must be proved by producing a valid signature.
+    type: object
+    required:
+      - revoke
+      - signature
+    properties:
+      revoke:
+        $ref: '#/definitions/Revoke'
+      signature:
+        description: signature of field `revoke` as created with the signing party's private key
+        type: string
+    example:
+      revoke:
+        created: '2018-09-07T12:14:16.872Z'
+        key: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+      signature: ES6OIkm1UP/Z/jrlnzm0abHbCYaBZCv/PzfNsJmmgd1DlrVSMGMV5WGUSdFP5qNQseNAaQyBogoy/IsRelZkAw==
+  RevokeError:
+    allOf:
+      - $ref: '#/definitions/ErrorResponse'
+    example:
+      version: '1.0'
+      status: NOK
+      errorType: RevokeError
+      message: failed to revoke key
