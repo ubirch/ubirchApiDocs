@@ -381,6 +381,48 @@
           }
         }
       }
+    },
+    "/pubkey/getTrusted": {
+      "post": {
+        "tags": [
+          "key-service",
+          "key registry",
+          "2Bimplemented"
+        ],
+        "summary": "query all trusted keys",
+        "description": "This method allows us to query all keys we trust.\nTo ensure the underlying web-of-trust's privacy we only allow queries on keys which the caller has full control over which is ensured by a mandatory request signature.\n\nThe request includes a `depth` field which we'll ignore for now. We'll start to use it only once full control over whom can see which trust relations has been implemented.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "signedGetTrusted",
+            "description": "signed request for trusted keys",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignedGetTrustedKeys"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all trusted keys",
+            "schema": {
+              "$ref": "#/definitions/TrustedKeysResult"
+            }
+          },
+          "400": {
+            "description": "request for trusted keys failed",
+            "schema": {
+              "$ref": "#/definitions/GetTrustedError"
+            }
+          },
+          "500": {
+            "description": "server has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -498,7 +540,8 @@
             "ErrorCannotDeletePubKey",
             "ErrorInvalidSignature",
             "TrustError",
-            "RevokeError"
+            "RevokeError",
+            "GetTrustedError"
           ]
         },
         "errorMessage": {
@@ -777,6 +820,93 @@
         "status": "NOK",
         "errorType": "RevokeError",
         "message": "failed to revoke key"
+      }
+    },
+    "GetTrustedKeys": {
+      "description": "Information about querying trusted keys starting with the one specified in this object.",
+      "type": "object",
+      "required": [
+        "created",
+        "depth",
+        "key"
+      ],
+      "properties": {
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "date-time when a trusted keys request has been created"
+        },
+        "depth": {
+          "type": "integer",
+          "description": "IGNORED FOR NOW (defaults to 1)! Only once the server implements full user control over to whom trust relations are visible we start to use it."
+        },
+        "key": {
+          "type": "string",
+          "description": "the full public key at which to start query of trusted keys with"
+        }
+      },
+      "example": {
+        "created": "2018-09-07T14:36:27.236Z",
+        "depth": 1,
+        "key": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4="
+      }
+    },
+    "SignedGetTrustedKeys": {
+      "description": "To revoke a key ownership must be proved by producing a valid signature.",
+      "type": "object",
+      "required": [
+        "getTrustedKeys",
+        "signature"
+      ],
+      "properties": {
+        "getTrustedKeys": {
+          "$ref": "#/definitions/GetTrustedKeys"
+        },
+        "signature": {
+          "description": "signature of field `getTrustedKeys` as created with the signing party's private key",
+          "type": "string"
+        }
+      },
+      "example": {
+        "getTrustedKeys": {
+          "created":"2018-09-07T14:36:27.236Z",
+          "depth":1,
+          "key":"MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4="
+        },
+        "signature":"cfHsFgKxu316rwUTnds5QOjcol8Cge9g3H4cYjvoc2vj0YZGZKU2R8MAqK/Edu4WOGrwRbl6B1xW6EhRYJ0aBw=="
+      }
+    },
+    "TrustedKeysResult": {
+      "description": "Response to a `/pubkey/getTrusted` call. Empty if no keys are trusted.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/PublicKey"
+      },
+      "example": [
+        {
+          "pubKeyInfo": {
+            "algorithm": "ECC_ED25519",
+            "created": "2018-09-07T13:36:26.703Z",
+            "hwDeviceId": "db5f2882-0b08-49f8-85b1-cf709ec9af9f",
+            "pubKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+            "pubKeyId": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+            "validNotBefore": "2018-09-07T14:35:26.795Z"
+          },
+          "signature": "kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw=="
+        }
+      ]
+    },
+    "GetTrustedError": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "GetTrustedError",
+        "message": "failed to query trusted keys"
       }
     }
   }
