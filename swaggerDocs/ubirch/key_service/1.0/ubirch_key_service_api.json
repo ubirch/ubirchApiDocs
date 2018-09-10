@@ -382,8 +382,8 @@
         }
       }
     },
-    "/pubkey/getTrusted": {
-      "post": {
+    "/pubkey/trusted": {
+      "get": {
         "tags": [
           "key-service",
           "key registry",
@@ -398,7 +398,47 @@
             "description": "signed request for trusted keys",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SignedGetTrustedKeys"
+              "$ref": "#/definitions/SignedTrustedKeys"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all trusted keys",
+            "schema": {
+              "$ref": "#/definitions/TrustedKeysResult"
+            }
+          },
+          "400": {
+            "description": "request for trusted keys failed",
+            "schema": {
+              "$ref": "#/definitions/GetTrustedError"
+            }
+          },
+          "500": {
+            "description": "server has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "key-service",
+          "key registry",
+          "2Bimplemented"
+        ],
+        "summary": "query all trusted keys",
+        "description": "NOTE: This method does exactly the same as it's _GET_ equivalent and is meant for clients unable to send a body with a _GET_ request.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "signedGetTrusted",
+            "description": "signed request for trusted keys",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SignedTrustedKeys"
             }
           }
         ],
@@ -829,58 +869,65 @@
         "message": "failed to revoke key"
       }
     },
-    "GetTrustedKeys": {
+    "TrustedKeys": {
       "description": "Information about querying trusted keys starting with the one specified in this object.",
       "type": "object",
       "required": [
-        "created",
         "depth",
-        "key"
+        "minTrustLevel",
+        "originatorPublicKey",
+        "queryDate"
       ],
       "properties": {
-        "created": {
-          "type": "string",
-          "format": "date-time",
-          "description": "date-time when a trusted keys request has been created"
-        },
         "depth": {
           "type": "integer",
           "description": "IGNORED FOR NOW (defaults to 1)! Only once the server implements full user control over to whom trust relations are visible we start to use it."
         },
-        "key": {
+        "minTrustLevel": {
+          "type": "integer",
+          "description": "the minimum level of trust a key has to be included in the results (we're still discussing the semantics of the trust level (is lower or higher better?). depending on the outcome of this discussion this field might have to be renamed to _maxTrustLevel_"
+        },
+        "originatorPublicKey": {
           "type": "string",
           "description": "the full public key at which to start query of trusted keys with"
+        },
+        "queryDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "date-time when a trusted keys request has been created"
         }
       },
       "example": {
-        "created": "2018-09-07T14:36:27.236Z",
         "depth": 1,
-        "key": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4="
+        "minTrustLevel": 10,
+        "originatorPublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+        "queryDate": "2018-09-10T14:15:18.450Z"
       }
     },
-    "SignedGetTrustedKeys": {
+    "SignedTrustedKeys": {
       "description": "To revoke a key ownership must be proved by producing a valid signature.",
       "type": "object",
       "required": [
-        "getTrustedKeys",
-        "signature"
+        "signature",
+        "trustedKeys"
       ],
       "properties": {
-        "getTrustedKeys": {
-          "$ref": "#/definitions/GetTrustedKeys"
-        },
         "signature": {
           "description": "signature of field `getTrustedKeys` as created with the signing party's private key",
           "type": "string"
+        },
+        "trustedKeys": {
+          "$ref": "#/definitions/TrustedKeys"
         }
       },
       "example": {
-        "getTrustedKeys": {
-          "created":"2018-09-07T14:36:27.236Z",
-          "depth":1,
-          "key":"MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4="
-        },
-        "signature":"cfHsFgKxu316rwUTnds5QOjcol8Cge9g3H4cYjvoc2vj0YZGZKU2R8MAqK/Edu4WOGrwRbl6B1xW6EhRYJ0aBw=="
+        "signature": "qDi0+r7r+NecaeetzjBIGUdyIU8XQ7hZ5wZ4z89joZZwc5ue3Tej/jLHrF0IkK6uZDapci5q3TEQo9uACLatAw==",
+        "trustedKeys": {
+          "depth": 1,
+          "minTrustLevel": 10,
+          "originatorPublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+          "queryDate": "2018-09-10T14:15:18.450Z"
+        }
       }
     },
     "TrustedKeysResult": {
