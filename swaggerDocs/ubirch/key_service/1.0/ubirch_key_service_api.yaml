@@ -543,40 +543,40 @@ definitions:
       status: NOK
       errorType: TrustError
       message: failed to trust another key
-  Revoke:
+  Revokation:
     description: describes a key revokation
     type: object
     required:
-      - created
-      - key
+      - revokationDate
+      - publicKey
     properties:
-      created:
+      publicKey:
+        type: string
+        description: the full public key to revoke
+      revokationDate:
         type: string
         format: date-time
         description: date-time when a key revokation request has been created
-      key:
-        type: string
-        description: the full public key to revoke
     example:
-      created: '2018-09-07T12:14:16.872Z'
-      key: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+      publicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+      revokationDate: '2018-09-10T12:10:29.188Z'
   SignedRevoke:
     description: To revoke a key ownership must be proved by producing a valid signature.
     type: object
     required:
-      - revoke
+      - revokation
       - signature
     properties:
-      revoke:
-        $ref: '#/definitions/Revoke'
+      revokation:
+        $ref: '#/definitions/Revokation'
       signature:
         description: signature of field `revoke` as created with the signing party's private key
         type: string
     example:
-      revoke:
-        created: '2018-09-07T12:14:16.872Z'
-        key: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-      signature: ES6OIkm1UP/Z/jrlnzm0abHbCYaBZCv/PzfNsJmmgd1DlrVSMGMV5WGUSdFP5qNQseNAaQyBogoy/IsRelZkAw==
+      revokation:
+        publicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+        revokationDate: '2018-09-10T12:10:29.188Z'
+      signature: 4Nlml972DyFdCrVwzrDYnkuY2vcBOHe4txpI4rpTBILeKvtyOnHSi8M1Q00dTdF6VKcyTeWOrsZ0aQeEqY+wDQ==
   RevokeError:
     allOf:
       - $ref: '#/definitions/ErrorResponse'
