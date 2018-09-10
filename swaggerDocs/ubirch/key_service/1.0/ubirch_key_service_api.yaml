@@ -120,7 +120,7 @@ paths:
           description: key A expressing trust in key B
           required: true
           schema:
-            $ref: '#/definitions/TrustedKey'
+            $ref: '#/definitions/SignedTrustRelation'
       responses:
         '200':
           description: trust has successfully been expressed
@@ -489,52 +489,58 @@ definitions:
     example:
       publicKey: MC0wCAYDK2VkCgEBAyEAxUQcVYd3dt7jAJBtulZoz8QDftnND2X5//ittJ7XAhs=
       signature: /kED2IJKCAyro/szRoylAwaEx3E8U2OFI8zHNB8cEHdxy8JtgoR81YL1X/o7Xzkz30eqNjIsWfhmQNdaIma2Aw==
-  TrustedKey:
+  SignedTrustRelation:
     description: Expressed trust from one key to another and confirmed with a signature by the key-pair expressing trust.
     type: object
     required:
       - trustRelation
       - signature
     properties:
-      trustRelation:
-        $ref: '#/definitions/TrustRelation'
       signature:
         description: signature of field `trustRelation` as created with the signing party's private key
         type: string
-    example:
-      signature: kC8/xkzQhfwZrFmgnWfBhhOHi7UksNAc1GkVmljEj1+GfBOWAb5LddmqoVlmFakaG2nwp/ijX479TRtVCOBBDw==
       trustRelation:
-        created: '2018-09-06T16:02:59.448Z'
-        fromKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-        toKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
-        validNotAfter: '2018-12-06T16:02:59.448Z'
+        $ref: '#/definitions/TrustRelation'
+    example:
+      signature: yWMI1pe6Hi7Wf4UxUb1NOUHNBLu/ZyjpDVIqG6mK6mveKoqbU5K1z7cizthAUVVg8HLWRR3uIYLUV/Rx+06ADw==
+      trustRelation:
+        created: '2018-09-10T12:37:56.544Z'
+        sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+        targetPublicKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
+        trustLevel: 10
+        validNotAfter: '2018-12-10T12:37:56.544Z'
   TrustRelation:
     description: describes a trust relationship between two keys A and B where A expresses it's trust of B.
     type: object
     required:
       - created
-      - fromKey
-      - toKey
+      - sourcePublicKey
+      - targetPublicKey
+      - trustLevel
     properties:
       created:
         type: string
         format: date-time
         description: date-time when key A expressed trust in key B
-      fromKey:
+      sourcePublicKey:
         type: string
         description: the full public key expressing trust
-      toKey:
+      targetPublicKey:
         type: string
         description: the full public trust is being expressed into
+      trustLevel:
+        type: integer
+        description: defines how strong the trust in a key is on a scale from 1-19 (lower values mean more trust; should default to 10)
       validNotAfter:
         type: string
         format: date-time
         description: (optional) trust can be expressed for a limited time
     example:
-      created: '2018-09-06T16:02:59.448Z'
-      fromKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-      toKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
-      validNotAfter: '2018-12-06T16:02:59.448Z'
+      created: '2018-09-10T12:37:56.544Z'
+      sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+      targetPublicKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
+      trustLevel: 10
+      validNotAfter: '2018-12-10T12:37:56.544Z'
   TrustError:
     allOf:
       - $ref: '#/definitions/ErrorResponse'
