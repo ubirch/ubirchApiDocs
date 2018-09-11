@@ -780,7 +780,7 @@
         },
         "trustLevel": {
           "type": "integer",
-          "description": "defines how strong the trust in a key is on a scale from 1-19 (lower values mean more trust; should default to 10)"
+          "description": "defines how strong the trust in a key is on a scale from 1-100 (higher values mean more trust; should default to 50)"
         },
         "validNotAfter": {
           "type": "string",
