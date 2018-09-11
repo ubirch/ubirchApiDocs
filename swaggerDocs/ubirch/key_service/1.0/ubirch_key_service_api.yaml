@@ -523,19 +523,19 @@ definitions:
       - trustRelation
       - signature
     properties:
+      trustRelation:
+        $ref: '#/definitions/TrustRelation'
       signature:
         description: signature of field `trustRelation` as created with the signing party's private key
         type: string
-      trustRelation:
-        $ref: '#/definitions/TrustRelation'
     example:
-      signature: yWMI1pe6Hi7Wf4UxUb1NOUHNBLu/ZyjpDVIqG6mK6mveKoqbU5K1z7cizthAUVVg8HLWRR3uIYLUV/Rx+06ADw==
       trustRelation:
         created: '2018-09-10T12:37:56.544Z'
         sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
         targetPublicKey: MC0wCAYDK2VkCgEBAyEAV4aTMZNuV2bLEy/VwZQTpxbPEVZ127gs88TChgjuq4s=
         trustLevel: 10
         validNotAfter: '2018-12-10T12:37:56.544Z'
+      signature: yWMI1pe6Hi7Wf4UxUb1NOUHNBLu/ZyjpDVIqG6mK6mveKoqbU5K1z7cizthAUVVg8HLWRR3uIYLUV/Rx+06ADw==
   TrustRelation:
     description: describes a trust relationship between two keys A and B where A expresses it's trust of B.
     type: object
