@@ -390,7 +390,7 @@
           "2Bimplemented"
         ],
         "summary": "query all trusted keys",
-        "description": "This method allows us to query all keys we trust.\nTo ensure the underlying web-of-trust's privacy we only allow queries on keys which the caller has full control over which is ensured by a mandatory request signature.\n\nThe request includes a `depth` field which we'll ignore for now. We'll start to use it only once full control over whom can see which trust relations has been implemented.",
+        "description": "This method allows us to query all keys we trust.\nTo ensure the underlying web-of-trust's privacy we only allow queries on keys which the caller has full control over which is ensured by a mandatory request signature. In addition we only allow requests with a recent enough _queryDate_ (up to a few minutes old).\n\nThe request includes a `depth` field which we'll ignore for now. We'll start to use it only once full control over whom can see which trust relations has been implemented.",
         "parameters": [
           {
             "in": "body",
@@ -894,7 +894,7 @@
         "queryDate": {
           "type": "string",
           "format": "date-time",
-          "description": "date-time when a trusted keys request has been created"
+          "description": "date-time when a trusted keys request has been created; used as simple protection against replay attacks since we only accepts with requests where the _queryDate_ is recent"
         }
       },
       "example": {
@@ -908,26 +908,26 @@
       "description": "To revoke a key ownership must be proved by producing a valid signature.",
       "type": "object",
       "required": [
-        "signature",
-        "trustedKeys"
+        "trustedKeys",
+        "signature"
       ],
       "properties": {
+        "trustedKeys": {
+          "$ref": "#/definitions/TrustedKeys"
+        },
         "signature": {
           "description": "signature of field `getTrustedKeys` as created with the signing party's private key",
           "type": "string"
-        },
-        "trustedKeys": {
-          "$ref": "#/definitions/TrustedKeys"
         }
       },
       "example": {
-        "signature": "qDi0+r7r+NecaeetzjBIGUdyIU8XQ7hZ5wZ4z89joZZwc5ue3Tej/jLHrF0IkK6uZDapci5q3TEQo9uACLatAw==",
         "trustedKeys": {
           "depth": 1,
           "minTrustLevel": 10,
           "originatorPublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
           "queryDate": "2018-09-10T14:15:18.450Z"
-        }
+        },
+        "signature": "qDi0+r7r+NecaeetzjBIGUdyIU8XQ7hZ5wZ4z89joZZwc5ue3Tej/jLHrF0IkK6uZDapci5q3TEQo9uACLatAw=="
       }
     },
     "TrustedKeysResult": {
