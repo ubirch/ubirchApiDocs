@@ -155,8 +155,7 @@
       "post": {
         "tags": [
           "key-service",
-          "key registry",
-          "2Bimplemented"
+          "key registry"
         ],
         "summary": "trust another key",
         "parameters": [
