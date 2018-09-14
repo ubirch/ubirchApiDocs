@@ -397,7 +397,7 @@
             "description": "signed request for trusted keys",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SignedTrustedKeys"
+              "$ref": "#/definitions/FindTrustedSigned"
             }
           }
         ],
@@ -405,13 +405,13 @@
           "200": {
             "description": "all trusted keys",
             "schema": {
-              "$ref": "#/definitions/TrustedKeysResult"
+              "$ref": "#/definitions/TrustedKeysResultSet"
             }
           },
           "400": {
             "description": "request for trusted keys failed",
             "schema": {
-              "$ref": "#/definitions/GetTrustedError"
+              "$ref": "#/definitions/FindTrustedError"
             }
           },
           "500": {
@@ -437,7 +437,7 @@
             "description": "signed request for trusted keys",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SignedTrustedKeys"
+              "$ref": "#/definitions/FindTrustedSigned"
             }
           }
         ],
@@ -445,13 +445,13 @@
           "200": {
             "description": "all trusted keys",
             "schema": {
-              "$ref": "#/definitions/TrustedKeysResult"
+              "$ref": "#/definitions/TrustedKeysResultSet"
             }
           },
           "400": {
             "description": "request for trusted keys failed",
             "schema": {
-              "$ref": "#/definitions/GetTrustedError"
+              "$ref": "#/definitions/FindTrustedError"
             }
           },
           "500": {
@@ -580,7 +580,7 @@
             "ErrorInvalidSignature",
             "TrustError",
             "RevokeError",
-            "GetTrustedError"
+            "FindTrustedError"
           ]
         },
         "errorMessage": {
@@ -868,13 +868,13 @@
         "message": "failed to revoke key"
       }
     },
-    "TrustedKeys": {
+    "FindTrusted": {
       "description": "Information about querying trusted keys starting with the one specified in this object.",
       "type": "object",
       "required": [
         "depth",
         "minTrustLevel",
-        "originatorPublicKey",
+        "sourcePublicKey",
         "queryDate"
       ],
       "properties": {
@@ -884,11 +884,11 @@
         },
         "minTrustLevel": {
           "type": "integer",
-          "description": "the minimum level of trust a key has to be included in the results (we're still discussing the semantics of the trust level (is lower or higher better?). depending on the outcome of this discussion this field might have to be renamed to _maxTrustLevel_"
+          "description": "the minimum level of trust a key has."
         },
-        "originatorPublicKey": {
+        "sourcePublicKey": {
           "type": "string",
-          "description": "the full public key at which to start query of trusted keys with"
+          "description": "the full public key at which to start query of trusted keys"
         },
         "queryDate": {
           "type": "string",
@@ -898,21 +898,21 @@
       },
       "example": {
         "depth": 1,
-        "minTrustLevel": 10,
-        "originatorPublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
-        "queryDate": "2018-09-10T14:15:18.450Z"
+        "minTrustLevel": 50,
+        "sourcePublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+        "queryDate": "2018-09-14T12:03:16.214Z"
       }
     },
-    "SignedTrustedKeys": {
+    "FindTrustedSigned": {
       "description": "To revoke a key ownership must be proved by producing a valid signature.",
       "type": "object",
       "required": [
-        "trustedKeys",
+        "findTrusted",
         "signature"
       ],
       "properties": {
         "trustedKeys": {
-          "$ref": "#/definitions/TrustedKeys"
+          "$ref": "#/definitions/FindTrusted"
         },
         "signature": {
           "description": "signature of field `getTrustedKeys` as created with the signing party's private key",
@@ -920,23 +920,40 @@
         }
       },
       "example": {
-        "trustedKeys": {
+        "findTrusted": {
           "depth": 1,
-          "minTrustLevel": 10,
-          "originatorPublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
-          "queryDate": "2018-09-10T14:15:18.450Z"
+          "minTrustLevel": 50,
+          "sourcePublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+          "queryDate": "2018-09-14T12:03:16.214Z"
         },
-        "signature": "qDi0+r7r+NecaeetzjBIGUdyIU8XQ7hZ5wZ4z89joZZwc5ue3Tej/jLHrF0IkK6uZDapci5q3TEQo9uACLatAw=="
+        "signature": "LPcI15cz4K+0nEqyB9AUNPYtkP59NpBuf6BDkwh5zzEp8ra7X2Qsv+++3okocMpa0GOcvcYgdZ5pA6Htwt5bBA=="
       }
     },
-    "TrustedKeysResult": {
-      "description": "Response to a `/pubkey/getTrusted` call. Empty if no keys are trusted.",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/PublicKey"
+    "TrustedKeyResult": {
+      "description": "One element of the response to a `GET /pubkey/getTrusted` call.",
+      "type": "object",
+      "required": [
+        "depth",
+        "trustLevel",
+        "publicKey"
+      ],
+      "properties": {
+        "depth": {
+          "type": "integer",
+          "description": "At what depth a key was found in our web-of-trust."
+        },
+        "trustLevel": {
+          "type": "integer",
+          "description": "The level of trust a key has."
+        },
+        "publicKey": {
+          "$ref": "#/definitions/PublicKey"
+        }
       },
-      "example": [
-        {
+      "example": {
+        "depth": 1,
+        "trustLevel": 50,
+        "publicKey": {
           "pubKeyInfo": {
             "algorithm": "ECC_ED25519",
             "created": "2018-09-07T13:36:26.703Z",
@@ -947,9 +964,33 @@
           },
           "signature": "kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw=="
         }
+      }
+    },
+    "TrustedKeysResultSet": {
+      "description": "Response to a `/pubkey/getTrusted` call. Empty if no keys are trusted.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TrustedKeyResult"
+      },
+      "example": [
+        {
+          "depth": 1,
+          "trustLevel": 50,
+          "publicKey": {
+            "pubKeyInfo": {
+              "algorithm": "ECC_ED25519",
+              "created": "2018-09-07T13:36:26.703Z",
+              "hwDeviceId": "db5f2882-0b08-49f8-85b1-cf709ec9af9f",
+              "pubKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+              "pubKeyId": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
+              "validNotBefore": "2018-09-07T14:35:26.795Z"
+            },
+            "signature": "kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw=="
+          }
+        }
       ]
     },
-    "GetTrustedError": {
+    "FindTrustedError": {
       "allOf": [
         {
           "$ref": "#/definitions/ErrorResponse"
@@ -958,7 +999,7 @@
       "example": {
         "version": "1.0",
         "status": "NOK",
-        "errorType": "GetTrustedError",
+        "errorType": "FindTrustedError",
         "message": "failed to query trusted keys"
       }
     }

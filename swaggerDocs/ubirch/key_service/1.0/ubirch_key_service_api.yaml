@@ -279,16 +279,16 @@ paths:
           description: signed request for trusted keys
           required: true
           schema:
-            $ref: '#/definitions/SignedTrustedKeys'
+            $ref: '#/definitions/FindTrustedSigned'
       responses:
         '200':
           description: all trusted keys
           schema:
-            $ref: '#/definitions/TrustedKeysResult'
+            $ref: '#/definitions/TrustedKeysResultSet'
         '400':
           description: request for trusted keys failed
           schema:
-            $ref: '#/definitions/GetTrustedError'
+            $ref: '#/definitions/FindTrustedError'
         '500':
           description: server has a problem
           schema:
@@ -306,16 +306,16 @@ paths:
           description: signed request for trusted keys
           required: true
           schema:
-            $ref: '#/definitions/SignedTrustedKeys'
+            $ref: '#/definitions/FindTrustedSigned'
       responses:
         '200':
           description: all trusted keys
           schema:
-            $ref: '#/definitions/TrustedKeysResult'
+            $ref: '#/definitions/TrustedKeysResultSet'
         '400':
           description: request for trusted keys failed
           schema:
-            $ref: '#/definitions/GetTrustedError'
+            $ref: '#/definitions/FindTrustedError'
         '500':
           description: server has a problem
           schema:
@@ -406,7 +406,7 @@ definitions:
           - ErrorInvalidSignature
           - TrustError
           - RevokeError
-          - GetTrustedError
+          - FindTrustedError
       errorMessage:
         type: string
         enum:
@@ -617,13 +617,13 @@ definitions:
       status: NOK
       errorType: RevokeError
       message: failed to revoke key
-  TrustedKeys:
+  FindTrusted:
     description: Information about querying trusted keys starting with the one specified in this object.
     type: object
     required:
       - depth
       - minTrustLevel
-      - originatorPublicKey
+      - sourcePublicKey
       - queryDate
     properties:
       depth:
@@ -631,45 +631,59 @@ definitions:
         description: IGNORED FOR NOW (defaults to 1)! Only once the server implements full user control over to whom trust relations are visible we start to use it.
       minTrustLevel:
         type: integer
-        description: the minimum level of trust a key has to be included in the results (we're still discussing the semantics of the trust level (is lower or higher better?). depending on the outcome of this discussion this field might have to be renamed to _maxTrustLevel_
-      originatorPublicKey:
+        description: the minimum level of trust a key has.
+      sourcePublicKey:
         type: string
-        description: the full public key at which to start query of trusted keys with
+        description: the full public key at which to start query of trusted keys
       queryDate:
         type: string
         format: date-time
         description: date-time when a trusted keys request has been created; used as simple protection against replay attacks since we only accepts with requests where the _queryDate_ is recent
     example:
       depth: 1
-      minTrustLevel: 10
-      originatorPublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-      queryDate: '2018-09-10T14:15:18.450Z'
-  SignedTrustedKeys:
+      minTrustLevel: 50
+      sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+      queryDate: '2018-09-14T12:03:16.214Z'
+  FindTrustedSigned:
     description: To revoke a key ownership must be proved by producing a valid signature.
     type: object
     required:
-      - trustedKeys
+      - findTrusted
       - signature
     properties:
       trustedKeys:
-        $ref: '#/definitions/TrustedKeys'
+        $ref: '#/definitions/FindTrusted'
       signature:
         description: signature of field `getTrustedKeys` as created with the signing party's private key
         type: string
     example:
-      trustedKeys:
+      findTrusted:
         depth: 1
-        minTrustLevel: 10
-        originatorPublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-        queryDate: '2018-09-10T14:15:18.450Z'
-      signature: qDi0+r7r+NecaeetzjBIGUdyIU8XQ7hZ5wZ4z89joZZwc5ue3Tej/jLHrF0IkK6uZDapci5q3TEQo9uACLatAw==
-  TrustedKeysResult:
-    description: Response to a `/pubkey/getTrusted` call. Empty if no keys are trusted.
-    type: array
-    items:
-      $ref: '#/definitions/PublicKey'
+        minTrustLevel: 50
+        sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+        queryDate: '2018-09-14T12:03:16.214Z'
+      signature: LPcI15cz4K+0nEqyB9AUNPYtkP59NpBuf6BDkwh5zzEp8ra7X2Qsv+++3okocMpa0GOcvcYgdZ5pA6Htwt5bBA==
+  TrustedKeyResult:
+    description: One element of the response to a `GET /pubkey/getTrusted` call.
+    type: object
+    required:
+      - depth
+      - trustLevel
+      - publicKey
+    properties:
+      depth:
+        type: integer
+        description: At what depth a key was found in our web-of-trust.
+      trustLevel:
+        type: integer
+        description: The level of trust a key has.
+      publicKey:
+        $ref: '#/definitions/PublicKey'
     example:
-      - pubKeyInfo:
+      depth: 1
+      trustLevel: 50
+      publicKey:
+        pubKeyInfo:
           algorithm: ECC_ED25519
           created: '2018-09-07T13:36:26.703Z'
           hwDeviceId: db5f2882-0b08-49f8-85b1-cf709ec9af9f
@@ -677,11 +691,28 @@ definitions:
           pubKeyId: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
           validNotBefore: '2018-09-07T14:35:26.795Z'
         signature: kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw==
-  GetTrustedError:
+  TrustedKeysResultSet:
+    description: Response to a `/pubkey/getTrusted` call. Empty if no keys are trusted.
+    type: array
+    items:
+      $ref: '#/definitions/TrustedKeyResult'
+    example:
+      - depth: 1
+        trustLevel: 50
+        publicKey:
+          pubKeyInfo:
+            algorithm: ECC_ED25519
+            created: '2018-09-07T13:36:26.703Z'
+            hwDeviceId: db5f2882-0b08-49f8-85b1-cf709ec9af9f
+            pubKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+            pubKeyId: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+            validNotBefore: '2018-09-07T14:35:26.795Z'
+          signature: kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw==
+  FindTrustedError:
     allOf:
       - $ref: '#/definitions/ErrorResponse'
     example:
       version: '1.0'
       status: NOK
-      errorType: GetTrustedError
+      errorType: FindTrustedError
       message: failed to query trusted keys
