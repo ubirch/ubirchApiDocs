@@ -253,6 +253,8 @@ paths:
       responses:
         '200':
           description: key has been successfully revoked
+          schema:
+            $ref: '#/definitions/PublicKey'
         '400':
           description: revokation failed
           schema:
@@ -484,6 +486,8 @@ definitions:
       previousPubKeySignature:
         type: string
         description: (optional) Base 64 encoded signature of the _pubkeyInfo_ (created with previous key)
+      signedRevoke:
+        $ref: '#/definitions/SignedRevoke'
     example:
       pubKeyInfo:
         hwDeviceId: 4150473037-547268290-3238389072-173590267

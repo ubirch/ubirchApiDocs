@@ -364,7 +364,10 @@
         ],
         "responses": {
           "200": {
-            "description": "key has been successfully revoked"
+            "description": "key has been successfully revoked",
+            "schema": {
+              "$ref": "#/definitions/PublicKey"
+            }
           },
           "400": {
             "description": "revokation failed",
@@ -684,6 +687,9 @@
         "previousPubKeySignature": {
           "type": "string",
           "description": "(optional) Base 64 encoded signature of the _pubkeyInfo_ (created with previous key)"
+        },
+        "signedRevoke": {
+          "$ref": "#/definitions/SignedRevoke"
         }
       },
       "example": {
