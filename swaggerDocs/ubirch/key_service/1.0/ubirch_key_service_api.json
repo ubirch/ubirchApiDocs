@@ -385,8 +385,7 @@
       "get": {
         "tags": [
           "key-service",
-          "key registry",
-          "2Bimplemented"
+          "key registry"
         ],
         "summary": "query all trusted keys",
         "description": "This method allows us to query all keys we trust.\nTo ensure the underlying web-of-trust's privacy we only allow queries on keys which the caller has full control over which is ensured by a mandatory request signature. In addition we only allow requests with a recent enough _queryDate_ (up to a few minutes old).\n\nThe request includes a `depth` field which we'll ignore for now. We'll start to use it only once full control over whom can see which trust relations has been implemented.",
@@ -425,8 +424,7 @@
       "post": {
         "tags": [
           "key-service",
-          "key registry",
-          "2Bimplemented"
+          "key registry"
         ],
         "summary": "query all trusted keys",
         "description": "NOTE: This method does exactly the same as it's _GET_ equivalent and is meant for clients unable to send a body with a _GET_ request.",

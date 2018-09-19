@@ -266,7 +266,6 @@ paths:
       tags:
         - key-service
         - key registry
-        - 2Bimplemented
       summary: query all trusted keys
       description: |-
         This method allows us to query all keys we trust.
@@ -297,7 +296,6 @@ paths:
       tags:
         - key-service
         - key registry
-        - 2Bimplemented
       summary: query all trusted keys
       description: 'NOTE: This method does exactly the same as it''s _GET_ equivalent and is meant for clients unable to send a body with a _GET_ request.'
       parameters:
