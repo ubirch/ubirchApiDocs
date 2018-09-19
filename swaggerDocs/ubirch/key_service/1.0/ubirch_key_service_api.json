@@ -347,8 +347,7 @@
       "post": {
         "tags": [
           "key-service",
-          "key registry",
-          "2Bimplemented"
+          "key registry"
         ],
         "summary": "revoke a key",
         "parameters": [

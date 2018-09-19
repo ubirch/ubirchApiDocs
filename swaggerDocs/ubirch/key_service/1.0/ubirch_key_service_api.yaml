@@ -241,7 +241,6 @@ paths:
       tags:
         - key-service
         - key registry
-        - 2Bimplemented
       summary: revoke a key
       parameters:
         - in: body
