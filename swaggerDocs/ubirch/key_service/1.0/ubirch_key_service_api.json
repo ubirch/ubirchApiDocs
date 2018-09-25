@@ -877,8 +877,8 @@
       "required": [
         "depth",
         "minTrustLevel",
-        "sourcePublicKey",
-        "queryDate"
+        "queryDate",
+        "sourcePublicKey"
       ],
       "properties": {
         "depth": {
@@ -889,21 +889,21 @@
           "type": "integer",
           "description": "the minimum level of trust a key has."
         },
-        "sourcePublicKey": {
-          "type": "string",
-          "description": "the full public key at which to start query of trusted keys"
-        },
         "queryDate": {
           "type": "string",
           "format": "date-time",
           "description": "date-time when a trusted keys request has been created; used as simple protection against replay attacks since we only accepts with requests where the _queryDate_ is recent"
-        }
+        },
+        "sourcePublicKey": {
+          "type": "string",
+          "description": "the full public key at which to start query of trusted keys"
+        },
       },
       "example": {
         "depth": 1,
         "minTrustLevel": 50,
-        "sourcePublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
-        "queryDate": "2018-09-14T12:03:16.214Z"
+        "queryDate": "2018-09-14T12:03:16.214Z",
+        "sourcePublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4="
       }
     },
     "FindTrustedSigned": {
@@ -926,8 +926,8 @@
         "findTrusted": {
           "depth": 1,
           "minTrustLevel": 50,
-          "sourcePublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=",
-          "queryDate": "2018-09-14T12:03:16.214Z"
+          "queryDate": "2018-09-14T12:03:16.214Z",
+          "sourcePublicKey": "MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4="
         },
         "signature": "LPcI15cz4K+0nEqyB9AUNPYtkP59NpBuf6BDkwh5zzEp8ra7X2Qsv+++3okocMpa0GOcvcYgdZ5pA6Htwt5bBA=="
       }

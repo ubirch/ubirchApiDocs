@@ -9,18 +9,18 @@ info:
     - through direct communication (TODO)
     - without direct communication with handshake objects tranfered through the key service
 schemes:
-  - https
+- https
 host: key.dev.ubirch.com
 basePath: /api/keyService/v1
 produces:
-  - application/json
+- application/json
 paths:
   /:
     get:
       tags:
-        - key-service
-        - health
-        - welcome
+      - key-service
+      - health
+      - welcome
       summary: Welcome / Health
       description: Check if service is up and running
       responses:
@@ -35,9 +35,9 @@ paths:
   /check:
     get:
       tags:
-        - key-service
-        - health
-        - welcome
+      - key-service
+      - health
+      - welcome
       summary: Welcome / Health
       description: Check if service is up and running
       responses:
@@ -52,8 +52,8 @@ paths:
   /deepCheck:
     get:
       tags:
-        - key-service
-        - health
+      - key-service
+      - health
       summary: health monitor deep check
       description: allows a deep check of the service
       responses:
@@ -68,17 +68,17 @@ paths:
   /pubkey:
     post:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: stores new public key
       description: stores the given public key with its unique pubKeyID
       parameters:
-        - in: body
-          name: pubkey
-          description: the new public key object with the pubKey that should be stored for the unique pubKeyId - also part of the pub key object - in the key registry to be able to find the public key; pubKeyId may not exist already
-          required: true
-          schema:
-            $ref: '#/definitions/PublicKey'
+      - in: body
+        name: pubkey
+        description: the new public key object with the pubKey that should be stored for the unique pubKeyId - also part of the pub key object - in the key registry to be able to find the public key; pubKeyId may not exist already
+        required: true
+        schema:
+          $ref: '#/definitions/PublicKey'
       responses:
         '200':
           description: Successful response; returns created public key
@@ -90,16 +90,16 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     delete:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: delete a public key
       parameters:
-        - in: body
-          name: publicKeyToDelete
-          description: the public key to delete including signature of publicKey field
-          required: true
-          schema:
-            $ref: '#/definitions/DeletePublicKey'
+      - in: body
+        name: publicKeyToDelete
+        description: the public key to delete including signature of publicKey field
+        required: true
+        schema:
+          $ref: '#/definitions/DeletePublicKey'
       responses:
         '200':
           description: delete was successful or key did not exist
@@ -110,16 +110,16 @@ paths:
   /pubkey/trust:
     post:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: trust another key
       parameters:
-        - in: body
-          name: trustedKey
-          description: key A expressing trust in key B
-          required: true
-          schema:
-            $ref: '#/definitions/SignedTrustRelation'
+      - in: body
+        name: trustedKey
+        description: key A expressing trust in key B
+        required: true
+        schema:
+          $ref: '#/definitions/SignedTrustRelation'
       responses:
         '200':
           description: trust has successfully been expressed
@@ -134,22 +134,22 @@ paths:
   /pubkey/mpack:
     post:
       tags:
-        - key-service
-        - key registry
-        - MessagePack
+      - key-service
+      - key registry
+      - MessagePack
       summary: stores new public key in msgpack format
       description: stores the given public key with its unique pubKeyID
       consumes:
-        - application/octet-stream
+      - application/octet-stream
       produces:
-        - application/json
+      - application/json
       parameters:
-        - in: body
-          name: pubkey
-          description: 'a mgspack representation of the public key registration. The format follows both the json structure (with binary values instead of encoded) as well as the [ubirch-protocol](https://github.com/ubirch/ubirch-protocol#key-registration) format.'
-          required: true
-          schema:
-            $ref: '#/definitions/PublicKeyMpack'
+      - in: body
+        name: pubkey
+        description: 'a mgspack representation of the public key registration. The format follows both the json structure (with binary values instead of encoded) as well as the [ubirch-protocol](https://github.com/ubirch/ubirch-protocol#key-registration) format.'
+        required: true
+        schema:
+          $ref: '#/definitions/PublicKeyMpack'
       responses:
         '200':
           description: Successful response; returns created public key
@@ -162,16 +162,16 @@ paths:
   '/pubkey/current/hardwareId/{hardwareId}':
     get:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: query only the currently valid public keys
       description: query the currently valid public keys based on a hardwareId
       parameters:
-        - in: path
-          name: hardwareId
-          type: string
-          description: hardwareId for which to search for currently valid public keys
-          required: true
+      - in: path
+        name: hardwareId
+        type: string
+        description: hardwareId for which to search for currently valid public keys
+        required: true
       responses:
         '200':
           description: Successful response; returns an array of currently valid public keys
@@ -186,24 +186,24 @@ paths:
   '/pubkey/{pubkeyid}':
     put:
       tags:
-        - key-service
-        - key registry
-        - 2BImplemented
+      - key-service
+      - key registry
+      - 2BImplemented
       summary: updates public key
       description: updates the given public key found by pubKeyID in the key registry with the given data; the public key must exist already
       parameters:
-        - name: pubkeyid
-          in: path
-          description: unique id of the public key; pubKeyId must exist already in the keyRegistry
-          required: true
-          type: number
-          format: integer
-        - in: body
-          name: pubkey
-          description: the public key object with the new pubKey data that the existing pubKey should be updated with
-          required: true
-          schema:
-            $ref: '#/definitions/PublicKey'
+      - name: pubkeyid
+        in: path
+        description: unique id of the public key; pubKeyId must exist already in the keyRegistry
+        required: true
+        type: number
+        format: integer
+      - in: body
+        name: pubkey
+        description: the public key object with the new pubKey data that the existing pubKey should be updated with
+        required: true
+        schema:
+          $ref: '#/definitions/PublicKey'
       responses:
         '200':
           description: Successful response; returns the updated public key
@@ -215,18 +215,18 @@ paths:
             $ref: '#/definitions/ErrorResponse'
     get:
       tags:
-        - key-service
-        - key registry
-        - 2BImplemented
+      - key-service
+      - key registry
+      - 2BImplemented
       summary: get public key
       description: returns the public key for the given pubKeyID from the key registry
       parameters:
-        - name: pubkeyid
-          in: path
-          description: unique id of the public key to find it in the key registry
-          required: true
-          type: number
-          format: integer
+      - name: pubkeyid
+        in: path
+        description: unique id of the public key to find it in the key registry
+        required: true
+        type: number
+        format: integer
       responses:
         '200':
           description: Successful response; returns the requested public key
@@ -239,16 +239,16 @@ paths:
   /pubkey/revoke:
     post:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: revoke a key
       parameters:
-        - in: body
-          name: signedRevoke
-          description: signed revokation request
-          required: true
-          schema:
-            $ref: '#/definitions/SignedRevoke'
+      - in: body
+        name: signedRevoke
+        description: signed revokation request
+        required: true
+        schema:
+          $ref: '#/definitions/SignedRevoke'
       responses:
         '200':
           description: key has been successfully revoked
@@ -265,8 +265,8 @@ paths:
   /pubkey/trusted:
     get:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: query all trusted keys
       description: |-
         This method allows us to query all keys we trust.
@@ -274,12 +274,12 @@ paths:
 
         The request includes a `depth` field which we'll ignore for now. We'll start to use it only once full control over whom can see which trust relations has been implemented.
       parameters:
-        - in: body
-          name: signedGetTrusted
-          description: signed request for trusted keys
-          required: true
-          schema:
-            $ref: '#/definitions/FindTrustedSigned'
+      - in: body
+        name: signedGetTrusted
+        description: signed request for trusted keys
+        required: true
+        schema:
+          $ref: '#/definitions/FindTrustedSigned'
       responses:
         '200':
           description: all trusted keys
@@ -295,17 +295,17 @@ paths:
             $ref: '#/definitions/ServerError'
     post:
       tags:
-        - key-service
-        - key registry
+      - key-service
+      - key registry
       summary: query all trusted keys
       description: 'NOTE: This method does exactly the same as it''s _GET_ equivalent and is meant for clients unable to send a body with a _GET_ request.'
       parameters:
-        - in: body
-          name: signedGetTrusted
-          description: signed request for trusted keys
-          required: true
-          schema:
-            $ref: '#/definitions/FindTrustedSigned'
+      - in: body
+        name: signedGetTrusted
+        description: signed request for trusted keys
+        required: true
+        schema:
+          $ref: '#/definitions/FindTrustedSigned'
       responses:
         '200':
           description: all trusted keys
@@ -324,17 +324,17 @@ definitions:
     description: response if server is healthy
     type: object
     required:
-      - version
-      - status
-      - message
+    - version
+    - status
+    - message
     properties:
       version:
         type: string
       status:
         type: string
         enum:
-          - OK
-          - NOK
+        - OK
+        - NOK
       message:
         type: string
     example:
@@ -343,7 +343,7 @@ definitions:
       message: Welcome to the ubirchUserService
   HealthResponse400:
     allOf:
-      - $ref: '#/definitions/HealthResponse200'
+    - $ref: '#/definitions/HealthResponse200'
     example:
       version: '1.0'
       status: NOK
@@ -352,14 +352,14 @@ definitions:
     description: response of deep check if server is healthy
     type: object
     required:
-      - status
-      - message
+    - status
+    - message
     properties:
       status:
         type: string
         enum:
-          - true
-          - false
+        - true
+        - false
       message:
         type: array
         items:
@@ -370,19 +370,19 @@ definitions:
       message: []
   DeepCheckHealthResponse500:
     allOf:
-      - $ref: '#/definitions/DeepCheckHealthResponse200'
+    - $ref: '#/definitions/DeepCheckHealthResponse200'
     example:
       status: false
       message:
-        - unable to connect to the database
+      - unable to connect to the database
   ErrorResponse:
     type: object
     description: error object with error code and message
     required:
-      - version
-      - status
-      - errorType
-      - errorMessage
+    - version
+    - status
+    - errorType
+    - errorMessage
     properties:
       version:
         type: string
@@ -392,37 +392,37 @@ definitions:
       errorType:
         type: string
         enum:
-          - ServerError
-          - ErrorTimeOut
-          - ErrorNotHandled
-          - ErrorFatalIntern
-          - ErrorMissingParams
-          - ErrorPubKeyIdExists
-          - ErrorInvalidPubKeyId
-          - ErrorUpdatePubKey
-          - ErrorParseJson
-          - ErrorCannotDeletePubKey
-          - ErrorInvalidSignature
-          - TrustError
-          - RevokeError
-          - FindTrustedError
+        - ServerError
+        - ErrorTimeOut
+        - ErrorNotHandled
+        - ErrorFatalIntern
+        - ErrorMissingParams
+        - ErrorPubKeyIdExists
+        - ErrorInvalidPubKeyId
+        - ErrorUpdatePubKey
+        - ErrorParseJson
+        - ErrorCannotDeletePubKey
+        - ErrorInvalidSignature
+        - TrustError
+        - RevokeError
+        - FindTrustedError
       errorMessage:
         type: string
         enum:
-          - request could not be processed in time
-          - request could not be handled
-          - fatal internal error
-          - missing parameters
-          - given pubKeyId for new public key already exists
-          - cannot find public key for given pubKeyId
-          - public key for given pubKeyId cannot be updated
-          - cannot parse incoming json doc
-          - cannot delete PubKey from datatbase
-          - cannot find destination given by pubKeyId
-          - Verification of signature failed
+        - request could not be processed in time
+        - request could not be handled
+        - fatal internal error
+        - missing parameters
+        - given pubKeyId for new public key already exists
+        - cannot find public key for given pubKeyId
+        - public key for given pubKeyId cannot be updated
+        - cannot parse incoming json doc
+        - cannot delete PubKey from datatbase
+        - cannot find destination given by pubKeyId
+        - Verification of signature failed
   ServerError:
     allOf:
-      - $ref: '#/definitions/ErrorResponse'
+    - $ref: '#/definitions/ErrorResponse'
     example:
       version: '1.0'
       status: NOK
@@ -433,11 +433,11 @@ definitions:
     type: object
     discriminator: pubkeyInfo
     required:
-      - hwDeviceId
-      - pubKey
-      - algorithm
-      - created
-      - validNotBefore
+    - hwDeviceId
+    - pubKey
+    - algorithm
+    - created
+    - validNotBefore
     properties:
       hwDeviceId:
         type: string
@@ -452,8 +452,8 @@ definitions:
         type: string
         description: algorithm of the public key
         enum:
-          - RSA4096
-          - ECC_ED25519
+        - RSA4096
+        - ECC_ED25519
       previousPubKeyId:
         type: string
         description: (optional) Base64 encoded predecessor key
@@ -474,8 +474,8 @@ definitions:
     type: object
     discriminator: publicKey
     required:
-      - pubKeyInfo
-      - signature
+    - pubKeyInfo
+    - signature
     properties:
       pubKeyInfo:
         $ref: '#/definitions/PublicKeyInfo'
@@ -504,8 +504,8 @@ definitions:
     description: a public key to delete
     type: object
     required:
-      - publicKey
-      - signature
+    - publicKey
+    - signature
     properties:
       publicKey:
         type: string
@@ -520,8 +520,8 @@ definitions:
     description: Expressed trust from one key to another and confirmed with a signature by the key-pair expressing trust.
     type: object
     required:
-      - trustRelation
-      - signature
+    - trustRelation
+    - signature
     properties:
       trustRelation:
         $ref: '#/definitions/TrustRelation'
@@ -540,10 +540,10 @@ definitions:
     description: describes a trust relationship between two keys A and B where A expresses it's trust of B.
     type: object
     required:
-      - created
-      - sourcePublicKey
-      - targetPublicKey
-      - trustLevel
+    - created
+    - sourcePublicKey
+    - targetPublicKey
+    - trustLevel
     properties:
       created:
         type: string
@@ -570,7 +570,7 @@ definitions:
       validNotAfter: '2018-12-10T12:37:56.544Z'
   TrustError:
     allOf:
-      - $ref: '#/definitions/ErrorResponse'
+    - $ref: '#/definitions/ErrorResponse'
     example:
       version: '1.0'
       status: NOK
@@ -580,8 +580,8 @@ definitions:
     description: describes a key revokation
     type: object
     required:
-      - revokationDate
-      - publicKey
+    - revokationDate
+    - publicKey
     properties:
       publicKey:
         type: string
@@ -597,8 +597,8 @@ definitions:
     description: To revoke a key ownership must be proved by producing a valid signature.
     type: object
     required:
-      - revokation
-      - signature
+    - revokation
+    - signature
     properties:
       revokation:
         $ref: '#/definitions/Revokation'
@@ -612,7 +612,7 @@ definitions:
       signature: 4Nlml972DyFdCrVwzrDYnkuY2vcBOHe4txpI4rpTBILeKvtyOnHSi8M1Q00dTdF6VKcyTeWOrsZ0aQeEqY+wDQ==
   RevokeError:
     allOf:
-      - $ref: '#/definitions/ErrorResponse'
+    - $ref: '#/definitions/ErrorResponse'
     example:
       version: '1.0'
       status: NOK
@@ -622,10 +622,10 @@ definitions:
     description: Information about querying trusted keys starting with the one specified in this object.
     type: object
     required:
-      - depth
-      - minTrustLevel
-      - sourcePublicKey
-      - queryDate
+    - depth
+    - minTrustLevel
+    - queryDate
+    - sourcePublicKey
     properties:
       depth:
         type: integer
@@ -633,24 +633,24 @@ definitions:
       minTrustLevel:
         type: integer
         description: the minimum level of trust a key has.
-      sourcePublicKey:
-        type: string
-        description: the full public key at which to start query of trusted keys
       queryDate:
         type: string
         format: date-time
         description: date-time when a trusted keys request has been created; used as simple protection against replay attacks since we only accepts with requests where the _queryDate_ is recent
+      sourcePublicKey:
+        type: string
+        description: the full public key at which to start query of trusted keys
     example:
       depth: 1
       minTrustLevel: 50
-      sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
       queryDate: '2018-09-14T12:03:16.214Z'
+      sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
   FindTrustedSigned:
     description: To revoke a key ownership must be proved by producing a valid signature.
     type: object
     required:
-      - findTrusted
-      - signature
+    - findTrusted
+    - signature
     properties:
       trustedKeys:
         $ref: '#/definitions/FindTrusted'
@@ -661,16 +661,16 @@ definitions:
       findTrusted:
         depth: 1
         minTrustLevel: 50
-        sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
         queryDate: '2018-09-14T12:03:16.214Z'
+        sourcePublicKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
       signature: LPcI15cz4K+0nEqyB9AUNPYtkP59NpBuf6BDkwh5zzEp8ra7X2Qsv+++3okocMpa0GOcvcYgdZ5pA6Htwt5bBA==
   TrustedKeyResult:
     description: One element of the response to a `GET /pubkey/getTrusted` call.
     type: object
     required:
-      - depth
-      - trustLevel
-      - publicKey
+    - depth
+    - trustLevel
+    - publicKey
     properties:
       depth:
         type: integer
@@ -698,20 +698,20 @@ definitions:
     items:
       $ref: '#/definitions/TrustedKeyResult'
     example:
-      - depth: 1
-        trustLevel: 50
-        publicKey:
-          pubKeyInfo:
-            algorithm: ECC_ED25519
-            created: '2018-09-07T13:36:26.703Z'
-            hwDeviceId: db5f2882-0b08-49f8-85b1-cf709ec9af9f
-            pubKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-            pubKeyId: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
-            validNotBefore: '2018-09-07T14:35:26.795Z'
-          signature: kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw==
+    - depth: 1
+      trustLevel: 50
+      publicKey:
+        pubKeyInfo:
+          algorithm: ECC_ED25519
+          created: '2018-09-07T13:36:26.703Z'
+          hwDeviceId: db5f2882-0b08-49f8-85b1-cf709ec9af9f
+          pubKey: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+          pubKeyId: MC0wCAYDK2VkCgEBAyEA+alWF5nfiw7RYbRqH5lAcFLjc13zv63FpG7G2OF33O4=
+          validNotBefore: '2018-09-07T14:35:26.795Z'
+        signature: kDG1tut0GWe+gjXmy0aIfTeUxXLtKFjY0t06ua5V+2BsP7lPjQCbVKMecsBryuqdx5Sko1u1e3B7h2FjlW7cDw==
   FindTrustedError:
     allOf:
-      - $ref: '#/definitions/ErrorResponse'
+    - $ref: '#/definitions/ErrorResponse'
     example:
       version: '1.0'
       status: NOK
