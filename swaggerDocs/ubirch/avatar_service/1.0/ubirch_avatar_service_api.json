@@ -1103,6 +1103,42 @@
           }
         }
       }
+    },
+    "/device/verify/{valueHash}": {
+      "get": {
+        "tags": [
+          "avatar service",
+          "verification"
+        ],
+        "summary": "Verify message",
+        "description": "verifies that the message associated with the given valueHash is trustful and returns the relevant trust\ninformation",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "valueHash",
+            "description": "hash associated with the message to verify, usually base64-encoded sha512",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; verification succeeded; contains the relevant trust information",
+            "schema": {
+              "$ref": "#/definitions/DeviceVerifyResult"
+            }
+          },
+          "400": {
+            "description": "Not successful response; verification failed",
+            "schema": {
+              "$ref": "#/definitions/DeviceVerifyError"
+            }
+          },
+          "404": {
+            "description": "Not successful response; could not find the message associated with the given hash"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1901,6 +1937,59 @@
         "status": "NOK",
         "errorType": "DeviceClaimError",
         "errorMessage": "a short error description"
+      }
+    },
+    "DeviceVerifyResult": {
+      "description": "response of a successfull verification call",
+      "type": "object",
+      "required": [
+        "seal"
+      ],
+      "properties": {
+        "seal": {
+          "type": "string",
+          "description": "base64-encoded MessagePack seal of the verified message"
+        },
+        "chain": {
+          "type": "string",
+          "description": "base64-encoded MessagePack seal of the previous message in the chain"
+        },
+        "anchor": {
+          "type": "object",
+          "description": "optional transaction anchor info, present if the message if anchored in the blockchain",
+          "required": [
+            "hash"
+          ],
+          "properties": {
+            "hash": {
+              "type": "string",
+              "description": "bitcoin transaction hash"
+            },
+            "url": {
+              "type": "string",
+              "description": "related chain explorer url"
+            }
+          }
+        }
+      },
+      "example": {
+        "seal": "lhOw04RN6zcFSPajBZ4pk/07+toAQGT2VYpTD9sOIs+LNdLX6WpDIyV7LnKNWzaZks7bifVJ0lnRa+OK1+MM9vgKmk3ISXCLnfC4zKPxpgCcnfkV6g4A2gBA91KZCJdgs9D/6d5yyrYaSojB2ABwQYFMXYjyQJ4ilc9ZHlGx9tBxYIUfh4Zd3rp4+P1WWeb7GPiYjf9Q/FduR9oAQCq/NbkwJMzV5cZQzq09zPhxd/+QsquDR2kv5RxQdH1lr+IKe9jsJ6rZFsnw+P4GXJHg5s7/GJJxMtfgXEEQ1wY=",
+        "chain": "lhOw04RN6zcFSPajBZ4pk/07+toAQNbxMa02n0X1UgdLsIO8g/nNsQjC0F74DfnAWsqrRbQ/xv/scpEB123uHbgrrVysrIJjVFCrlhV+YLpNLgTpaQwA2gBAEJnT4GutCruP4FebT4ozsKtMYvCdkBybBdHNbd6aZnpRZ1bYmqL26daeI4V5EtGFkgChXD0XoKsIklUtw71GatoAQGT2VYpTD9sOIs+LNdLX6WpDIyV7LnKNWzaZks7bifVJ0lnRa+OK1+MM9vgKmk3ISXCLnfC4zKPxpgCcnfkV6g4=",
+        "anchor": {
+          "hash": "9f93cd6e859750c2054dbe5da4a417fd17f84265168be51917028c7925490641",
+          "url": "https://www.blocktrail.com/tBTC/tx/9f93cd6e859750c2054dbe5da4a417fd17f84265168be51917028c7925490641"
+        }
+      }
+    },
+    "DeviceVerifyError": {
+      "allOf": {
+        "$ref": "#/definitions/ErrorResponse"
+      },
+      "example": {
+        "version": "1.0",
+        "status": "NOK",
+        "errorType": "ValidationError",
+        "errorMessage": "value hash verification failed"
       }
     }
   }
