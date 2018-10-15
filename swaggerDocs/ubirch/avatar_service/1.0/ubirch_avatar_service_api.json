@@ -1982,9 +1982,11 @@
       }
     },
     "DeviceVerifyError": {
-      "allOf": {
-        "$ref": "#/definitions/ErrorResponse"
-      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorResponse"
+        }
+      ],
       "example": {
         "version": "1.0",
         "status": "NOK",

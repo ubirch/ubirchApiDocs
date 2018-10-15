@@ -1446,7 +1446,7 @@ definitions:
         url: https://www.blocktrail.com/tBTC/tx/9f93cd6e859750c2054dbe5da4a417fd17f84265168be51917028c7925490641
   DeviceVerifyError:
     allOf:
-      $ref: '#/definitions/ErrorResponse'
+      - $ref: '#/definitions/ErrorResponse'
     example:
       version: '1.0'
       status: NOK
