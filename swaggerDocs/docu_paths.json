@@ -1,6 +1,6 @@
 [
   {
-    "bundlename": "ubirch REST API",
+    "add_swagger_path": true,
     "services": [
       {
         "name": "ubirch Avatar Service",
@@ -31,6 +31,16 @@
         "name": "ubirch User Service",
         "version": "1.0",
         "uri": "/ubirch/user_service/1.0/ubirch_user_service_api.yaml"
+      }
+    ]
+  },
+  {
+    "add_swagger_path": false,
+    "services": [
+      {
+        "name": "Ubirch Web UI",
+        "version": "1.0",
+        "uri": " https://api.console.dev.ubirch.com/ubirch-web-ui/api/v1/api-docs/swagger.json"
       }
     ]
   }
