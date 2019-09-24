@@ -11,11 +11,6 @@
         "name": "Ubirch Niomon Verification Service",
         "version": "1.0",
         "uri": "/ubirch/verify_microservice/1.0/ubirch_niomon_verify_service_api.json"
-      },
-      {
-        "name": "Ubirch Niomon HTTP Service",
-        "version": "1.0",
-        "uri": "/ubirch/http_service/1.0/ubirch_niomon_http_service.yaml"
       }
     ]
   },
@@ -36,6 +31,11 @@
         "name": "Ubirch Simple Data Service",
         "version": "1.0",
         "uri": "https://data.dev.ubirch.com/v1/api-docs/swagger.json"
+      },
+      {
+        "name": "Ubirch Niomon HTTP Service",
+        "version": "1.0",
+        "uri": "https://niomon.dev.ubirch.com/swagger/swagger.json"
       }
     ]
   }
