@@ -1,0 +1,102 @@
+openapi: 3.0.1
+info:
+  title: Niomon HTTP
+  version: 1.0.1-SNAPSHOT
+paths:
+  /:
+    post:
+      description: Anchors the given Ubirch Protocol Packet (passed in as the body,
+        I don't know why swagger ui doesn't show body's description)
+      operationId: postRoot
+      parameters:
+        - name: authorization
+          in: cookie
+          description: checked for cumulocity auth (only one of {Authorization (header),
+            authorization (cookie), X-XSRF-TOKEN (header)} needed)
+          required: false
+          schema:
+            type: string
+        - name: X-Ubirch-HardwareId
+          in: header
+          description: the hardware id of the sender device
+          required: false
+          schema:
+            type: string
+        - name: X-Ubirch-Auth-Type
+          in: header
+          description: auth type
+          required: false
+          schema:
+            type: string
+            enum:
+              - cumulocity
+              - ubirch
+              - keycloak
+        - name: X-Ubirch-Credential
+          in: header
+          description: checked for ubirch auth
+          required: false
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          description: checked for cumulocity auth (only one of {Authorization (header),
+            authorization (cookie), X-XSRF-TOKEN (header)} needed)
+          required: false
+          schema:
+            type: string
+        - name: X-XSRF-TOKEN
+          in: header
+          description: checked for cumulocity auth (only one of {Authorization (header),
+            authorization (cookie), X-XSRF-TOKEN (header)} needed)
+          required: false
+          schema:
+            type: string
+        - name: X-Cumulocity-BaseUrl
+          in: header
+          description: change which cumulocity instance is asked for auth
+          required: false
+          schema:
+            type: string
+        - name: X-Cumulocity-Tenant
+          in: header
+          description: change which cumulocity tenant is asked for auth
+          required: false
+          schema:
+            type: string
+        - name: X-Niomon-Purge-Caches
+          in: header
+          description: set this header to clean niomon caches (dangerous)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        description: Ubirch Protocol Packet to be anchored
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        '200':
+          description: arbitrary response, configurable per device; status code may
+            vary
+          headers:
+            Content-Type:
+              description: actual content type of the response (sadly this cannot
+                be modelled accurately in swagger)
+              required: true
+              schema:
+                type: string
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '500':
+          description: error details
+          content:
+            text/plain:
+              schema:
+                type: string
