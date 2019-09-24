@@ -28,11 +28,6 @@
         "uri": "https://api.console.dev.ubirch.com/ubirch-web-ui/api/v1/api-docs/swagger.json"
       },
       {
-        "name": "Ubirch Niomon Service",
-        "version": "1.0",
-        "uri": "https://niomon.dev.ubirch.com/swagger/swagger.json"
-      },
-      {
         "name": "Ubirch Verification Service",
         "version": "1.0",
         "uri": "https://verify.dev.ubirch.com/swagger/swagger.json"
