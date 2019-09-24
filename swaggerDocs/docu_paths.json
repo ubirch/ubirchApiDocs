@@ -3,9 +3,14 @@
     "add_swagger_path": true,
     "services": [
       {
-        "name": "ubirch Key Service",
+        "name": "Ubirch Key Service",
         "version": "1.0",
         "uri": "/ubirch/key_service/1.0/ubirch_key_service_api.yaml"
+      },
+      {
+        "name": "Ubirch Niomon Verify Service",
+        "version": "1.0",
+        "uri": "/ubirch/verify_microservie/1.0/ubirch_niomon_verify_service_api.json"
       }
     ]
   },
