@@ -1,0 +1,138 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Verification Microservice",
+    "version": "1.0.0",
+    "description": "Verification Micro-Service with a REST endpoint that accesses Log Service"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/verify": {
+      "post": {
+        "operationId": "verify",
+        "requestBody": {
+          "content": {
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            },
+            "text/plain": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://verify.dev.ubirch.com/api/"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Failure": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "default": "1.0"
+          },
+          "status": {
+            "type": "string",
+            "default": "NOK"
+          },
+          "errorType": {
+            "type": "string",
+            "default": "ValidationError"
+          },
+          "errorMessage": {
+            "type": "string",
+            "default": "signature verification failed"
+          }
+        }
+      },
+      "Response": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/Success"
+          },
+          {
+            "type": "object"
+          },
+          {
+            "$ref": "#/components/schemas/Failure"
+          }
+        ],
+        "example": {
+          "seal": "lhOw04RN6zcFSPajBZ4pk/07+toAQGT2VYpTD9sOIs+LNdLX6WpDIyV7LnKNWzaZks7bifVJ0lnRa+OK1+MM9vgKmk3ISXCLnfC4zKPxpgCcnfkV6g4A2gBA91KZCJdgs9D/6d5yyrYaSojB2ABwQYFMXYjyQJ4ilc9ZHlGx9tBxYIUfh4Zd3rp4+P1WWeb7GPiYjf9Q/FduR9oAQCq/NbkwJMzV5cZQzq09zPhxd/+QsquDR2kv5RxQdH1lr+IKe9jsJ6rZFsnw+P4GXJHg5s7/GJJxMtfgXEEQ1wY=",
+          "chain": "lhOw04RN6zcFSPajBZ4pk/07+toAQNbxMa02n0X1UgdLsIO8g/nNsQjC0F74DfnAWsqrRbQ/xv/scpEB123uHbgrrVysrIJjVFCrlhV+YLpNLgTpaQwA2gBAEJnT4GutCruP4FebT4ozsKtMYvCdkBybBdHNbd6aZnpRZ1bYmqL26daeI4V5EtGFkgChXD0XoKsIklUtw71GatoAQGT2VYpTD9sOIs+LNdLX6WpDIyV7LnKNWzaZks7bifVJ0lnRa+OK1+MM9vgKmk3ISXCLnfC4zKPxpgCcnfkV6g4=",
+          "anchors": [
+            {
+              "status": "added",
+              "txid": "51f6cfe400bd1062f8fcde5dc5c23aaac111e8124886ecf1f60c33015a35ccb0",
+              "message": "e392457bdd63db37d00435bfdc0a0a7f4a85f3664b9439956a4f4f2310fd934df85ea4a02823d4674c891f224bcab8c8f2c117fdc8710ce78c928fc9de8d9e19",
+              "blockchain": "ethereum",
+              "network_info": "Rinkeby Testnet Network",
+              "network_type": "testnet",
+              "created": "2019-05-07T21:30:14.421095"
+            }
+          ]
+        }
+      },
+      "Success": {
+        "type": "object",
+        "properties": {
+          "seal": {
+            "type": "string"
+          },
+          "chain": {
+            "type": "string"
+          },
+          "anchors": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "seal",
+          "chain",
+          "anchors"
+        ]
+      }
+    }
+  }
+}
