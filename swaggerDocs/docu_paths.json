@@ -8,7 +8,7 @@
         "uri": "/ubirch/key_service/1.0/ubirch_key_service_api.yaml"
       },
       {
-        "name": "Ubirch Niomon Verify Service",
+        "name": "Ubirch Niomon Verification Service",
         "version": "1.0",
         "uri": "/ubirch/verify_microservice/1.0/ubirch_niomon_verify_service_api.json"
       }
