@@ -3,6 +3,11 @@
     "add_swagger_path": true,
     "services": [
       {
+        "name": "Ubirch Niomon Service",
+        "version": "1.0",
+        "uri": "https://niomon.dev.ubirch.com/swagger/swagger.json"
+      },
+      {
         "name": "Ubirch Key Service",
         "version": "1.0",
         "uri": "/ubirch/key_service/1.0/ubirch_key_service_api.yaml"
@@ -13,7 +18,7 @@
     "add_swagger_path": false,
     "services": [
       {
-        "name": "Ubirch Web UI",
+        "name": "Ubirch Thing API",
         "version": "1.0",
         "uri": "https://api.console.dev.ubirch.com/ubirch-web-ui/api/v1/api-docs/swagger.json"
       },
@@ -26,12 +31,8 @@
         "name": "Ubirch Simple Data Service",
         "version": "1.0",
         "uri": "https://data.dev.ubirch.com/v1/api-docs/swagger.json"
-      },
-      {
-        "name": "Ubirch Niomon Service",
-        "version": "1.0",
-        "uri": "https://niomon.dev.ubirch.com/swagger/swagger.json"
       }
+      
     ]
   }
 ]
