@@ -7,23 +7,25 @@ If you add a new documentation, add an entry to the file
     
 In the following structure:
 
-      {
+    {
+       "add_swagger_path": false,
+       "services": [{
         "name": "<service name>",
         "version": "<version>",
         "uri": "<path to the yaml or json starting under swaggerDocs>"
-      },
+         }]
+     },
 
 Example:
 
-      {
-        "name": "ubirch Key Service",
-        "version": "0.5",
-        "uri": "/ubirch/key_service/0.5/ubirch_key_service_api.yaml"
-      },
-
-The entries have to be a services item of a bundle array:
-
     {
-        "bundlename": "<bundle name>",
-        "services": []
-    }
+       "add_swagger_path": false,
+       "services": [{
+           "name": "Ubirch Niomon Service",
+           "version": "1.0",
+           "uri": "https://niomon.dev.ubirch.com/swagger/swagger.json"
+         }]
+     },
+
+The add_swagger_path defines, if the Swagger documentation has it's .yaml or .json file
+in this project and the path is only a relative one or if the path is a standalone provision of a swagger documentation. 
