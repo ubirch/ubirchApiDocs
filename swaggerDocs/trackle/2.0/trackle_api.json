@@ -305,6 +305,39 @@
         }
       }
     },
+    "/cycle": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "GET a cycle overview",
+        "description": "returns a reduced overview (begin, end, cycleId) over all cycles for one user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested reduced cycle overview",
+            "schema": {
+              "$ref": "#/definitions/ReducedCycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/cycle/id/{cycleId}": {
       "get": {
         "tags": [
@@ -924,6 +957,34 @@
         "encryptedPrivateKey": ["06bb7aab-275a-4812-adbb-31226754c5d3"]
       }
     },
+    "ReducedCycleObject": {
+      "type": "object",
+      "description": "a reduced version of the cycle object.",
+      "required": [
+        "cycleDounter",
+        "cycleBegin"
+      ],
+      "properties": {
+        "cycleId": {
+          "type": "string",
+          "description": "UUID of the cycle"
+        },
+        "cycleCounter": {
+          "type": "integer",
+          "description": "running counter of all cycles"
+        },
+        "cycleBegin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "first day in this cycle"
+        },
+        "cycleEnd": {
+          "type": "string",
+          "format": "date-time",
+          "description": "last day in this cycle"
+        }
+      }
+    },
     "CycleObject": {
       "type": "object",
       "description": "all available data for one cycle.",
@@ -968,6 +1029,10 @@
           "type": "integer",
           "description": "if set we know how many days long the post-ovulation phase has been."
         },
+        "ovulationAnalysisStats": {
+          "$ref": "#/definitions/OvulationAnalysisStats",
+          "description": "the detailed information about the ovulation if found."
+        },
         "aggregatedSigned": {
           "$ref": "#/definitions/CycleAggregatedSigned",
           "description": "aggregated information if available"
@@ -981,6 +1046,58 @@
           "type": "string",
           "format": "date-time",
           "description": "cycle's last modified date"
+        }
+      }
+    },
+    "OvulationAnalysisStats": {
+      "type": "object",
+      "description": "detailed information about the ovulation, if any was found",
+      "properties": {
+        "temperatureHigherValues": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "date-time",
+            "description": "An array of 0-5 days, that represent the days with the highest basal temperatures that have a chronological order."
+          }
+        },
+        "temperatureAidLine": {
+          "$ref": "#/definitions/TemperatureAidLine",
+          "description": "The data needed for the temperature aid line."
+        },
+        "cervicalMucusAnalysis": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "date-time",
+            "description": "An array of four days (H, 1, 2, 3) that represent the days with the mucuspeaks related to the temperature shift of the ovulation."
+          }
+        }
+      }
+    },
+    "TemperatureAidLine": {
+      "type": "object",
+      "description": "The data needed for the temperature aid line.",
+      "required": [
+        "begin",
+        "end",
+        "temperature"
+      ],
+      "properties": {
+        "begin": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The beginning of the baseline days used to analyse for the temperature shift."
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The end of the baseline days used to analyse for the temperature shift."
+        },
+        "temperature": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The temperature peak of the baseline."
         }
       }
     },
