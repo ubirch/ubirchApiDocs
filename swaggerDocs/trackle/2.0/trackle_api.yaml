@@ -713,6 +713,9 @@ definitions:
       postOvulationLength:
         type: integer
         description: if set we know how many days long the post-ovulation phase has been.
+      ovulationAnalysisStats:
+        $ref: '#/definitions/OvulationAnalysisStats'
+        description: the detailed information about the ovulation if found.
       aggregatedSigned:
         $ref: '#/definitions/CycleAggregatedSigned'
         description: aggregated information if available
