@@ -1095,8 +1095,8 @@
           "description": "The end of the baseline days used to analyse for the temperature shift."
         },
         "temperature": {
-          "type": "string",
-          "format": "date-time",
+          "type": "number",
+          "format": "float",
           "description": "The temperature peak of the baseline."
         }
       }
