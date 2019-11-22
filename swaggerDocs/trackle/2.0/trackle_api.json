@@ -1301,6 +1301,10 @@
                         "prognosis": {
                           "type": "boolean",
                           "description": "true if the fertility of this day is a prognosis; this is the case if the ovulation of this cycle has not yet been measured"
+                        },
+                        "partialFertileTime": {
+                          "type": "string",
+                          "description": "defines the time when fertility ends this day and is only set if it applies"
                         }
                       }
                     },
@@ -1374,9 +1378,10 @@
             "cycleDayCounter": 14,
             "dragon": true,
             "fertile": {
-              "state": false,
+              "state": true,
               "ovulation": false,
-              "prognosis": true
+              "prognosis": false,
+              "partialFertileTime": "18:00:00.000Z"
             },
             "menstruation": {
               "state": false,
