@@ -547,7 +547,7 @@
       "get": {
         "tags": [
           "trackle",
-          "profile"
+          "user"
         ],
         "summary": "CHECK if user exists",
         "description": "check existence of user by hashed email address",
@@ -580,7 +580,7 @@
       "get": {
         "tags": [
           "trackle",
-          "profile",
+          "user",
           "2BImplemented"
         ],
         "summary": "READ user info",
@@ -615,7 +615,6 @@
         "tags": [
           "trackle",
           "user",
-          "profile",
           "2BImplemented"
         ],
         "summary": "CREATE user settings",
@@ -656,7 +655,6 @@
         "tags": [
           "trackle",
           "user",
-          "profile",
           "2BImplemented"
         ],
         "summary": "UPDATE user settings",
@@ -697,7 +695,6 @@
         "tags": [
           "trackle",
           "user",
-          "profile",
           "2BImplemented"
         ],
         "summary": "READ user settings",
@@ -727,12 +724,93 @@
         }
       }
     },
+    "/userUpdate/password": {
+      "put": {
+        "tags": [
+          "trackle",
+          "user"
+        ],
+        "summary": "UPDATE user password",
+        "description": "this endpoint is used for updating a user's password",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the admin user authorized to change customer's passwords",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "info",
+            "description": "the externalId of the user who wants to change her password and the externalId of the temporary user generated to enter a new password via the app.",
+            "schema": {
+              "$ref": "#/definitions/UserUpdatePassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the user id of the user whose password was changed.",
+            "schema": {
+              "$ref": "#/definitions/UbirchJsonResponse"
+            }
+          },
+          "400": {
+            "description": "Not successful response.",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/userUpdate/email": {
+      "put": {
+        "tags": [
+          "trackle",
+          "user"
+        ],
+        "summary": "UPDATE user email",
+        "description": "this endpoint is used for updating a user's email adress",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the admin user authorized to change customer's passwords",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "info",
+            "description": "the externalId of the user who wants to change her email adress and the new email adress in form of the externalId.",
+            "schema": {
+              "$ref": "#/definitions/UserUpdateEmail"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the user id of the user whose password was changed.",
+            "schema": {
+              "$ref": "#/definitions/UbirchJsonResponse"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/cycle/stats": {
       "get": {
         "tags": [
           "trackle",
           "cycle",
-          "profile",
           "2BImplemented"
         ],
         "summary": "READ user cycle statistics",
@@ -767,7 +845,6 @@
         "tags": [
           "trackle",
           "user",
-          "profile",
           "2BImplemented"
         ],
         "summary": "READ user profile",
@@ -954,7 +1031,9 @@
         }
       },
       "example": {
-        "encryptedPrivateKey": ["06bb7aab-275a-4812-adbb-31226754c5d3"]
+        "encryptedPrivateKey": [
+          "06bb7aab-275a-4812-adbb-31226754c5d3"
+        ]
       }
     },
     "ReducedCycleObject": {
@@ -1680,6 +1759,42 @@
         }
       }
     },
+    "UserUpdatePassword": {
+      "type": "object",
+      "required": [
+        "externalId",
+        "tempExternalId"
+      ],
+      "description": "info needed for password change",
+      "properties": {
+        "externalId": {
+          "type": "string",
+          "description": "externalId of the user with the old password"
+        },
+        "tempExternalId": {
+          "type": "string",
+          "description": "externalId of the temp user with the new password"
+        }
+      }
+    },
+    "UserUpdateEmail": {
+      "type": "object",
+      "required": [
+        "oldExternalId",
+        "newExternalId"
+      ],
+      "description": "info needed for change of email",
+      "properties": {
+        "oldExternalId": {
+          "type": "string",
+          "description": "externalId of the user whose email is supposed to become changed"
+        },
+        "newExternalId": {
+          "type": "string",
+          "description": "the new email in form of an externalId"
+        }
+      }
+    },
     "UserSettingsAcceptedSigned": {
       "description": "current state of the user specific settings, signed by the app, accepted and signed by the server",
       "allOf": [
@@ -2042,7 +2157,8 @@
       },
       "example": {
         "status": true,
-        "message": []
+        "message": [
+        ]
       }
     },
     "DeepCheckHealthResponse500": {
