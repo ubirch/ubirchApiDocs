@@ -759,7 +759,7 @@
           "400": {
             "description": "Not successful response.",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/TrackleError"
             }
           }
         }
@@ -800,7 +800,7 @@
           "400": {
             "description": "Not successful response",
             "schema": {
-              "$ref": "#/definitions/ErrorResponse"
+              "$ref": "#/definitions/TrackleError"
             }
           }
         }

@@ -550,7 +550,7 @@ paths:
         '400':
           description: Not successful response.
           schema:
-            "$ref": "#/definitions/ErrorResponse"
+            "$ref": "#/definitions/TrackleError"
   "/userUpdate/email":
     put:
       tags:
@@ -578,7 +578,7 @@ paths:
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
+            "$ref": "#/definitions/TrackleError"
   "/cycle/stats":
     get:
       tags:
