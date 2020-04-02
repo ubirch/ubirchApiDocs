@@ -87,6 +87,37 @@ paths:
           description: the backend has a problem
           schema:
             "$ref": "#/definitions/ServerError"
+  "/device/statistics/:hardwareDeviceId":
+    get:
+      tags:
+        - trackle
+        - sensor
+      summary: GET sensor statistic
+      description: 'the sensor statistics gives information about the date of deactivation of the device and when the user has to become informed about this; the device has to become claimed before the statistics can be retrieved.'
+      parameters:
+        - in: header
+          name: Authorization
+          description: ubirch token identifying the related user
+          required: true
+          type: string
+        - in: path
+          name: hardwareDeviceId
+          description: the `hardwareDeviceId` of the device to retrieve the statistics for
+          required: true
+          type: string
+      responses:
+        '202':
+          description: device statistic retrieved successfully
+          schema:
+            "$ref": "#/definitions/DeviceStatisticSuccess"
+        '400':
+          description: retrieving device statistic failed
+          schema:
+            "$ref": "#/definitions/TrackleError"
+        '500':
+          description: the backend has a problem
+          schema:
+            "$ref": "#/definitions/ServerError"
   "/userInput":
     post:
       tags:
@@ -698,6 +729,47 @@ definitions:
       version: '1.0'
       status: OK
       message: 'device 12341234 claimed for user: Jane Smith'
+  DeviceStatisticSuccess:
+    description: created or existing device statistic
+    properties:
+      hwDeviceId:
+        type: string
+        format: uuid
+        description: 'id of the device for which the statistic is requested'
+      lifetime:
+        type: object
+        description: 'object containing statistics regarding the lifetime of the sensor'
+        properties:
+          amount:
+            type: integer
+            description: 'how many days since production date have passed'
+          max:
+            type: integer
+            description: 'the maximum of days that may pass since production date before the device has to become deactivated'
+          deactivatedAt:
+            type: string
+            format: date-time
+            description: 'the date, when the sensor has to become or became deactivated'
+          notifyUser:
+            type: boolean
+            description: 'informs the app, if the user has to become notified about the approaching end of life of the sensor'
+      usageDays:
+        type: object
+        description: 'object containing statistics regarding the max usageDays of the sensor'
+        properties:
+          amount:
+            type: integer
+            description: 'how many days the device has been used already (that means measured temperature or transferred data)'
+          max:
+            type: integer
+            description: 'the maximum of days that the device can be used before it has to become deactivated'
+          deactivatedAt:
+            type: string
+            format: date-time
+            description: 'the date, when the sensor has to become or became deactivated'
+          notifyUser:
+            type: boolean
+            description: 'informs the app, if the user has to become notified about the approaching end of life of the sensor'
   ClaimErrorResponse:
     description: possible errors for claiming request
     allOf:
