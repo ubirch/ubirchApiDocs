@@ -116,6 +116,144 @@
         }
       }
     },
+    "/device/statistic/:hardwareDeviceId": {
+      "get": {
+        "tags": [
+          "trackle",
+          "sensor"
+        ],
+        "summary": "GET sensor statistic",
+        "description": "the sensor statistics gives information about the date of deactivation of the device and when the user has to become informed about this; the device has to become claimed before the statistics can be retrieved.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "hardwareDeviceId",
+            "description": "the `hardwareDeviceId ` of the device to retrieve the statistic for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "device statistic retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/DeviceStatisticSuccess"
+            }
+          },
+          "400": {
+            "description": "retrieving device statistic failed",
+            "schema": {
+              "$ref": "#/definitions/TrackleError"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
+    },
+    "/device/statistic/create/:hardwareDeviceId": {
+      "get": {
+        "tags": [
+          "trackle",
+          "sensor"
+        ],
+        "summary": "GET sensor statistic for admins only",
+        "description": "this endpoint expects the deviceId and not hwDeviceId and serves mostly the endpoints statistics/createAll and statistics/recreateAll and is for admins only.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "ubirch token identifying the admin user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "deviceId",
+            "description": "the `deviceId` of the device to retrieve the statistic for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "device statistic retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/DeviceStatisticSuccess"
+            }
+          },
+          "400": {
+            "description": "retrieving device statistic failed",
+            "schema": {
+              "$ref": "#/definitions/TrackleError"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
+    },
+    "/device/statistic/createAll/:delaySeconds": {
+      "get": {
+        "tags": [
+          "trackle",
+          "sensor"
+        ],
+        "summary": "GET sensor statistic for admins only",
+        "description": "this endpoint creates all non-existing device statistics by calling /statistic/createAll - for admin user only.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Ubirch token identifying the admin user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "delaySeconds",
+            "description": "the number of delay seconds with which the create Endpoint is called for each deviceId",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "generating all missing deviceStatistics successfully",
+            "schema": {
+              "$ref": "#/definitions/CreateAllDeviceStatsResponse"
+            }
+          },
+          "400": {
+            "description": "retrieving all missing deviceStatistics failed",
+            "schema": {
+              "$ref": "#/definitions/CreateAllDeviceStatsResponse"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
+    },
     "/userInput": {
       "post": {
         "tags": [
@@ -498,6 +636,94 @@
             "description": "Not successful response",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/export/cycleDays/:cycleId": {
+      "get": {
+        "tags": [
+          "trackle",
+          "export"
+        ],
+        "summary": "GET a .csv file with all days of a cycle by it's id",
+        "description": "this endpoint exports all days combined with ovulationStatistics to a .csv file.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "ubirch token identifying the admin user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "the `cycleId` of the cycle to retrieve all days for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "cycleDay export retrieved successfully",
+            "type": "string"
+          },
+          "400": {
+            "description": "retrieving cycleDay export failed",
+            "schema": {
+              "$ref": "#/definitions/TrackleError"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
+    },
+    "/export/temperatures/:cycleId": {
+      "get": {
+        "tags": [
+          "trackle",
+          "export"
+        ],
+        "summary": "GET a .csv file with all temperatures of a cycle by cycleId",
+        "description": "this endpoint exports all temperatures of a cycle marking which has been included in the evaluation to a .csv file.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "ubirch token identifying the admin user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "the `cycleId` of the cycle to retrieve all temperatures for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "cycleTemperatures export retrieved successfully",
+            "type": "string"
+          },
+          "400": {
+            "description": "retrieving cycleTemperatures export failed",
+            "schema": {
+              "$ref": "#/definitions/TrackleError"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -987,6 +1213,77 @@
         "status": "NOK",
         "errorType": "ValidationError",
         "errorMessage": "device 12341234 does not exist"
+      }
+    },
+    "DeviceStatisticSuccess": {
+      "type": "object",
+      "description": "created or existing device statistic",
+      "properties": {
+        "hwDeviceId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "id of the device for which the statistic is requested"
+        },
+        "lifetime": {
+          "type": "object",
+          "description": "object containing statistics regarding the lifetime of the sensor",
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "description": "how many days since production date have passed"
+            },
+            "max": {
+              "type": "integer",
+              "description": "the maximum of days that may pass since production date before the device has to become deactivated"
+            },
+            "deactivateAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "the date, when the sensor has to become or became deactivated"
+            },
+            "notifyUser": {
+              "type": "boolean",
+              "description": "informs the app, if the user has to become notified about the approaching end of life of the sensor"
+            }
+          }
+        },
+        "usageDays": {
+          "type": "object",
+          "description": "object containing statistics regarding the max usageDays of the sensor",
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "description": "how many days the device has been used already (that means measured temperature or transferred data)"
+            },
+            "max": {
+              "type": "integer",
+              "description": "the maximum of days that the device can be used before it has to become deactivated"
+            },
+            "deactivateAt": {
+              "type": "string",
+              "format": "date",
+              "description": "the date, when the sensor has to become or became deactivated"
+            },
+            "notifyUser": {
+              "type": "boolean",
+              "description": "informs the app, if the user has to become notified about the approaching end of life of the sensor"
+            }
+          }
+        }
+      }
+    },
+    "CreateAllDeviceStatsResponse": {
+      "type": "object",
+      "description": "preliminary result of the createAll request",
+      "properties": {
+        "amountDevicesWithoutStatistics": {
+          "type": "integer",
+          "description": "the number of devices for which the statistics shall get generated"
+        },
+        "errorMsg": {
+          "type": "string",
+          "description": "error message if any error appears like no admin user sending request"
+        }
       }
     },
     "RegistrationError": {
