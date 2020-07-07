@@ -485,7 +485,8 @@ paths:
       responses:
         '200':
           description: cycleDay export retrieved successfully
-          type: string
+          content:
+            text/csv: {}
         '400':
           description: retrieving cycleDay export failed
           schema:
@@ -494,7 +495,7 @@ paths:
           description: the backend has a problem
           schema:
             "$ref": "#/definitions/ServerError"
-  "/export/temperatures/:cycleId:":
+  "/export/temperatures/:cycleId":
     get:
       tags:
         - trackle
@@ -516,7 +517,8 @@ paths:
       responses:
         '200':
           description: cycleTemperatures export retrieved successfully
-          type: string
+          content:
+            text/csv: {}
         '400':
           description: retrieving cycleTemperatures export failed
           schema:
