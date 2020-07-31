@@ -21,16 +21,11 @@
         "name": "Ubirch Verification Service",
         "version": "1.0",
         "uri": "https://verify.demo.ubirch.com/swagger/swagger.json"
-      }
-    ]
-  },
-  {
-    "add_swagger_path": true,
-    "services": [
+      },
       {
-        "name": "Ubirch Key Service",
+        "name": "Ubirch Identity Service",
         "version": "1.0",
-        "uri": "/ubirch/key_service/1.0/ubirch_key_service_api.yaml"
+        "uri": "https://identity.prod.ubirch.com/api-docs/swagger.json"
       }
     ]
   }
