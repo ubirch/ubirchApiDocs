@@ -46,6 +46,98 @@
         }
       }
     },
+    "/contraceptionState": {
+      "post": {
+        "tags": [
+          "trackle",
+          "contraception state"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "contraceptionState",
+            "description": "the object to become stored in the backend",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ContraceptionStateSigned"
+            }
+          }
+        ],
+        "summary": "post new contraceptive status for the user of the auth token",
+        "description": "post a new contraception status of the authenticated user",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the by the server accepted contraception state object",
+            "schema": {
+              "$ref": "#/definitions/ContraceptionStateAccepted"
+            }
+          },
+          "400": {
+            "description": "Not successful response e.g. due to signatureCreated in future",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "trackle",
+          "contraception state"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "limits the number being returned of the last contraceptionState changes",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "summary": "contraception state for the user of the auth token",
+        "description": "Query all available contraception states, that the authenticated user has inserted (possibly limited in number by query parameter)",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an array of contraception states",
+            "schema": {
+              "$ref": "#/definitions/ContraceptionStateAccepted"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/cycle": {
       "get": {
         "tags": [
@@ -142,6 +234,92 @@
             "description": "Successful response; returns the requested user cycle statistics",
             "schema": {
               "$ref": "#/definitions/CycleStatsSigned"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/dataUsage": {
+      "post": {
+        "tags": [
+          "trackle",
+          "data agreement"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "dataUsage",
+            "description": "the object to become stored in the backend",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DataUsageSigned"
+            }
+          }
+        ],
+        "summary": "post new data approval for the user of the auth token",
+        "description": "post a new data agreement, that the authenticated user has approved or ",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the by the server accepted data usage object",
+            "schema": {
+              "$ref": "#/definitions/DataUsageAccepted"
+            }
+          },
+          "400": {
+            "description": "Not successful response e.g. due to signatureCreated in future",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "trackle",
+          "data agreement"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "limits the number being returned of the last dataAgreement updates",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "summary": "data agreements for the user of the auth token",
+        "description": "Query all available data agreements, that the authenticated user has inserted (possibly limited in number by query parameter)",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an array of data agreements",
+            "schema": {
+              "$ref": "#/definitions/DataUsageAccepted"
             }
           },
           "400": {
@@ -794,6 +972,12 @@
           },
           "400": {
             "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
             "schema": {
               "$ref": "#/definitions/ErrorResponse"
             }
@@ -1564,6 +1748,102 @@
       },
       "example": {
         "lastUpdated": "2018-08-271T11:03:42.230Z"
+      }
+    },
+    "ContraceptionState": {
+      "type": "object",
+      "description": "the object that contains the agreement and it's (dis-)approval",
+      "properties": {
+        "contraceptive": {
+          "type": "boolean",
+          "description": "defines if the customer uses the app as a contraceptive or not"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the date the user has entered it's usage of the app as a contraceptive or not"
+        }
+      }
+    },
+    "ContraceptionStateSigned": {
+      "type": "object",
+      "description": "the object that contains the contraceptionState object and the signature by the client as well as it's created date",
+      "properties": {
+        "dataUsage": {
+          "$ref": "#/definitions/ContraceptionState"
+        }
+      }
+    },
+    "ContraceptionStateAccepted": {
+      "type": "object",
+      "description": "contraception state transferred after user action, signed by the server after verifying the client's signature",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "uuid of the user"
+        },
+        "dataUsageSigned": {
+          "$ref": "#/definitions/ContraceptionStateSigned"
+        },
+        "signature": {
+          "type": "string",
+          "description": "signature created by the server after verifying the clients signature"
+        },
+        "signatureCreated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the date this object was signed by the server"
+        }
+      }
+    },
+    "DataUsage": {
+      "type": "object",
+      "description": "the object that contains the agreement and it's (dis-)approval",
+      "properties": {
+        "agreement": {
+          "type": "string",
+          "description": "statement of the agreement"
+        },
+        "approved": {
+          "type": "boolean",
+          "description": "defined if the customer agrees or not with the statement"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the date the user has (dis-)agreed to the statement"
+        }
+      }
+    },
+    "DataUsageSigned": {
+      "type": "object",
+      "description": "the object that contains the dataUsage object and the signature by the client and it's created date",
+      "properties": {
+        "dataUsage": {
+          "$ref": "#/definitions/DataUsage"
+        }
+      }
+    },
+    "DataUsageAccepted": {
+      "type": "object",
+      "description": "data agreement transferred after user action, signed by the server after verifying signature",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "uuid of the user"
+        },
+        "dataUsageSigned": {
+          "$ref": "#/definitions/DataUsageSigned"
+        },
+        "signature": {
+          "type": "string",
+          "description": "signature created by the server after verifying the clients signature"
+        },
+        "signatureCreated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "the date this object was signed by the server"
+        }
       }
     },
     "DayInfoObject": {

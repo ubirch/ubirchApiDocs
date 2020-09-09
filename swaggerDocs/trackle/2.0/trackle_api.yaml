@@ -1,4 +1,3 @@
----
 swagger: '2.0'
 info:
   version: 2.0.0
@@ -10,11 +9,11 @@ info:
     - registration and login of trackle user accounts (including deletion of accounts)
     - read cycle statistics of user
     - getting trackle RAW data of sleeping periods
-basePath: "/api/trackleService/v2"
+basePath: /api/trackleService/v2
 produces:
   - application/json
 paths:
-  "/":
+  /:
     get:
       tags:
         - trackle
@@ -25,8 +24,8 @@ paths:
         '200':
           description: everything is fine
           schema:
-            "$ref": "#/definitions/HealthResponse200"
-  "/check":
+            $ref: '#/definitions/HealthResponse200'
+  /check:
     get:
       tags:
         - trackle
@@ -37,8 +36,76 @@ paths:
         '200':
           description: everything is fine
           schema:
-            "$ref": "#/definitions/HealthResponse200"
-  "/cycle":
+            $ref: '#/definitions/HealthResponse200'
+  /contraceptionState:
+    post:
+      tags:
+        - trackle
+        - contraception state
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer or ubirch token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: contraceptionState
+          description: the object to become stored in the backend
+          required: true
+          schema:
+            $ref: '#/definitions/ContraceptionStateSigned'
+      summary: post new contraceptive status for the user of the auth token
+      description: post a new contraception status of the authenticated user
+      responses:
+        '200':
+          description: >-
+            Successful response; returns the by the server accepted
+            contraception state object
+          schema:
+            $ref: '#/definitions/ContraceptionStateAccepted'
+        '400':
+          description: Not successful response e.g. due to signatureCreated in future
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - trackle
+        - contraception state
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer or ubirch token identifying the related user
+          required: true
+          type: string
+        - in: query
+          name: limit
+          description: >-
+            limits the number being returned of the last contraceptionState
+            changes
+          required: false
+          type: integer
+      summary: contraception state for the user of the auth token
+      description: >-
+        Query all available contraception states, that the authenticated user
+        has inserted (possibly limited in number by query parameter)
+      responses:
+        '200':
+          description: Successful response; returns an array of contraception states
+          schema:
+            $ref: '#/definitions/ContraceptionStateAccepted'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  /cycle:
     get:
       tags:
         - trackle
@@ -56,12 +123,12 @@ paths:
         '200':
           description: Successful response; returns the requested reduced cycle overview
           schema:
-            "$ref": "#/definitions/ReducedCycleObject"
+            $ref: '#/definitions/ReducedCycleObject'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/cycle/id/{cycleId}":
+            $ref: '#/definitions/ErrorResponse'
+  '/cycle/id/{cycleId}':
     get:
       tags:
         - trackle
@@ -83,12 +150,12 @@ paths:
         '200':
           description: Successful response; returns the requested cycle data
           schema:
-            "$ref": "#/definitions/CycleObject"
+            $ref: '#/definitions/CycleObject'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/cycle/stats":
+            $ref: '#/definitions/ErrorResponse'
+  /cycle/stats:
     get:
       tags:
         - trackle
@@ -107,12 +174,74 @@ paths:
         '200':
           description: Successful response; returns the requested user cycle statistics
           schema:
-            "$ref": "#/definitions/CycleStatsSigned"
+            $ref: '#/definitions/CycleStatsSigned'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/day/{day}":
+            $ref: '#/definitions/ErrorResponse'
+  /dataUsage:
+    post:
+      tags:
+        - trackle
+        - data agreement
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer or ubirch token identifying the related user
+          required: true
+          type: string
+        - in: body
+          name: dataUsage
+          description: the object to become stored in the backend
+          required: true
+          schema:
+            $ref: '#/definitions/DataUsageSigned'
+      summary: post new data approval for the user of the auth token
+      description: 'post a new data agreement, that the authenticated user has approved or '
+      responses:
+        '200':
+          description: >-
+            Successful response; returns the by the server accepted data usage
+            object
+          schema:
+            $ref: '#/definitions/DataUsageAccepted'
+        '400':
+          description: Not successful response e.g. due to signatureCreated in future
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    get:
+      tags:
+        - trackle
+        - data agreement
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer or ubirch token identifying the related user
+          required: true
+          type: string
+        - in: query
+          name: limit
+          description: limits the number being returned of the last dataAgreement updates
+          required: false
+          type: integer
+      summary: data agreements for the user of the auth token
+      description: >-
+        Query all available data agreements, that the authenticated user has
+        inserted (possibly limited in number by query parameter)
+      responses:
+        '200':
+          description: Successful response; returns an array of data agreements
+          schema:
+            $ref: '#/definitions/DataUsageAccepted'
+        '400':
+          description: Not successful response
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/day/{day}':
     get:
       tags:
         - trackle
@@ -137,12 +266,12 @@ paths:
         '200':
           description: Successful response; returns an trackle day info object
           schema:
-            "$ref": "#/definitions/DayInfoObject"
+            $ref: '#/definitions/DayInfoObject'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/day/lastupdated":
+            $ref: '#/definitions/ErrorResponse'
+  /day/lastupdated:
     get:
       tags:
         - trackle
@@ -158,12 +287,12 @@ paths:
         '202':
           description: successful response; returns last updated information
           schema:
-            "$ref": "#/definitions/LastUpdated"
+            $ref: '#/definitions/LastUpdated'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/day/from/{fromDay}/until/{untilDay}":
+            $ref: '#/definitions/ErrorResponse'
+  '/day/from/{fromDay}/until/{untilDay}':
     get:
       tags:
         - trackle
@@ -196,12 +325,12 @@ paths:
           schema:
             type: array
             items:
-              "$ref": "#/definitions/DayInfoObject"
+              $ref: '#/definitions/DayInfoObject'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/deepCheck":
+            $ref: '#/definitions/ErrorResponse'
+  /deepCheck:
     get:
       tags:
         - trackle
@@ -212,12 +341,12 @@ paths:
         '200':
           description: everything is fine
           schema:
-            "$ref": "#/definitions/DeepCheckHealthResponse200"
+            $ref: '#/definitions/DeepCheckHealthResponse200'
         '500':
           description: something is not fine
           schema:
-            "$ref": "#/definitions/DeepCheckHealthResponse500"
-  "/device/claim/:hardwareDeviceId":
+            $ref: '#/definitions/DeepCheckHealthResponse500'
+  '/device/claim/:hardwareDeviceId':
     post:
       tags:
         - trackle
@@ -241,16 +370,16 @@ paths:
         '202':
           description: device claimed successfully
           schema:
-            "$ref": "#/definitions/ClaimSuccess"
+            $ref: '#/definitions/ClaimSuccess'
         '400':
           description: device claiming failed
           schema:
-            "$ref": "#/definitions/ClaimErrorResponse"
+            $ref: '#/definitions/ClaimErrorResponse'
         '500':
           description: the backend has a problem
           schema:
-            "$ref": "#/definitions/ServerError"
-  "/device/statistics/:hardwareDeviceId":
+            $ref: '#/definitions/ServerError'
+  '/device/statistic/:hardwareDeviceId':
     get:
       tags:
         - trackle
@@ -265,23 +394,23 @@ paths:
           type: string
         - in: path
           name: hardwareDeviceId
-          description: the `hardwareDeviceId` of the device to retrieve the statistics for
+          description: the `hardwareDeviceId ` of the device to retrieve the statistic for
           required: true
           type: string
       responses:
-        '202':
+        '200':
           description: device statistic retrieved successfully
           schema:
-            "$ref": "#/definitions/DeviceStatisticSuccess"
+            $ref: '#/definitions/DeviceStatisticSuccess'
         '400':
           description: retrieving device statistic failed
           schema:
-            "$ref": "#/definitions/TrackleError"
+            $ref: '#/definitions/TrackleError'
         '500':
           description: the backend has a problem
           schema:
-            "$ref": "#/definitions/ServerError"
-  "/device/statistic/create/:deviceId":
+            $ref: '#/definitions/ServerError'
+  '/device/statistic/create/:deviceId':
     get:
       tags:
         - trackle
@@ -305,16 +434,16 @@ paths:
         '200':
           description: device statistic retrieved successfully
           schema:
-            "$ref": "#/definitions/DeviceStatisticSuccess"
+            $ref: '#/definitions/DeviceStatisticSuccess'
         '400':
           description: retrieving device statistic failed
           schema:
-            "$ref": "#/definitions/TrackleError"
+            $ref: '#/definitions/TrackleError'
         '500':
           description: the backend has a problem
           schema:
-            "$ref": "#/definitions/ServerError"
-  "/device/statistic/createAll/:delaySeconds":
+            $ref: '#/definitions/ServerError'
+  '/device/statistic/createAll/:delaySeconds':
     get:
       tags:
         - trackle
@@ -338,16 +467,16 @@ paths:
         '200':
           description: generating all missing deviceStatistics successfully
           schema:
-            "$ref": "#/definitions/CreateAllDeviceStatsResponse"
+            $ref: '#/definitions/CreateAllDeviceStatsResponse'
         '400':
           description: retrieving all missing deviceStatistics failed
           schema:
-            "$ref": "#/definitions/CreateAllDeviceStatsResponse"
+            $ref: '#/definitions/CreateAllDeviceStatsResponse'
         '500':
           description: the backend has a problem
           schema:
-            "$ref": "#/definitions/ServerError"
-  "/export/cycleDays/:cycleId":
+            $ref: '#/definitions/ServerError'
+  '/export/cycleDays/:cycleId':
     get:
       tags:
         - trackle
@@ -372,12 +501,12 @@ paths:
         '400':
           description: retrieving cycleDay export failed
           schema:
-            "$ref": "#/definitions/TrackleError"
+            $ref: '#/definitions/TrackleError'
         '500':
           description: the backend has a problem
           schema:
-            "$ref": "#/definitions/ServerError"
-  "/export/temperatures/:cycleId":
+            $ref: '#/definitions/ServerError'
+  '/export/temperatures/:cycleId':
     get:
       tags:
         - trackle
@@ -402,12 +531,12 @@ paths:
         '400':
           description: retrieving cycleTemperatures export failed
           schema:
-            "$ref": "#/definitions/TrackleError"
+            $ref: '#/definitions/TrackleError'
         '500':
           description: the backend has a problem
           schema:
-            "$ref": "#/definitions/ServerError"
-  "/userInput":
+            $ref: '#/definitions/ServerError'
+  /userInput:
     post:
       tags:
         - trackle
@@ -425,18 +554,18 @@ paths:
           description: the data the user inserted and uploaded for one day, signed by
             the app
           schema:
-            "$ref": "#/definitions/UserInputSigned"
+            $ref: '#/definitions/UserInputSigned'
       responses:
         '200':
           description: Successful response; returns the user input signed by the app,
             wrapped in an object documenting that the server accepted and signed that
             content sent by the app
           schema:
-            "$ref": "#/definitions/UserInputAcceptedSigned"
+            $ref: '#/definitions/UserInputAcceptedSigned'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
     put:
       tags:
         - trackle
@@ -456,19 +585,19 @@ paths:
           description: the updated data the user inserted and uploaded for one day,
             signed by the app
           schema:
-            "$ref": "#/definitions/UserInputSigned"
+            $ref: '#/definitions/UserInputSigned'
       responses:
         '200':
           description: Successful response; returns the user input signed by the app,
             wrapped in an object documenting that the server accepted and signed that
             content sent by the app
           schema:
-            "$ref": "#/definitions/UserInputAcceptedSigned"
+            $ref: '#/definitions/UserInputAcceptedSigned'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/user":
+            $ref: '#/definitions/ErrorResponse'
+  /user:
     delete:
       tags:
         - trackle
@@ -491,15 +620,15 @@ paths:
           description: signed public key delete request (forwarded to key-service)
           required: true
           schema:
-            "$ref": "#/definitions/DeletePublicKey"
+            $ref: '#/definitions/DeletePublicKey'
       responses:
         '200':
           description: successfully deleted user information
         '400':
           description: user deletion failed
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/user/register":
+            $ref: '#/definitions/ErrorResponse'
+  /user/register:
     post:
       tags:
         - trackle
@@ -512,22 +641,21 @@ paths:
           name: register
           description: all information needed to register a user
           schema:
-            "$ref": "#/definitions/RegistrationObject"
+            $ref: '#/definitions/RegistrationObject'
       responses:
         '200':
           description: success
         '400':
           description: failed
           schema:
-            "$ref": "#/definitions/RegistrationError"
-  "/user/login/:hashedSecret":
+            $ref: '#/definitions/RegistrationError'
+  '/user/login/:hashedSecret':
     get:
       tags:
         - trackle
         - user
       summary: login a user
-      description: login a user. registered users could get their encrypted secret
-        key.
+      description: login a user. registered users could get their encrypted secret key.
       parameters:
         - in: path
           name: hashedSecret
@@ -538,16 +666,16 @@ paths:
         '202':
           description: success
           schema:
-            "$ref": "#/definitions/LoginSuccessful"
+            $ref: '#/definitions/LoginSuccessful'
         '400':
           description: failed
           schema:
-            "$ref": "#/definitions/LoginError"
+            $ref: '#/definitions/LoginError'
         '500':
           description: failed
           schema:
-            "$ref": "#/definitions/LoginError"
-  "/sleepingPeriod/{sleepingPeriodId}":
+            $ref: '#/definitions/LoginError'
+  '/sleepingPeriod/{sleepingPeriodId}':
     get:
       tags:
         - trackle
@@ -570,12 +698,16 @@ paths:
           description: Successful response; returns the requested sleeping period
             temperature curve
           schema:
-            "$ref": "#/definitions/SleepingPeriodObject"
+            $ref: '#/definitions/SleepingPeriodObject'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/user/check/{hashedEmail}":
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/user/check/{hashedEmail}':
     get:
       tags:
         - trackle
@@ -593,12 +725,12 @@ paths:
           description: Successful response; returns if user for given email address
             already exists or not
           schema:
-            "$ref": "#/definitions/CheckEmailExists"
+            $ref: '#/definitions/CheckEmailExists'
         '400':
           description: Not successful response; especially if user already exists
           schema:
-            "$ref": "#/definitions/CheckEmailError"
-  "/user/info":
+            $ref: '#/definitions/CheckEmailError'
+  /user/info:
     get:
       tags:
         - trackle
@@ -616,12 +748,12 @@ paths:
         '200':
           description: Successful response; returns the requested user info
           schema:
-            "$ref": "#/definitions/UserInfoAcceptedSigned"
+            $ref: '#/definitions/UserInfoAcceptedSigned'
         '400':
           description: Not successful response; especially if user doesn't exist
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/user/settings":
+            $ref: '#/definitions/ErrorResponse'
+  /user/settings:
     post:
       tags:
         - trackle
@@ -637,20 +769,20 @@ paths:
           type: string
         - in: body
           name: userSettingsSigned
-          description: user settings the user inserted initially, signed by the app
+          description: 'user settings the user inserted initially, signed by the app'
           schema:
-            "$ref": "#/definitions/UserSettingsSigned"
+            $ref: '#/definitions/UserSettingsSigned'
       responses:
         '200':
           description: Successful response; returns the user settings signed by the
             app, wrapped in an object documenting that the server accepted and signed
             that content sent by the app
           schema:
-            "$ref": "#/definitions/UserSettingsAcceptedSigned"
+            $ref: '#/definitions/UserSettingsAcceptedSigned'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
     put:
       tags:
         - trackle
@@ -666,20 +798,20 @@ paths:
           type: string
         - in: body
           name: userSettingsSigned
-          description: user settings the user changed, signed by the app
+          description: 'user settings the user changed, signed by the app'
           schema:
-            "$ref": "#/definitions/UserSettingsSigned"
+            $ref: '#/definitions/UserSettingsSigned'
       responses:
         '200':
           description: Successful response; returns the user settings signed by the
             app, wrapped in an object documenting that the server accepted and signed
             that content sent by the app
           schema:
-            "$ref": "#/definitions/UserSettingsAcceptedSigned"
+            $ref: '#/definitions/UserSettingsAcceptedSigned'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
     get:
       tags:
         - trackle
@@ -699,12 +831,12 @@ paths:
             app, wrapped in an object documenting that the server accepted and signed
             that content sent by the app
           schema:
-            "$ref": "#/definitions/UserSettingsAcceptedSigned"
+            $ref: '#/definitions/UserSettingsAcceptedSigned'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/ErrorResponse"
-  "/userUpdate/password":
+            $ref: '#/definitions/ErrorResponse'
+  /userUpdate/password:
     put:
       tags:
         - trackle
@@ -722,21 +854,21 @@ paths:
           description: the externalId of the user who wants to change her password and the externalId
             of the temporary user generated to enter a new password via the app.
           schema:
-            "$ref": "#/definitions/UserUpdatePassword"
+            $ref: '#/definitions/UserUpdatePassword'
       responses:
         '200':
           description: Successful response; returns the user id of the user whose password was changed.
           schema:
-            "$ref": "#/definitions/UbirchJsonResponse"
+            $ref: '#/definitions/UbirchJsonResponse'
         '400':
           description: Not successful response.
           schema:
-            "$ref": "#/definitions/TrackleError"
-  "/userUpdate/email":
+            $ref: '#/definitions/TrackleError'
+  /userUpdate/email:
     put:
       tags:
         - trackle
-        - user update
+        - user
       summary: UPDATE user email
       description: this endpoint is used for updating a user's email adress
       parameters:
@@ -750,17 +882,17 @@ paths:
           description: the externalId of the user who wants to change her email adress and the new email adress in
             form of the externalId.
           schema:
-            "$ref": "#/definitions/UserUpdateEmail"
+            $ref: '#/definitions/UserUpdateEmail'
       responses:
         '200':
           description: Successful response; returns the user id of the user whose password was changed.
           schema:
-            "$ref": "#/definitions/UbirchJsonResponse"
+            $ref: '#/definitions/UbirchJsonResponse'
         '400':
           description: Not successful response
           schema:
-            "$ref": "#/definitions/TrackleError"
-  "/user/profile":
+            $ref: '#/definitions/TrackleError'
+  /user/profile:
     get:
       tags:
         - trackle
@@ -779,11 +911,11 @@ paths:
         '200':
           description: Successful response; returns the requested user profile
           schema:
-            "$ref": "#/definitions/UserProfile"
+            $ref: '#/definitions/UserProfile'
         '400':
           description: Not successful response; especially if user doesn't exist
           schema:
-            "$ref": "#/definitions/ErrorResponse"
+            $ref: '#/definitions/ErrorResponse'
 definitions:
   SignedObject:
     type: object
@@ -802,7 +934,7 @@ definitions:
         description: the timestamp when this signature was created
   AcceptedSignedObject:
     allOf:
-      - "$ref": "#/definitions/SignedObject"
+      - $ref: '#/definitions/SignedObject'
       - type: object
         discriminator: AcceptedSignedObject
         description: the additional contained property/object is signed by the app,
@@ -850,25 +982,26 @@ definitions:
   ClaimSuccess:
     description: possible errors for claiming request
     allOf:
-      - "$ref": "#/definitions/UbirchJsonResponse"
+      - $ref: '#/definitions/UbirchJsonResponse'
     example:
       version: '1.0'
       status: OK
       message: 'device 12341234 claimed for user: Jane Smith'
   DeviceStatisticSuccess:
+    type: object
     description: created or existing device statistic
     properties:
       hwDeviceId:
         type: string
         format: uuid
-        description: 'id of the device for which the statistic is requested'
+        description: id of the device for which the statistic is requested
       lifetime:
         type: object
-        description: 'object containing statistics regarding the lifetime of the sensor'
+        description: object containing statistics regarding the lifetime of the sensor
         properties:
           amount:
             type: integer
-            description: 'how many days since production date have passed'
+            description: how many days since production date have passed
           max:
             type: integer
             description: 'the maximum of days that may pass since production date before the device has to become deactivated'
@@ -881,7 +1014,7 @@ definitions:
             description: 'informs the app, if the user has to become notified about the approaching end of life of the sensor'
       usageDays:
         type: object
-        description: 'object containing statistics regarding the max usageDays of the sensor'
+        description: object containing statistics regarding the max usageDays of the sensor
         properties:
           amount:
             type: integer
@@ -891,7 +1024,7 @@ definitions:
             description: 'the maximum of days that the device can be used before it has to become deactivated'
           deactivatedAt:
             type: string
-            format: date-time
+            format: date
             description: 'the date, when the sensor has to become or became deactivated'
           notifyUser:
             type: boolean
@@ -918,7 +1051,7 @@ definitions:
       errorMessage: device 12341234 does not exist
   RegistrationError:
     allOf:
-      - "$ref": "#/definitions/TrackleError"
+      - $ref: '#/definitions/TrackleError'
     example:
       version: '1.0'
       status: NOK
@@ -926,7 +1059,7 @@ definitions:
       errorMessage: failed to create user record
   LoginError:
     allOf:
-      - "$ref": "#/definitions/TrackleError"
+      - $ref: '#/definitions/TrackleError'
     example:
       version: '1.0'
       status: NOK
@@ -1010,10 +1143,10 @@ definitions:
         description: if set we know how many days long the post-ovulation phase has
           been.
       ovulationAnalysisStats:
-        "$ref": "#/definitions/OvulationAnalysisStats"
+        $ref: '#/definitions/OvulationAnalysisStats'
         description: the detailed information about the ovulation if found.
       aggregatedSigned:
-        "$ref": "#/definitions/CycleAggregatedSigned"
+        $ref: '#/definitions/CycleAggregatedSigned'
         description: aggregated information if available
       created:
         type: string
@@ -1035,7 +1168,7 @@ definitions:
           description: An array of 0-5 days, that represent the days with the highest
             basal temperatures that have a chronological order.
       temperatureAidLine:
-        "$ref": "#/definitions/TemperatureAidLine"
+        $ref: '#/definitions/TemperatureAidLine'
         description: The data needed for the temperature aid line.
       cervicalMucusAnalysis:
         type: array
@@ -1075,7 +1208,7 @@ definitions:
       - signatureCreated
     properties:
       aggregated:
-        "$ref": "#/definitions/CycleAggregated"
+        $ref: '#/definitions/CycleAggregated'
       signature:
         type: string
         description: signature of `baseline` field as created by backend
@@ -1092,7 +1225,7 @@ definitions:
       - lastUpdated
     properties:
       baseline:
-        "$ref": "#/definitions/NfpBaseline"
+        $ref: '#/definitions/NfpBaseline'
       created:
         type: string
         format: date-time
@@ -1134,7 +1267,86 @@ definitions:
         type: string
         format: date-time
     example:
-      lastUpdated: 2018-08-271T11:03:42.230Z
+      lastUpdated: '2018-08-271T11:03:42.230Z'
+  ContraceptionState:
+    type: object
+    description: the object that contains the agreement and it's (dis-)approval
+    properties:
+      contraceptive:
+        type: boolean
+        description: defines if the customer uses the app as a contraceptive or not
+      date:
+        type: string
+        format: date-time
+        description: >-
+          the date the user has entered it's usage of the app as a contraceptive
+          or not
+  ContraceptionStateSigned:
+    type: object
+    description: >-
+      the object that contains the contraceptionState object and the signature
+      by the client as well as it's created date
+    properties:
+      dataUsage:
+        $ref: '#/definitions/ContraceptionState'
+  ContraceptionStateAccepted:
+    type: object
+    description: >-
+      contraception state transferred after user action, signed by the server
+      after verifying the client's signature
+    properties:
+      userId:
+        type: string
+        description: uuid of the user
+      dataUsageSigned:
+        $ref: '#/definitions/ContraceptionStateSigned'
+      signature:
+        type: string
+        description: signature created by the server after verifying the clients signature
+      signatureCreated:
+        type: string
+        format: date-time
+        description: the date this object was signed by the server
+  DataUsage:
+    type: object
+    description: the object that contains the agreement and it's (dis-)approval
+    properties:
+      agreement:
+        type: string
+        description: statement of the agreement
+      approved:
+        type: boolean
+        description: defined if the customer agrees or not with the statement
+      date:
+        type: string
+        format: date-time
+        description: the date the user has (dis-)agreed to the statement
+  DataUsageSigned:
+    type: object
+    description: >-
+      the object that contains the dataUsage object and the signature by the
+      client and it's created date
+    properties:
+      dataUsage:
+        $ref: '#/definitions/DataUsage'
+  DataUsageAccepted:
+    type: object
+    description: >-
+      data agreement transferred after user action, signed by the server after
+      verifying signature
+    properties:
+      userId:
+        type: string
+        description: uuid of the user
+      dataUsageSigned:
+        $ref: '#/definitions/DataUsageSigned'
+      signature:
+        type: string
+        description: signature created by the server after verifying the clients signature
+      signatureCreated:
+        type: string
+        format: date-time
+        description: the date this object was signed by the server
   DayInfoObject:
     type: object
     description: all available data for one day. From user input the authenticated
@@ -1148,13 +1360,12 @@ definitions:
       aggregatedSigned:
         description: aggregated data of this day signed by server
         allOf:
-          - "$ref": "#/definitions/SignedObject"
+          - $ref: '#/definitions/SignedObject'
           - type: object
             properties:
               aggregated:
                 type: object
-                description: the measured data and/or aggregated information for this
-                  day
+                description: the measured data and/or aggregated information for this day
                 properties:
                   date:
                     type: string
@@ -1228,8 +1439,7 @@ definitions:
                       with day number 1)
                   fertile:
                     type: object
-                    description: fertile state of the day, if the user is fertile or
-                      not
+                    description: 'fertile state of the day, if the user is fertile or not'
                     properties:
                       state:
                         type: boolean
@@ -1283,7 +1493,7 @@ definitions:
                     format: date-time
                     description: timestamp when this data has been updated last
       userInputAcceptedSigned:
-        "$ref": "#/definitions/UserInputAcceptedSigned"
+        $ref: '#/definitions/UserInputAcceptedSigned'
     example:
       date: '2017-09-20T22:00:00.000Z'
       aggregatedSigned:
@@ -1292,7 +1502,7 @@ definitions:
           instantTime:
             temperature: 36.81
             timestamp: '2017-09-20T05:58:00.000Z'
-            desiredTime: 06:00:00.000Z
+            desiredTime: '06:00:00.000Z'
           basal:
             temperature: 36.62
             sleepingPeriodId: 4a904a91-cabf-417e-981c-5be70654ae98
@@ -1309,7 +1519,7 @@ definitions:
             state: true
             ovulation: false
             prognosis: false
-            partialFertileTime: 18:00:00.000Z
+            partialFertileTime: '18:00:00.000Z'
           menstruation:
             state: false
             prognosis: true
@@ -1317,7 +1527,7 @@ definitions:
             state: false
           created: '2017-09-20T08:20:00.000Z'
           lastUpdated: '2017-09-20T12:29:22.717Z'
-        signature: a server side signature :)
+        signature: 'a server side signature :)'
         signatureCreated: '2017-09-20T08:22:00.000Z'
       userInputAcceptedSigned:
         userInputAccepted:
@@ -1332,29 +1542,29 @@ definitions:
                   - sleepLately
                   - alcohol
                   - emotionalPressure
-            signature: a client side signature :)
+            signature: 'a client side signature :)'
             signatureCreated: '2017-09-20T08:22:00.000Z'
           created: '2017-09-20T08:20:00.000Z'
           lastUpdated: '2017-09-20T08:22:03.500Z'
-        signature: another server side signature :)
-        signatureCreated: 2017-19-19T08:22:03.000Z
+        signature: 'another server side signature :)'
+        signatureCreated: '2017-19-19T08:22:03.000Z'
   UserInputAcceptedSigned:
     description: current state of the user input for that day, signed by the app,
       accepted and signed by the server
     allOf:
-      - "$ref": "#/definitions/AcceptedSignedObject"
+      - $ref: '#/definitions/AcceptedSignedObject'
       - type: object
         properties:
           userInputSigned:
-            "$ref": "#/definitions/UserInputSigned"
+            $ref: '#/definitions/UserInputSigned'
   UserInputSigned:
     description: current state of the user input for that day signed by the app
     allOf:
-      - "$ref": "#/definitions/SignedObject"
+      - $ref: '#/definitions/SignedObject'
       - type: object
         properties:
           userInput:
-            "$ref": "#/definitions/UserInput"
+            $ref: '#/definitions/UserInput'
   RegistrationObject:
     description: all information required to register a user
     type: object
@@ -1519,19 +1729,19 @@ definitions:
       * user info * user specific settings * cycle statistics
     properties:
       userInfo:
-        "$ref": "#/definitions/UserInfoAcceptedSigned"
+        $ref: '#/definitions/UserInfoAcceptedSigned'
       userSettings:
-        "$ref": "#/definitions/UserSettingsAcceptedSigned"
+        $ref: '#/definitions/UserSettingsAcceptedSigned'
       cycleStats:
-        "$ref": "#/definitions/CycleStatsSigned"
+        $ref: '#/definitions/CycleStatsSigned'
   UserInfoAcceptedSigned:
-    description: user info, signed by the app, accepted and signed by the server
+    description: 'user info, signed by the app, accepted and signed by the server'
     allOf:
-      - "$ref": "#/definitions/AcceptedSignedObject"
+      - $ref: '#/definitions/AcceptedSignedObject'
       - type: object
         properties:
           userInfoSigned:
-            "$ref": "#/definitions/UserInfoSigned"
+            $ref: '#/definitions/UserInfoSigned'
           activeSince:
             type: string
             format: date-time
@@ -1540,11 +1750,11 @@ definitions:
   UserInfoSigned:
     description: user info signed by app
     allOf:
-      - "$ref": "#/definitions/SignedObject"
+      - $ref: '#/definitions/SignedObject'
       - type: object
         properties:
           userInfo:
-            "$ref": "#/definitions/UserInfo"
+            $ref: '#/definitions/UserInfo'
   UserInfo:
     type: object
     required:
@@ -1587,19 +1797,19 @@ definitions:
     description: current state of the user specific settings, signed by the app, accepted
       and signed by the server
     allOf:
-      - "$ref": "#/definitions/AcceptedSignedObject"
+      - $ref: '#/definitions/AcceptedSignedObject'
       - type: object
         properties:
           userSettingsSigned:
-            "$ref": "#/definitions/UserSettingsSigned"
+            $ref: '#/definitions/UserSettingsSigned'
   UserSettingsSigned:
     description: user settings signed by app
     allOf:
-      - "$ref": "#/definitions/SignedObject"
+      - $ref: '#/definitions/SignedObject'
       - type: object
         properties:
           userSettings:
-            "$ref": "#/definitions/UserSettings"
+            $ref: '#/definitions/UserSettings'
   UserSettings:
     type: object
     description: user specific settings; key value pairs; can be changed by user
@@ -1608,11 +1818,11 @@ definitions:
   CycleStatsSigned:
     description: cycle stats of the user signed by backend
     allOf:
-      - "$ref": "#/definitions/SignedObject"
+      - $ref: '#/definitions/SignedObject'
       - type: object
         properties:
           cycleStats:
-            "$ref": "#/definitions/CycleStats"
+            $ref: '#/definitions/CycleStats'
   CycleStats:
     type: object
     description: statistics about users cycles analysed from collected measured temperatures
@@ -1797,7 +2007,7 @@ definitions:
           - sorted by timestamp - in ascending order - with unique timestamps - intervals between timestamps do not need to be equal - basal values (minimum) are marked
         type: array
         items:
-          "$ref": "#/definitions/TemperatureObject"
+          $ref: '#/definitions/TemperatureObject'
       created:
         type: string
         format: date-time
@@ -1875,7 +2085,7 @@ definitions:
       message: []
   DeepCheckHealthResponse500:
     allOf:
-      - "$ref": "#/definitions/DeepCheckHealthResponse200"
+      - $ref: '#/definitions/DeepCheckHealthResponse200'
     example:
       status: false
       message:
@@ -1883,7 +2093,7 @@ definitions:
   ErrorResponse:
     description: default error object with error code and message
     allOf:
-      - "$ref": "#/definitions/ErrorResponseObject"
+      - $ref: '#/definitions/ErrorResponseObject'
       - type: object
         properties:
           error:
@@ -1930,7 +2140,7 @@ definitions:
           - ValidationError
   ServerError:
     allOf:
-      - "$ref": "#/definitions/TrackleError"
+      - $ref: '#/definitions/TrackleError'
     example:
       version: '1.0'
       status: NOK
@@ -1938,7 +2148,7 @@ definitions:
       message: message from most likely an exception
   CheckEmailError:
     allOf:
-      - "$ref": "#/definitions/TrackleError"
+      - $ref: '#/definitions/TrackleError'
     example:
       version: '1.0'
       status: NOK
@@ -1960,7 +2170,7 @@ definitions:
         type: string
   CheckEmailExists:
     allOf:
-      - "$ref": "#/definitions/UbirchJsonResponse"
+      - $ref: '#/definitions/UbirchJsonResponse'
     example:
       version: '1.0'
       status: OK
