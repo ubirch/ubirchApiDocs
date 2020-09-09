@@ -46,6 +46,238 @@
         }
       }
     },
+    "/cycle": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "GET a cycle overview",
+        "description": "returns a reduced overview (begin, end, cycleId) over all cycles for one user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested reduced cycle overview",
+            "schema": {
+              "$ref": "#/definitions/ReducedCycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/id/{cycleId}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle"
+        ],
+        "summary": "GET cycle data",
+        "description": "returns cycle related information",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "id of the cycle",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested cycle data",
+            "schema": {
+              "$ref": "#/definitions/CycleObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/cycle/stats": {
+      "get": {
+        "tags": [
+          "trackle",
+          "cycle",
+          "2BImplemented"
+        ],
+        "summary": "READ user cycle statistics",
+        "description": "return statistics about users cycles analysed from collected measured temperatures and user inputs",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response; returns the requested user cycle statistics",
+            "schema": {
+              "$ref": "#/definitions/CycleStatsSigned"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/day/{day}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "day",
+            "description": "date of the day the user requests data for",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "summary": "data for a day",
+        "description": "Query all available data for one day, that the authenticated user has inserted for that day or that have been measured by the user's device or that have been aggregated from known information in the backend",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an trackle day info object",
+            "schema": {
+              "$ref": "#/definitions/DayInfoObject"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/day/lastupdated": {
+      "get": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "description": "tells us when any day of a user has been last updated",
+        "responses": {
+          "202": {
+            "description": "successful response; returns last updated information",
+            "schema": {
+              "$ref": "#/definitions/LastUpdated"
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/day/from/{fromDay}/until/{untilDay}": {
+      "get": {
+        "tags": [
+          "trackle",
+          "day"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Bearer or ubirch token identifying the related user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "fromDay",
+            "description": "first day from date range the user requests data for",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          },
+          {
+            "in": "path",
+            "name": "untilDay",
+            "description": "last day from date range the user requests data for",
+            "required": true,
+            "type": "string",
+            "format": "date"
+          }
+        ],
+        "summary": "data for a day",
+        "description": "Query all available data for a range of days, that the authenticated user has inserted for that days or that have been measured by the user's device or that have been aggregated from known information in the backend",
+        "responses": {
+          "200": {
+            "description": "Successful response; returns an array of trackle day info objects",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DayInfoObject"
+              }
+            }
+          },
+          "400": {
+            "description": "Not successful response",
+            "schema": {
+              "$ref": "#/definitions/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
     "/deepCheck": {
       "get": {
         "tags": [
@@ -162,7 +394,7 @@
         }
       }
     },
-    "/device/statistic/create/:hardwareDeviceId": {
+    "/device/statistic/create/:deviceId": {
       "get": {
         "tags": [
           "trackle",
@@ -225,7 +457,7 @@
             "type": "string"
           },
           {
-            "in": "path",
+            "in": "query",
             "name": "delaySeconds",
             "description": "the number of delay seconds with which the create Endpoint is called for each deviceId",
             "required": false,
@@ -243,6 +475,92 @@
             "description": "retrieving all missing deviceStatistics failed",
             "schema": {
               "$ref": "#/definitions/CreateAllDeviceStatsResponse"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
+    },
+    "/export/cycleDays/:cycleId": {
+      "get": {
+        "tags": [
+          "trackle",
+          "export"
+        ],
+        "summary": "GET a .csv file with all days of a cycle by it's id",
+        "description": "this endpoint exports all days combined with ovulationStatistics to a .csv file.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "ubirch token identifying the admin user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "the `cycleId` of the cycle to retrieve all days for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "cycleDay export retrieved successfully"
+          },
+          "400": {
+            "description": "retrieving cycleDay export failed",
+            "schema": {
+              "$ref": "#/definitions/TrackleError"
+            }
+          },
+          "500": {
+            "description": "the backend has a problem",
+            "schema": {
+              "$ref": "#/definitions/ServerError"
+            }
+          }
+        }
+      }
+    },
+    "/export/temperatures/:cycleId": {
+      "get": {
+        "tags": [
+          "trackle",
+          "export"
+        ],
+        "summary": "GET a .csv file with all temperatures of a cycle by cycleId",
+        "description": "this endpoint exports all temperatures of a cycle marking which has been included in the evaluation to a .csv file.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "ubirch token identifying the admin user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "cycleId",
+            "description": "the `cycleId` of the cycle to retrieve all temperatures for",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "cycleTemperatures export retrieved successfully"
+          },
+          "400": {
+            "description": "retrieving cycleTemperatures export failed",
+            "schema": {
+              "$ref": "#/definitions/TrackleError"
             }
           },
           "500": {
@@ -438,292 +756,6 @@
             "description": "failed",
             "schema": {
               "$ref": "#/definitions/LoginError"
-            }
-          }
-        }
-      }
-    },
-    "/cycle": {
-      "get": {
-        "tags": [
-          "trackle",
-          "cycle"
-        ],
-        "summary": "GET a cycle overview",
-        "description": "returns a reduced overview (begin, end, cycleId) over all cycles for one user",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer or ubirch token identifying the related user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the requested reduced cycle overview",
-            "schema": {
-              "$ref": "#/definitions/ReducedCycleObject"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/cycle/id/{cycleId}": {
-      "get": {
-        "tags": [
-          "trackle",
-          "cycle"
-        ],
-        "summary": "GET cycle data",
-        "description": "returns cycle related information",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "cycleId",
-            "description": "id of the cycle",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer or ubirch token identifying the related user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the requested cycle data",
-            "schema": {
-              "$ref": "#/definitions/CycleObject"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/day/{day}": {
-      "get": {
-        "tags": [
-          "trackle",
-          "day"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer or ubirch token identifying the related user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "day",
-            "description": "date of the day the user requests data for",
-            "required": true,
-            "type": "string",
-            "format": "date"
-          }
-        ],
-        "summary": "data for a day",
-        "description": "Query all available data for one day, that the authenticated user has inserted for that day or that have been measured by the user's device or that have been aggregated from known information in the backend",
-        "responses": {
-          "200": {
-            "description": "Successful response; returns an trackle day info object",
-            "schema": {
-              "$ref": "#/definitions/DayInfoObject"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/day/lastupdated": {
-      "get": {
-        "tags": [
-          "trackle",
-          "day"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer or ubirch token identifying the related user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "description": "tells us when any day of a user has been last updated",
-        "responses": {
-          "202": {
-            "description": "successful response; returns last updated information",
-            "schema": {
-              "$ref": "#/definitions/LastUpdated"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/day/from/{fromDay}/until/{untilDay}": {
-      "get": {
-        "tags": [
-          "trackle",
-          "day"
-        ],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer or ubirch token identifying the related user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "fromDay",
-            "description": "first day from date range the user requests data for",
-            "required": true,
-            "type": "string",
-            "format": "date"
-          },
-          {
-            "in": "path",
-            "name": "untilDay",
-            "description": "last day from date range the user requests data for",
-            "required": true,
-            "type": "string",
-            "format": "date"
-          }
-        ],
-        "summary": "data for a day",
-        "description": "Query all available data for a range of days, that the authenticated user has inserted for that days or that have been measured by the user's device or that have been aggregated from known information in the backend",
-        "responses": {
-          "200": {
-            "description": "Successful response; returns an array of trackle day info objects",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/DayInfoObject"
-              }
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
-            }
-          }
-        }
-      }
-    },
-    "/export/cycleDays/:cycleId": {
-      "get": {
-        "tags": [
-          "trackle",
-          "export"
-        ],
-        "summary": "GET a .csv file with all days of a cycle by it's id",
-        "description": "this endpoint exports all days combined with ovulationStatistics to a .csv file.",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "ubirch token identifying the admin user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "cycleId",
-            "description": "the `cycleId` of the cycle to retrieve all days for",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "cycleDay export retrieved successfully",
-            "type": "string"
-          },
-          "400": {
-            "description": "retrieving cycleDay export failed",
-            "schema": {
-              "$ref": "#/definitions/TrackleError"
-            }
-          },
-          "500": {
-            "description": "the backend has a problem",
-            "schema": {
-              "$ref": "#/definitions/ServerError"
-            }
-          }
-        }
-      }
-    },
-    "/export/temperatures/:cycleId": {
-      "get": {
-        "tags": [
-          "trackle",
-          "export"
-        ],
-        "summary": "GET a .csv file with all temperatures of a cycle by cycleId",
-        "description": "this endpoint exports all temperatures of a cycle marking which has been included in the evaluation to a .csv file.",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "ubirch token identifying the admin user",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "cycleId",
-            "description": "the `cycleId` of the cycle to retrieve all temperatures for",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "cycleTemperatures export retrieved successfully",
-            "type": "string"
-          },
-          "400": {
-            "description": "retrieving cycleTemperatures export failed",
-            "schema": {
-              "$ref": "#/definitions/TrackleError"
-            }
-          },
-          "500": {
-            "description": "the backend has a problem",
-            "schema": {
-              "$ref": "#/definitions/ServerError"
             }
           }
         }
@@ -1027,40 +1059,6 @@
             "description": "Not successful response",
             "schema": {
               "$ref": "#/definitions/TrackleError"
-            }
-          }
-        }
-      }
-    },
-    "/cycle/stats": {
-      "get": {
-        "tags": [
-          "trackle",
-          "cycle",
-          "2BImplemented"
-        ],
-        "summary": "READ user cycle statistics",
-        "description": "return statistics about users cycles analysed from collected measured temperatures and user inputs",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Bearer token identifying the related user",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response; returns the requested user cycle statistics",
-            "schema": {
-              "$ref": "#/definitions/CycleStatsSigned"
-            }
-          },
-          "400": {
-            "description": "Not successful response",
-            "schema": {
-              "$ref": "#/definitions/ErrorResponse"
             }
           }
         }
