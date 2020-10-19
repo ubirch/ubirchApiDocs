@@ -175,7 +175,7 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/ErrorResponse'
-  /dataUsage:
+  /dataAgreements:
     post:
       tags:
         - trackle
@@ -187,20 +187,20 @@ paths:
           required: true
           type: string
         - in: body
-          name: dataUsage
+          name: dataAgreement
           description: the object to become stored in the backend
           required: true
           schema:
-            $ref: '#/definitions/DataUsageSigned'
+            $ref: '#/definitions/DataAgreementSigned'
       summary: post new data approval for the user of the auth token
       description: 'post a new data agreement, that the authenticated user has approved or '
       responses:
         '200':
           description: >-
-            Successful response; returns the by the server accepted data usage
+            Successful response; returns the by the server accepted data agreement
             object
           schema:
-            $ref: '#/definitions/DataUsageAccepted'
+            $ref: '#/definitions/DataAgreementAccepted'
         '400':
           description: Not successful response e.g. due to signatureCreated in future
           schema:
@@ -232,7 +232,7 @@ paths:
         '200':
           description: Successful response; returns an array of data agreements
           schema:
-            $ref: '#/definitions/DataUsageAccepted'
+            $ref: '#/definitions/DataAgreementAccepted'
         '400':
           description: Not successful response
           schema:
@@ -1284,7 +1284,7 @@ definitions:
     description: the object that contains the contraceptionState object and the signature
       by the client as well as it's created date
     properties:
-      dataUsage:
+      contraceptionState:
         $ref: '#/definitions/ContraceptionState'
     example:
       contraceptionState:
@@ -1300,7 +1300,7 @@ definitions:
       userId:
         type: string
         description: uuid of the user
-      dataUsageSigned:
+      contraceptionStateSigned:
         $ref: '#/definitions/ContraceptionStateSigned'
       signature:
         type: string
@@ -1319,7 +1319,7 @@ definitions:
       signature: iuoasfDexPVPVYSlJKHLKSHFLRpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcV7893afdLE==,
       signatureCreated: 2020-12-30T08:49:59.729Z,
       userId: 6f63fe18-4886-4c23-8d06-4d03058c3c02
-  DataUsage:
+  DataAgreement:
     type: object
     description: the object that contains the agreement and it's (dis-)approval
     properties:
@@ -1336,22 +1336,22 @@ definitions:
     example:
       agreement: Hereby I accept that...
       date: '2019-12-30T08:46:59.729Z'
-  DataUsageSigned:
+  DataAgreementSigned:
     type: object
     description: >-
-      the object that contains the dataUsage object and the signature by the
+      the object that contains the dataAgreement object and the signature by the
       client and it's created date
     properties:
-      dataUsage:
-        $ref: '#/definitions/DataUsage'
+      dataAgreement:
+        $ref: '#/definitions/DataAgreement'
     example:
-      dataUsage:
+      dataAgreement:
         agreement: Hereby I accept that...
         date: '2019-12-30T08:46:59.729Z'
         approved: false
       signature: assEDexPVPVYSlRmhpEqXw+cj1RpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcVNqf8eoAA==
       signatureCreated: '2020-12-30T08:47:59.729Z'
-  DataUsageAccepted:
+  DataAgreementAccepted:
     type: object
     description: >-
       data agreement transferred after user action, signed by the server after
@@ -1360,8 +1360,8 @@ definitions:
       userId:
         type: string
         description: uuid of the user
-      dataUsageSigned:
-        $ref: '#/definitions/DataUsageSigned'
+      dataAgreementSigned:
+        $ref: '#/definitions/DataAgreementSigned'
       signature:
         type: string
         description: signature created by the server after verifying the clients signature
@@ -1370,8 +1370,8 @@ definitions:
         format: date-time
         description: the date this object was signed by the server
     example:
-      dataUsageSigned:
-        dataUsage:
+      dataAgreementSigned:
+        dataAgreement:
           agreement: Hereby I accept that ...
           date: '2019-12-30T08:46:59.729Z'
           approved: false
