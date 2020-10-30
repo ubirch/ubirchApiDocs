@@ -1754,7 +1754,7 @@
       "type": "object",
       "description": "the object that contains the agreement and it's (dis-)approval",
       "properties": {
-        "contraceptive": {
+        "state": {
           "type": "boolean",
           "description": "defines if the customer uses the app as a contraceptive or not"
         },
@@ -1765,7 +1765,7 @@
         }
       },
       "example": {
-        "contraceptive": false,
+        "state": false,
         "date": "2019-12-30T08:46:59.729Z"
       }
     },
@@ -1789,7 +1789,7 @@
       "example": {
         "contraceptionStateSigned": {
           "contraceptionState": {
-            "contraceptive": true,
+            "state": true,
             "date": "2019-12-30T08:46:59.729Z"
           },
           "signature": "assEDexPVPVYSlRmhpEqXw+cj1RpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcVNqf8eoAA==",
@@ -1821,7 +1821,7 @@
       "example": {
         "contraceptionStateSigned": {
           "contraceptionState": {
-            "contraceptive": true,
+            "state": true,
             "date": "2019-12-30T08:46:59.729Z"
           },
           "signature": "assEDexPVPVYSlRmhpEqXw+cj1RpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcVNqf8eoAA==",
