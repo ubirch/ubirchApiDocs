@@ -1426,6 +1426,10 @@
             "notifyUser": {
               "type": "boolean",
               "description": "informs the app, if the user has to become notified about the approaching end of life of the sensor"
+            },
+            "level": {
+              "type": "integer",
+              "description": "an integer (only delivered, if notifyUser is true) indicating the level of notification: 0 -> warning, 1 -> critical, 2 -> deactivated"
             }
           }
         },
@@ -1449,6 +1453,10 @@
             "notifyUser": {
               "type": "boolean",
               "description": "informs the app, if the user has to become notified about the approaching end of life of the sensor"
+            },
+            "level": {
+              "type": "integer",
+              "description": "an integer (only delivered, if notifyUser is true) indicating the level of notification: 0 -> warning, 1 -> critical, 2 -> deactivated"
             }
           }
         }
