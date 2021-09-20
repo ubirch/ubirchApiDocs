@@ -145,7 +145,7 @@
           "cycle"
         ],
         "summary": "GET a cycle overview",
-        "description": "returns a reduced overview (begin, end, cycleId) over all cycles for one user",
+        "description": "returns a (not reduced) overview (begin, end, cycleId) over all cycles for one user",
         "parameters": [
           {
             "in": "header",
@@ -159,7 +159,7 @@
           "200": {
             "description": "Successful response; returns the requested reduced cycle overview",
             "schema": {
-              "$ref": "#/definitions/ReducedCycleObject"
+              "$ref": "#/definitions/CycleObject"
             }
           },
           "400": {
@@ -1582,6 +1582,10 @@
         "cycleLength": {
           "type": "integer",
           "description": "number of days the cycle lasted"
+        },
+        "usageType": {
+          "type": "string",
+          "description": "the value might either be 'U', 'P', 'C' or null (undecided, pregnancyWish, contraception)"
         },
         "menstruationLength": {
           "type": "integer",

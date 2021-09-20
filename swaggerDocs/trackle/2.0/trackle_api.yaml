@@ -117,9 +117,9 @@ paths:
           type: string
       responses:
         '200':
-          description: Successful response; returns the requested reduced cycle overview
+          description: Successful response; returns the requested (not reduced) cycle overview
           schema:
-            $ref: '#/definitions/ReducedCycleObject'
+            $ref: '#/definitions/CycleObject'
         '400':
           description: Not successful response
           schema:
@@ -1132,6 +1132,9 @@ definitions:
       cycleLength:
         type: integer
         description: number of days the cycle lasted
+      usageType:
+        type: string
+        description: the string might either be 'U', 'P', 'C' or null (undecided, pregnancyWish, contraception)
       menstruationLength:
         type: integer
         description: number of days menstruation lasted
