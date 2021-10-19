@@ -1303,7 +1303,7 @@ definitions:
         description: the date the signature was created
     example:
       usageType:
-        state: 'P'
+        usage: 'P'
         date: '2019-12-30T08:46:59.729Z'
       signature: assEDexPVPVYSlRmhpEqXw+cj1RpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcVNqf8eoAA==
       signatureCreated: '2020-12-30T08:47:59.729Z'
@@ -1331,7 +1331,7 @@ definitions:
       id: 789122d-4886-4c23-8d06-4d03058c3c02
       usageTypeSigned:
         usageType:
-          state: 'P'
+          usage: 'P'
           date: '2019-12-30T08:46:59.729Z'
         signature: assEDexPVPVYSlRmhpEqXw+cj1RpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcVNqf8eoAA==
         signatureCreated: '2020-12-30T08:47:59.729Z'
