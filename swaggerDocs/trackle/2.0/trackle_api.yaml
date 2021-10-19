@@ -1132,7 +1132,7 @@ definitions:
       cycleLength:
         type: integer
         description: number of days the cycle lasted
-      usageType:
+      usage:
         type: string
         description: the string might either be 'U', 'P', 'C' or null (undecided, pregnancyWish, contraception)
       menstruationLength:
@@ -1277,7 +1277,7 @@ definitions:
     type: object
     description: the object that contains the agreement and it's (dis-)approval
     properties:
-      state:
+      usage:
         type: string
         description: the string might either be 'U', 'P' or 'C'  (undecided, pregnancyWish, contraception)
       date:
@@ -1285,7 +1285,7 @@ definitions:
         format: date-time
         description: the date the user has entered it's usage type of the app
     example:
-      state: 'U'
+      usage: 'U'
       date: '2019-12-30T08:46:59.729Z'
   UsageTypeSigned:
     type: object
@@ -1294,6 +1294,13 @@ definitions:
     properties:
       usageType:
         $ref: '#/definitions/UsageType'
+      signature:
+        type: string
+        description: signature by the client
+      signatureCreated:
+        type: string
+        format: date-time
+        description: the date the signature was created
     example:
       usageType:
         state: 'P'
@@ -1305,6 +1312,9 @@ definitions:
     description: usage type transferred after user action, signed by the server
       after verifying the client's signature
     properties:
+      id:
+        type: string
+        description: uuid of the usageType object
       userId:
         type: string
         description: uuid of the user
@@ -1318,9 +1328,10 @@ definitions:
         format: date-time
         description: the date this object was signed by the server
     example:
+      id: 789122d-4886-4c23-8d06-4d03058c3c02
       usageTypeSigned:
         usageType:
-          state: true
+          state: 'P'
           date: '2019-12-30T08:46:59.729Z'
         signature: assEDexPVPVYSlRmhpEqXw+cj1RpasouI9fZBEtU2EoSwEwwQ54MrAyO70H4DqyqebsYHQaTZjgjcVNqf8eoAA==
         signatureCreated: '2020-12-30T08:47:59.729Z'
@@ -2123,7 +2134,7 @@ definitions:
         description: array with all errors that occurred
     example:
       status: true
-      message: []
+      message: [ ]
   DeepCheckHealthResponse500:
     allOf:
       - $ref: '#/definitions/DeepCheckHealthResponse200'
