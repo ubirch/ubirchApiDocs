@@ -888,6 +888,38 @@ paths:
           description: Not successful response
           schema:
             $ref: '#/definitions/TrackleError'
+  /userUpdate/activation:
+    put:
+      tags:
+        - trackle
+        - user
+      summary: UPDATE multiple user's active state
+      description: this endpoint is used for updating one or many user's active state instantly or some time in the future
+      parameters:
+        - in: header
+          name: Authorization
+          description: Bearer or ubirch token identifying the admin user authorized to change customer's passwords
+          required: true
+          type: string
+        - in: header
+          name: Content-Type
+          description: application/json
+          required: true
+          type: string
+        - in: body
+          name: info
+          description: an array of objects that contain the externalId, the goal activation state and an optional executionDate if the update is not to become executed instantly.
+          schema:
+            $ref: '#/definitions/ActivationUpdate'
+      responses:
+        '200':
+          description: Successful response; returns a csv with the following headers 'externalId;targetStatus;executionDate;previousExecutionDate' and a row for each user.
+        '400':
+          description: Bad request response; returns a csv with the following headers 'externalId;targetStatus;executionDate;errorMessage' for each row that causes problems.
+        '500':
+          description: Internal Service error; returns a json with the error message.
+          schema:
+            $ref: '#definitions/ErrorResponse'
   /user/profile:
     get:
       tags:
@@ -1845,6 +1877,27 @@ definitions:
       newExternalId:
         type: string
         description: the new email in form of an externalId
+  ActivationUpdate:
+    type: array
+    items:
+      $ref: '#/definitions/UserActivationUpdate'
+  UserActivationUpdate:
+    type: object
+    required:
+      - externalId
+      - activate
+    description: the user activation command for a single user
+    properties:
+      externalId:
+        type: string
+        description: externalId of the user who shall become de- or activated
+      activate:
+        type: boolean
+        description: true if the user shall become activated; false if she shall become deactivated
+      executionDate:
+        type: string
+        format: date-time
+        description: if the de-/activation shall not take place instantly, this is the date when it shall take place
   UserSettingsAcceptedSigned:
     description: current state of the user specific settings, signed by the app, accepted
       and signed by the server
